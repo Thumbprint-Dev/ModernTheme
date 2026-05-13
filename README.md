@@ -11,7 +11,6 @@ There are three primary goals to making this repository open source.
 ![](https://github.com/Four51/Four51StorefrontWiki/blob/master/img/header.png?raw=true)
 
 ## Important Resources
-[Four51 Storefront API Documentation](http://four51.github.io/#/api/) (The API documentation)<br />
 [AngularJS](https://docs.angularjs.org/api/) (The JavaScript framework)<br />
 [Bootstrap CSS](http://getbootstrap.com/css/) (The css guide for the responsive design)<br />
 [UI Bootstrap](http://angular-ui.github.io/bootstrap/#/top) (Tools used throughout the application) 
