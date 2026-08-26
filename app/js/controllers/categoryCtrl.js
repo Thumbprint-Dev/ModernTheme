@@ -1,14 +1,6 @@
 four51.app.controller('CategoryCtrl', ['$routeParams', '$sce', '$scope', '$451', 'Category', 'Product', 'Nav',
 function ($routeParams, $sce, $scope, $451, Category, Product, Nav) {
 	$scope.isHome = !$routeParams.categoryInteropID;
-	if ($scope.isHome) {
-		$scope.departments = [
-			{ name: 'Apparel' },
-			{ name: 'Print & Marketing' },
-			{ name: 'Office & Gifts' },
-			{ name: 'Kits' }
-		];
-	}
 	$scope.productLoadingIndicator = true;
 	$scope.settings = {
 		currentPage: 1,

@@ -33,72 +33,69 @@
         </div>
     </div>
 
-    <div class="mt-container mt-section">
+    <div class="mt-container mt-section" ng-if="tree.length">
         <h2 class="mt-eyebrow">{{'Shop by department' | r | xlat}}</h2>
         <div class="row">
-            <div class="col-sm-3" ng-repeat="dept in departments">
-                <a href="catalog" class="mt-dept-tile">
-                    <div class="mt-placeholder-photo">{{'[lifestyle photo]' | r | xlat}}</div>
-                    <p class="mt-dept-name">{{dept.name}}</p>
+            <div class="col-sm-3" ng-repeat="dept in tree">
+                <a ng-href="catalog/{{dept.InteropID}}" class="mt-dept-tile">
+                    <img ng-if="dept.Image.URL" ng-src="{{dept.Image.URL}}" class="mt-placeholder-photo mt-real-photo" alt="" />
+                    <div ng-if="!dept.Image.URL" class="mt-placeholder-photo">{{'[lifestyle photo]' | r | xlat}}</div>
+                    <p class="mt-dept-name" ng-bind-html="dept.Name"></p>
                 </a>
             </div>
         </div>
     </div>
 
-    <div class="mt-container mt-section">
+    <div class="mt-container mt-section" ng-if="products.length">
         <h2 class="mt-eyebrow">{{'Featured for your team' | r | xlat}}</h2>
         <div class="row">
-            <div class="col-sm-3" ng-repeat="n in [1,2,3,4]">
-                <div class="mt-product-card">
-                    <div class="mt-placeholder-photo">{{'[product photo]' | r | xlat}}</div>
-                    <p class="mt-product-name">{{'Product name' | r | xlat}}</p>
-                    <p class="mt-product-price">$00.00</p>
-                </div>
+            <div class="col-sm-3" ng-repeat="product in products | limitTo:4">
+                <a href="product/{{product.InteropID}}" class="mt-product-card">
+                    <img ng-if="product.SmallImageUrl" ng-src="{{product.SmallImageUrl}}" class="mt-placeholder-photo mt-real-photo" alt="" />
+                    <div ng-if="!product.SmallImageUrl" class="mt-placeholder-photo">{{'[product photo]' | r | xlat}}</div>
+                    <p class="mt-product-name">{{product.Name}}</p>
+                    <p class="mt-product-price" ng-if="product.StandardPriceSchedule.PriceBreaks[0] && !(user.Permissions.contains('HidePricing'))">
+                        {{product.StandardPriceSchedule.PriceBreaks[0].Price | culturecurrency}}
+                    </p>
+                </a>
             </div>
         </div>
     </div>
 
 </section>
 
-<section ng-if="!isHome">
-    <nav id="451qa_nav_hdr" class="nav">
-        <ul>
-            <li class="hidden-sm hidden-xs">
-                <span ng-click="toggleNav()"><i class="fa fa-bars" ng-class="{ 'text-info': navStatus.visible }"></i></span>
-            </li>
-            <li>
-                <span id="451_lbl_curcat" class="text-primary" ng-bind-html="currentCategory.Name || '  {{'Categories' | r | xlat}}'"></span>
-            </li>
-            <li class="pull-right">
-                <a href="search">
-                    <span><i class="fa fa-search text-primary"></i></span>
-                </a>
-            </li>
-        </ul>
-    </nav>
-    <div class="row">
-        <aside class="col-md-3 visible-md visible-lg" ng-if="navStatus.visible">
-            <div class="panel panel-default panel-nav">
-                <div class="panel-heading">
-                    <h3 class="panel-title">
-                        {{'Category List' | r | xlat}}
-                    </h3>
+<section ng-if="!isHome" class="mt-plp">
+    <div class="mt-container mt-plp-header">
+        <p class="mt-breadcrumb"><a href="catalog">{{'Home' | r | xlat}}</a> / <span ng-bind-html="currentCategory.Name || ('Categories' | r | xlat)"></span></p>
+        <div class="mt-plp-title-row">
+            <h1 id="451_lbl_curcat" ng-bind-html="currentCategory.Name || ('Categories' | r | xlat)"></h1>
+            <button type="button" class="mt-header-btn" ng-click="toggleNav()">
+                <span ng-if="navStatus.visible">{{'Hide categories' | r | xlat}}</span>
+                <span ng-if="!navStatus.visible">{{'Show categories' | r | xlat}}</span>
+            </button>
+        </div>
+    </div>
+    <div class="mt-container">
+        <div class="row">
+            <aside class="col-md-3 visible-md visible-lg" ng-if="navStatus.visible">
+                <div class="mt-sidebar">
+                    <h2 class="mt-eyebrow">{{'Category List' | r | xlat}}</h2>
+                    <nav class="451qa_sidenav mt-sidebar-tree">
+                        <ul>
+                            <categorytree tree='tree' current='currentCategory' />
+                        </ul>
+                    </nav>
                 </div>
-                <nav class="nav 451qa_sidenav panel-body">
-                    <ul>
-                        <categorytree tree='tree' current='currentCategory' />
-                    </ul>
-                </nav>
+            </aside>
+            <div ng-class="{ 'col-md-9': navStatus.visible, 'col-md-12': !navStatus.visible }" >
+
+                <categorylistview></categorylistview>
+
+                <loadingindicator ng-show="productLoadingIndicator" title="{{'Please wait while we fetch all products' | r | xlat}}"/>
+
+                <productlistview></productlistview>
+
             </div>
-        </aside>
-        <div ng-class="{ 'col-md-9': navStatus.visible, 'col-md-12': !navStatus.visible }" >
-
-            <categorylistview></categorylistview>
-
-            <loadingindicator ng-show="productLoadingIndicator" title="{{'Please wait while we fetch all products' | r | xlat}}"/>
-
-            <productlistview></productlistview>
-
         </div>
     </div>
 </section>
