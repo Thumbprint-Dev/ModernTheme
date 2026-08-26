@@ -1,5 +1,13 @@
-four51.app.controller('NavCtrl', ['$location', '$route', '$scope', '$451', '$timeout', 'User',
-function ($location, $route, $scope, $451, $timeout, User) {
+four51.app.controller('NavCtrl', ['$location', '$route', '$scope', '$451', '$timeout', 'User', 'SpendingAccount',
+function ($location, $route, $scope, $451, $timeout, User, SpendingAccount) {
+    $scope.$watch('user', function(user) {
+        if (user && user.Type == 'Customer' && user.Permissions.contains('PayByBudgetAccount')) {
+            SpendingAccount.query(function(accounts) {
+                $scope.primarySpendingAccount = (accounts || []).filter(function(a) { return a.ForPurchase; })[0];
+            });
+        }
+    });
+
     $scope.doSearch = function(){
         if ($scope.searchTerm)
             $location.path('search/' + $scope.searchTerm);
