@@ -1,5 +1,10 @@
 four51.app.controller('NavCtrl', ['$location', '$route', '$scope', '$451', '$timeout', 'User',
 function ($location, $route, $scope, $451, $timeout, User) {
+    $scope.doSearch = function(){
+        if ($scope.searchTerm)
+            $location.path('search/' + $scope.searchTerm);
+    };
+
     $scope.Logout = function(){
         User.logout($scope.user, function(u){
             if ($scope.isAnon) {
