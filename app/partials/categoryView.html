@@ -1,4 +1,66 @@
-<section>
+<section ng-if="isHome" class="mt-home">
+
+    <div class="mt-hero">
+        <div class="mt-container">
+            <p class="mt-eyebrow">{{'Fall 2026 Collection' | r | xlat}}</p>
+            <h1>{{'Gear your team for the season ahead.' | r | xlat}}</h1>
+            <p class="mt-hero-sub">{{'New apparel, drinkware and print kits, priced for your group.' | r | xlat}}</p>
+            <a href="catalog" class="mt-btn-accent">{{'Shop the collection' | r | xlat}}</a>
+        </div>
+    </div>
+
+    <div class="mt-container mt-section">
+        <h2 class="mt-eyebrow">{{'Quick actions' | r | xlat}}</h2>
+        <div class="row mt-quick-actions">
+            <div class="col-sm-4">
+                <a href="order" class="mt-tile">
+                    <p class="mt-tile-title">{{'Reorder your last order' | r | xlat}}</p>
+                    <p class="mt-tile-sub">{{'View your recent orders' | r | xlat}}</p>
+                </a>
+            </div>
+            <div class="col-sm-4">
+                <a href="favoriteorders" class="mt-tile">
+                    <p class="mt-tile-title">{{'Saved carts' | r | xlat}}</p>
+                    <p class="mt-tile-sub">{{'Load a cart you saved earlier' | r | xlat}}</p>
+                </a>
+            </div>
+            <div class="col-sm-4">
+                <a href="catalog" class="mt-tile">
+                    <p class="mt-tile-title">{{'Browse full catalog' | r | xlat}}</p>
+                    <p class="mt-tile-sub">{{'Your team\'s approved products' | r | xlat}}</p>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-container mt-section">
+        <h2 class="mt-eyebrow">{{'Shop by department' | r | xlat}}</h2>
+        <div class="row">
+            <div class="col-sm-3" ng-repeat="dept in departments">
+                <a href="catalog" class="mt-dept-tile">
+                    <div class="mt-placeholder-photo">{{'[lifestyle photo]' | r | xlat}}</div>
+                    <p class="mt-dept-name">{{dept.name}}</p>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-container mt-section">
+        <h2 class="mt-eyebrow">{{'Featured for your team' | r | xlat}}</h2>
+        <div class="row">
+            <div class="col-sm-3" ng-repeat="n in [1,2,3,4]">
+                <div class="mt-product-card">
+                    <div class="mt-placeholder-photo">{{'[product photo]' | r | xlat}}</div>
+                    <p class="mt-product-name">{{'Product name' | r | xlat}}</p>
+                    <p class="mt-product-price">$00.00</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<section ng-if="!isHome">
     <nav id="451qa_nav_hdr" class="nav">
         <ul>
             <li class="hidden-sm hidden-xs">
