@@ -1,6 +1,13 @@
-four51.app.controller('CategoryCtrl', ['$routeParams', '$sce', '$scope', '$451', 'Category', 'Product', 'Nav',
-function ($routeParams, $sce, $scope, $451, Category, Product, Nav) {
+four51.app.controller('CategoryCtrl', ['$routeParams', '$sce', '$scope', '$451', 'Category', 'Product', 'Nav', 'AppConst',
+function ($routeParams, $sce, $scope, $451, Category, Product, Nav, AppConst) {
 	$scope.isHome = !$routeParams.categoryInteropID;
+	if ($scope.isHome) {
+		// "Featured for your team" pulls from a dedicated real category (see AppConst.featuredCategoryInteropID)
+		// rather than a platform-wide "all products" query, which Product.search doesn't support unscoped.
+		Product.search(AppConst.featuredCategoryInteropID, null, null, function (products) {
+			$scope.featuredProducts = products;
+		}, 1, 4);
+	}
 	$scope.productLoadingIndicator = true;
 	$scope.settings = {
 		currentPage: 1,

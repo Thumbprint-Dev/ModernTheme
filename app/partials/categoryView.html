@@ -46,10 +46,10 @@
         </div>
     </div>
 
-    <div class="mt-container mt-section" ng-if="products.length">
+    <div class="mt-container mt-section" ng-if="featuredProducts.length">
         <h2 class="mt-eyebrow">{{'Featured for your team' | r | xlat}}</h2>
         <div class="row">
-            <div class="col-sm-3" ng-repeat="product in products | limitTo:4" ng-include="'partials/controls/mtProductCard.html'"></div>
+            <div class="col-sm-3" ng-repeat="product in featuredProducts | limitTo:4" ng-include="'partials/controls/mtProductCard.html'"></div>
         </div>
     </div>
 
