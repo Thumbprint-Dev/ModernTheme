@@ -4,3 +4,155 @@ Theme name: My SPA Theme
 Version: 1.0
 Template: Howdy
 */
+
+/* ===== ModernTheme: Home page (v1, placeholder pass) ===== */
+/* Scoped to .mt-home so it doesn't affect any other page while we validate the approach. */
+
+.mt-home {
+    font-family: 'Inter', 'Droid Sans', sans-serif;
+    color: #262420;
+    background: #FAF8F4;
+    margin: -20px -15px 0;
+}
+
+.mt-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+.mt-section {
+    padding: 40px 0;
+}
+
+.mt-eyebrow {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #726D5F;
+    margin: 0 0 18px;
+}
+
+.mt-hero {
+    padding: 64px 0;
+    background-image: repeating-linear-gradient(120deg, #E7E1D3, #E7E1D3 22px, #DED5C0 22px, #DED5C0 44px);
+}
+
+.mt-hero h1 {
+    font-size: 42px;
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    margin: 0 0 16px;
+    max-width: 640px;
+    line-height: 1.1;
+    color: #211F19;
+}
+
+.mt-hero-sub {
+    font-size: 16px;
+    color: #4A463C;
+    max-width: 480px;
+    margin: 0 0 24px;
+}
+
+.mt-btn-accent {
+    display: inline-block;
+    background: #0F6B63;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 13px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.mt-btn-accent:hover,
+.mt-btn-accent:focus {
+    background: #0C544E;
+    color: #fff;
+    text-decoration: none;
+}
+
+.mt-quick-actions .mt-tile,
+.mt-dept-tile,
+.mt-product-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+.mt-tile {
+    border: 1px solid #E8E4DA;
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    min-height: 100px;
+    margin-bottom: 16px;
+}
+
+.mt-tile:hover {
+    border-color: #0F6B63;
+    text-decoration: none;
+    color: inherit;
+}
+
+.mt-tile-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0 0 6px;
+}
+
+.mt-tile-sub {
+    font-size: 13px;
+    color: #726D5F;
+    margin: 0;
+}
+
+.mt-placeholder-photo {
+    background-image: repeating-linear-gradient(135deg, #ECE7DA, #ECE7DA 14px, #E1DACB 14px, #E1DACB 28px);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #8A8578;
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 11px;
+    padding: 8px;
+    aspect-ratio: 4 / 3;
+    margin-bottom: 10px;
+}
+
+.mt-dept-tile {
+    margin-bottom: 20px;
+}
+
+.mt-dept-name {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0;
+    color: #262420;
+}
+
+.mt-product-card {
+    border: 1px solid #E8E4DA;
+    background: #fff;
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 20px;
+}
+
+.mt-product-name {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 4px 0 2px;
+}
+
+.mt-product-price {
+    font-size: 14px;
+    color: #0F6B63;
+    font-weight: 600;
+    margin: 0;
+}
