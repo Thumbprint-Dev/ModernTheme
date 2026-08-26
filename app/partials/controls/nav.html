@@ -11,6 +11,10 @@
         </form>
 
         <div class="mt-header-actions">
+            <div class="mt-budget hidden-xs" ng-if="primarySpendingAccount">
+                <span class="mt-budget-label">{{primarySpendingAccount.Label}}</span>
+                <span class="mt-budget-value">{{primarySpendingAccount.Balance | culturecurrency}} {{'available' | r | xlat}}</span>
+            </div>
             <a id="451qa_order_link" href="order" class="mt-header-btn hidden-xs" ng-if="user.Type == 'Customer'">
                 {{'Order History' | r | xlat}}
             </a>

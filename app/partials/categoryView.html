@@ -49,16 +49,7 @@
     <div class="mt-container mt-section" ng-if="products.length">
         <h2 class="mt-eyebrow">{{'Featured for your team' | r | xlat}}</h2>
         <div class="row">
-            <div class="col-sm-3" ng-repeat="product in products | limitTo:4">
-                <a href="product/{{product.InteropID}}" class="mt-product-card">
-                    <img ng-if="product.SmallImageUrl" ng-src="{{product.SmallImageUrl}}" class="mt-placeholder-photo mt-real-photo" alt="" />
-                    <div ng-if="!product.SmallImageUrl" class="mt-placeholder-photo">{{'[product photo]' | r | xlat}}</div>
-                    <p class="mt-product-name">{{product.Name}}</p>
-                    <p class="mt-product-price" ng-if="product.StandardPriceSchedule.PriceBreaks[0] && !(user.Permissions.contains('HidePricing'))">
-                        {{product.StandardPriceSchedule.PriceBreaks[0].Price | culturecurrency}}
-                    </p>
-                </a>
-            </div>
+            <div class="col-sm-3" ng-repeat="product in products | limitTo:4" ng-include="'partials/controls/mtProductCard.html'"></div>
         </div>
     </div>
 

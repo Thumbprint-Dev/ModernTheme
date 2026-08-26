@@ -1,0 +1,8 @@
+<a href="{{product.Type == 'Kit' ? 'kit' : 'product'}}/{{product.InteropID}}" class="mt-product-card">
+    <img ng-if="product.SmallImageUrl" ng-src="{{product.SmallImageUrl}}" class="mt-placeholder-photo mt-real-photo" alt="" />
+    <div ng-if="!product.SmallImageUrl" class="mt-placeholder-photo">{{'[product photo]' | r | xlat}}</div>
+    <p class="mt-product-name">{{product.Name}}</p>
+    <p class="mt-product-price" ng-if="product.StandardPriceSchedule.PriceBreaks[0] && !(user.Permissions.contains('HidePricing'))">
+        {{product.StandardPriceSchedule.PriceBreaks[0].Price | culturecurrency}}
+    </p>
+</a>

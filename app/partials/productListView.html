@@ -17,9 +17,7 @@
     <div class="mt-product-grid-wrap" ng-show="currentCategory.InteropID">
         <loadingindicator ng-show="searchLoading" title="{{'Please wait while we fetch all products' | r | xlat}}" />
         <div class="row">
-            <div class="col-sm-3 col-xs-6" id="451_lst_prod" ng-repeat="product in products | paginate:(settings.currentPage-1) * settings.pageSize | limitTo:settings.pageSize | orderBy:sorter:direction">
-                <shortproductviewgallery p="product" user="user" />
-            </div>
+            <div class="col-sm-3 col-xs-6" id="451_lst_prod" ng-repeat="product in products | paginate:(settings.currentPage-1) * settings.pageSize | limitTo:settings.pageSize | orderBy:sorter:direction" ng-include="'partials/controls/mtProductCard.html'"></div>
         </div>
     </div>
 
