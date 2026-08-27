@@ -27,6 +27,8 @@ function ($scope, $routeParams, $route, $location, $451, Product, ProductDisplay
 	function setDefaultQty(lineitem) {
 		if (lineitem.PriceSchedule && lineitem.PriceSchedule.DefaultQuantity != 0)
 			$scope.LineItem.Quantity = lineitem.PriceSchedule.DefaultQuantity;
+		else
+			$scope.LineItem.Quantity = 1;
 	}
 	function init(searchTerm, callback) {
 		ProductDisplayService.getProductAndVariant($routeParams.productInteropID, $routeParams.variantInteropID, function (data) {
