@@ -4,24 +4,24 @@
         <div class="mt-field" ng-if="user.Permissions.contains('EditPOID')">
             <label class="required">{{('Order' | r) + ' '  + ('ID' | r) | xlat}}</label>
             <div class="mt-checkout-orderid-row">
-                <input class="form-control" name="orderid" ng-disabled='currentOrder.autoID' type='text' ng-model="currentOrder.ExternalID"
+                <input class="form-control" name="orderid" ng-disabled='currentOrder.autoID' type='text' ng-model="currentOrder.ExternalID" ng-blur="saveOrderDetails()"
                        required ui-mask="{{currentOrder.autoID ? null : user.Company.POIDMask}}"></input>
                 <label class="mt-checkout-auto-id" ng-show="user.Permissions.contains('AllowAutoGenPOID')">
-                    <input type='checkbox' ng-click="currentOrder.ExternalID = currentOrder.autoID ? null : 'auto'" ng-model='currentOrder.autoID' />
+                    <input type='checkbox' ng-click="currentOrder.ExternalID = currentOrder.autoID ? null : 'auto'; saveOrderDetails()" ng-model='currentOrder.autoID' />
                     {{('Auto' | r) + ' ' + ('ID' | r) | xlat}}
                 </label>
             </div>
         </div>
         <div class="mt-field" ng-if="user.Permissions.contains('Comments')">
             <label>{{'Comments' | r | xlat}}</label>
-            <textarea class="form-control" rows="4" ng-model="currentOrder.Comments" ng-attr-placeholder="{{'Comments' | r | xlat}}..."></textarea>
+            <textarea class="form-control" rows="4" ng-model="currentOrder.Comments" ng-blur="saveOrderDetails()" ng-attr-placeholder="{{'Comments' | r | xlat}}..."></textarea>
         </div>
         <div class="mt-field" ng-show="user.Permissions.contains('CostCenterPerOrder') && !user.Permissions.contains('CostCenterPerLine') && user.CostCenters.length > 0 || user.Permissions.contains('CostCenterPerOrder') && user.Permissions.contains('FreeFormCostCenter')">
             <label class="required">{{'Cost Center' | r | xlat}}</label>
             <select class="form-control" ng-required="user.Permissions.contains('CostCenterPerOrder') && !user.Permissions.contains('CostCenterPerLine') && !user.Permissions.contains('FreeFormCostCenter')"
                     ng-change="updateCostCenter()" ng-if="user.CostCenters.length > 1 && !user.Permissions.contains('FreeFormCostCenter')"
                     ng-options="center.Name as center.Name for center in user.CostCenters" ng-model="currentOrder.CostCenter"><option value=""></option></select>
-            <input class="form-control" ng-show="user.Permissions.contains('FreeFormCostCenter')" ng-model="currentOrder.CostCenter" type='text'
+            <input class="form-control" ng-show="user.Permissions.contains('FreeFormCostCenter')" ng-model="currentOrder.CostCenter" type='text' ng-blur="saveOrderDetails()"
                    ng-required="user.Permissions.contains('CostCenterPerOrder') && !user.Permissions.contains('CostCenterPerLine') && user.Permissions.contains('FreeFormCostCenter')"
                    placeholder="{{'Cost Center' | r | xlat}}" />
             <span ng-if="user.CostCenters.length == 1 && !user.Permissions.contains('FreeFormCostCenter')">{{currentOrder.CostCenter}}</span>

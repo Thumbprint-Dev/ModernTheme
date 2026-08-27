@@ -120,20 +120,39 @@ four51.app.directive('paymentselector', function() {
 		       return selectedCard;
 	       };
 
+           $scope.savePaymentMethod = function() {
+               Order.save($scope.currentOrder,
+                   function(data) {
+                       var budgetAccountID = $scope.currentOrder.BudgetAccountID;
+                       var creditCardID = $scope.currentOrder.CreditCardID;
+                       $scope.currentOrder = data;
+                       $scope.currentOrder.BudgetAccountID = budgetAccountID;
+                       $scope.currentOrder.CreditCardID = creditCardID;
+                   },
+                   function(ex) {
+                       $scope.errorMessage = ex.Message;
+                   }
+               );
+           };
+
            $scope.setPaymentMethod = function(type) {
                $scope.currentOrder.PaymentMethod = type;
                $rootScope.$broadcast('event:paymentMethodChange', type);
+               $scope.savePaymentMethod();
            };
 
 	       $scope.setBudgetAccount = function(count) {
-		       $scope.setPaymentMethod('BudgetAccount');
-		       if ($scope.currentOrder.BudgetAccountID || count > 1) return;
-		       angular.forEach($scope.SpendingAccounts, function(a) {
-			       if (a.AccountType.PurchaseCredit) {
-				       $scope.currentOrder.BudgetAccountID = a.ID;
-				       $scope.selectedBudgetAccount = a;
-			       }
-		       });
+		       $scope.currentOrder.PaymentMethod = 'BudgetAccount';
+		       $rootScope.$broadcast('event:paymentMethodChange', 'BudgetAccount');
+		       if (!$scope.currentOrder.BudgetAccountID && count == 1) {
+			       angular.forEach($scope.SpendingAccounts, function(a) {
+				       if (a.AccountType.PurchaseCredit) {
+					       $scope.currentOrder.BudgetAccountID = a.ID;
+					       $scope.selectedBudgetAccount = a;
+				       }
+			       });
+		       }
+		       $scope.savePaymentMethod();
 	       };
 
 	       $rootScope.$on('event:SpendingAccountUpdate', function(event, accounts) {

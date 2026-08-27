@@ -14,7 +14,8 @@
             <div class="mt-field" ng-show="billaddresses.length > 0">
                 <label class="required">{{('Billing' | r) + ' ' + ('Address' | r) | xlat}}</label>
                 <select class="form-control" ng-show="billaddresses" name="billingAddress"
-                        ng-options="address.ID as address.AddressName for address in billaddresses | filter:{IsBilling:true}" ng-model="currentOrder.BillAddressID" ng-required="currentOrder.BillingEnabled">
+                        ng-options="address.ID as address.AddressName for address in billaddresses | filter:{IsBilling:true}" ng-model="currentOrder.BillAddressID" ng-required="currentOrder.BillingEnabled"
+                        ng-change="saveOrderBilling()">
                     <option value=""></option>
                 </select>
             </div>
@@ -27,9 +28,9 @@
                     {{BillAddress.FirstName + ' ' + BillAddress.LastName}}
                 </p>
                 <div class="mt-checkout-shipto-name-row" ng-show="user.Permissions.contains('EditBillToName') && !BillAddress.IsCustEditable">
-                    <input class="form-control" name="billingFirstName" ng-required="currentOrder.BillingEnabled && user.Permissions.contains('EditBillToName') && !BillAddress.IsCustEditable" type="text" ng-model="currentOrder.BillFirstName"
+                    <input class="form-control" name="billingFirstName" ng-required="currentOrder.BillingEnabled && user.Permissions.contains('EditBillToName') && !BillAddress.IsCustEditable" type="text" ng-model="currentOrder.BillFirstName" ng-blur="saveOrderBilling()"
                            placeholder="{{('First' | r) + ' ' + ('Name' | r) | xlat}}" autocomplete="off" />
-                    <input class="form-control" name="billingLastName" ng-required="currentOrder.BillingEnabled && user.Permissions.contains('EditBillToName') && !BillAddress.IsCustEditable" type="text" ng-model="currentOrder.BillLastName"
+                    <input class="form-control" name="billingLastName" ng-required="currentOrder.BillingEnabled && user.Permissions.contains('EditBillToName') && !BillAddress.IsCustEditable" type="text" ng-model="currentOrder.BillLastName" ng-blur="saveOrderBilling()"
                            placeholder="{{('Last' | r) + ' ' + ('Name' | r) | xlat}}" />
                 </div>
                 <p ng-show="BillAddress.Street1">{{BillAddress.Street1}}</p>
