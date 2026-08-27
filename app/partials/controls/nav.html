@@ -65,7 +65,12 @@
 
     <nav class="mt-cat-nav" aria-label="{{'Product categories' | r | xlat}}" ng-if="tree.length">
         <div class="mt-container mt-cat-nav-row">
-            <a ng-repeat="cat in tree" ng-href="catalog/{{cat.InteropID}}" ng-class="{active: isInPath(cat.InteropID)}" ng-bind-html="cat.Name"></a>
+            <div class="mt-cat-nav-item" ng-repeat="cat in tree" ng-class="{'has-children': cat.SubCategories.length}">
+                <a ng-href="catalog/{{cat.InteropID}}" ng-class="{active: isInPath(cat.InteropID)}" ng-bind-html="cat.Name"></a>
+                <div class="mt-cat-dropdown" ng-if="cat.SubCategories.length">
+                    <a ng-repeat="sub in cat.SubCategories" ng-href="catalog/{{sub.InteropID}}" ng-bind-html="sub.Name"></a>
+                </div>
+            </div>
         </div>
     </nav>
 </header>
