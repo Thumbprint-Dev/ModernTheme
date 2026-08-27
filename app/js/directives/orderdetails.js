@@ -1,4 +1,4 @@
-four51.app.directive('orderdetails', function() {
+four51.app.directive('orderdetails', ['Order', function(Order) {
 	var obj = {
 		restrict: 'AE',
 		templateUrl: 'partials/controls/orderDetails.html',
@@ -28,8 +28,25 @@ four51.app.directive('orderdetails', function() {
                        });
                    }
                 });
+                $scope.saveOrderDetails();
             }
+
+            $scope.saveOrderDetails = function() {
+                var auto = $scope.currentOrder.autoID;
+                Order.save($scope.currentOrder,
+                    function(data) {
+                        $scope.currentOrder = data;
+                        if (auto) {
+                            $scope.currentOrder.autoID = true;
+                            $scope.currentOrder.ExternalID = 'auto';
+                        }
+                    },
+                    function(ex) {
+                        $scope.errorMessage = ex.Message;
+                    }
+                );
+            };
 		}]
 	};
 	return obj;
-});
+}]);

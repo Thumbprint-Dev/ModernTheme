@@ -1,8 +1,21 @@
-four51.app.directive('orderbilling', ['Address', 'AddressList', function(Address, AddressList) {
+four51.app.directive('orderbilling', ['Address', 'AddressList', 'Order', function(Address, AddressList, Order) {
 	var obj = {
 		restrict: 'AE',
 		templateUrl: 'partials/controls/orderBilling.html',
 		controller: ['$scope', function($scope) {
+			$scope.saveOrderBilling = function() {
+				Order.save($scope.currentOrder,
+					function(data) {
+						var billAddressID = $scope.currentOrder.BillAddressID;
+						$scope.currentOrder = data;
+						$scope.currentOrder.BillAddressID = billAddressID;
+					},
+					function(ex) {
+						$scope.errorMessage = ex.Message;
+					}
+				);
+			};
+
 			AddressList.clear();
 			AddressList.billing(function(list) {
 				$scope.billaddresses = list;

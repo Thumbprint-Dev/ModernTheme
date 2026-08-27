@@ -3,7 +3,7 @@
         <button class="mt-header-btn" type="button"
                 ng-show="user.Permissions.contains('PayByPO')"
                 ng-class="{active: currentOrder.PaymentMethod == 'PurchaseOrder'}"
-                ng-click="currentOrder.PaymentMethod = 'PurchaseOrder'">
+                ng-click="setPaymentMethod('PurchaseOrder')">
             <i ng-show="currentOrder.PaymentMethod == 'PurchaseOrder'" class="fa fa-check"></i>
             {{'Purchase Order' | r | xlat}}
         </button>
@@ -11,7 +11,7 @@
                 ng-show="user.Permissions.contains('SubmitForApproval') && currentOrder.Approvals"
                 ng-disabled="isSplitBilling"
                 ng-class="{active: currentOrder.PaymentMethod == 'Undetermined'}"
-                ng-click="currentOrder.PaymentMethod = 'Undetermined'">
+                ng-click="setPaymentMethod('Undetermined')">
             <i ng-show="currentOrder.PaymentMethod == 'Undetermined'" class="fa fa-check"></i>
             {{'Approval Order' | r | xlat}}
         </button>
@@ -25,7 +25,7 @@
         <button class="mt-header-btn" type="button"
                 ng-if="user.AvailableCreditCards.length > 0 && user.Permissions.contains('PayByCreditCard')"
                 ng-class="{active: currentOrder.PaymentMethod == 'CreditCard'}"
-                ng-click="currentOrder.PaymentMethod = 'CreditCard'">
+                ng-click="setPaymentMethod('CreditCard')">
             <i ng-show="currentOrder.PaymentMethod == 'CreditCard'" class="fa fa-check"></i>
             {{'Credit Card' | r | xlat}}
         </button>
@@ -45,7 +45,8 @@
             <select class="form-control" placeholder="{{'Spending Account' | r | xlat}}"
                     ng-options="account.ID as (account.Label + ' - ' + ('Balance' | xlat) + ': ' + (account.Balance | culturecurrency)) for account in SpendingAccounts | filter:{ForPurchase:true}"
                     ng-model="currentOrder.BudgetAccountID"
-                    ng-required="currentOrder.PaymentMethod == 'BudgetAccount'">
+                    ng-required="currentOrder.PaymentMethod == 'BudgetAccount'"
+                    ng-change="savePaymentMethod()">
             </select>
         </div>
     </div>
@@ -54,7 +55,7 @@
         <div class="mt-checkout-payment-detail mt-checkout-saved-card-row" ng-if="paymentSelection.SavedCards">
             <div class="mt-field">
                 <label>{{('Saved' | r) + ' ' +  ('Card' | r) | xlat}}</label>
-                <select class="form-control" ng-model="currentOrder.CreditCardID" ng-options="card.ID as card.Name for card in paymentSelection.SavedCards">
+                <select class="form-control" ng-model="currentOrder.CreditCardID" ng-options="card.ID as card.Name for card in paymentSelection.SavedCards" ng-change="savePaymentMethod()">
                     <option value=""></option>
                 </select>
             </div>
