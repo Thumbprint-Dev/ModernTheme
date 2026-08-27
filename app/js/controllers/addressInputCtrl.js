@@ -1,5 +1,11 @@
 four51.app.controller('AddressInputCtrl', ['$scope', '$rootScope', '$location', 'User', 'Address', 'Resources',
 function ($scope, $rootScope, $location, User, Address, Resources) {
+    $scope.autoSaveIfValid = function() {
+        if ($scope.addressEdit && $scope.addressEdit.$valid) {
+            $scope.save();
+        }
+    };
+
     $scope.save = function() {
 	    $scope.objectExists = false;
         if(!this.address.State){
@@ -83,5 +89,6 @@ function ($scope, $rootScope, $location, User, Address, Resources) {
                 component.types[0] == 'country'                     ? ($scope.address.Country = component.short_name)   : '';
                 component.types[0] == 'postal_code'                 ? ($scope.address.Zip = component.short_name)       : '';
         });
+        $scope.autoSaveIfValid();
     }
 }]);
