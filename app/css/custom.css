@@ -698,14 +698,29 @@ Template: Howdy
 
 .mt-order-row label {
     margin: 0;
-    font-size: 13px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #726D5F;
+}
+
+.mt-order-row label.required {
+    color: #726D5F;
+}
+
+.mt-order-row label.required:after {
+    content: ' *';
+    color: #0F6B63;
 }
 
 .mt-pdp-add-btn {
-    flex: 1;
+    display: block;
+    width: 100%;
     text-align: center;
     font-size: 15px;
     padding: 14px 24px;
+    margin-top: 16px;
 }
 
 .mt-pdp-description {
