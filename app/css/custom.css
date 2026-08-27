@@ -493,13 +493,18 @@ Template: Howdy
     padding: 0;
 }
 
-.mt-sidebar-tree .451_cat_item {
+/* Note: [class~="451_cat_item"] is used instead of .451_cat_item because that class name starts
+   with a digit, which is invalid in an unescaped CSS class selector - the browser silently drops
+   the whole rule rather than erroring. Confirmed via live DevTools inspection (2026-08-27): the
+   browser showed the class internally as "\34 51_cat_item" (CSS escape for a leading "4"), and a
+   plain .451_cat_item selector never even appeared as a candidate in the Styles panel. */
+.mt-sidebar-tree [class~="451_cat_item"] {
     display: block;
     float: none;
     width: 100%;
 }
 
-.mt-sidebar-tree .451_cat_item > a {
+.mt-sidebar-tree [class~="451_cat_item"] > a {
     display: block;
     padding: 8px 0;
     font-size: 13px;
@@ -508,23 +513,23 @@ Template: Howdy
     border-bottom: 1px solid #F0EDE4;
 }
 
-.mt-sidebar-tree .451_cat_item > a:hover {
+.mt-sidebar-tree [class~="451_cat_item"] > a:hover {
     color: #0F6B63;
     text-decoration: none;
 }
 
-.mt-sidebar-tree .451_cat_item.active > a {
+.mt-sidebar-tree [class~="451_cat_item"].active > a {
     color: #0F6B63;
     font-weight: 600;
 }
 
 /* Nested subcategories (categorytree recurses a <ul> inside each parent <li>) - indent under the parent */
-.mt-sidebar-tree .451_cat_item ul {
+.mt-sidebar-tree [class~="451_cat_item"] ul {
     padding-left: 16px;
     margin: 0;
 }
 
-.mt-sidebar-tree .451_cat_item ul .451_cat_item > a {
+.mt-sidebar-tree [class~="451_cat_item"] ul [class~="451_cat_item"] > a {
     font-size: 12px;
     color: #726D5F;
 }
