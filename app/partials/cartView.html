@@ -81,7 +81,6 @@
                                     <quantityfield required="true" lineitem="item" class="quantity"></quantityfield>
                                     <button type="button" class="mt-cart-remove-link" ng-click="removeItem(item)">{{'Remove' | r | xlat}}</button>
                                 </div>
-                                <p class="mt-pdp-meta" ng-show="item.Quantity * item.Product.QuantityMultiplier">{{'Total Quantity' | r | xlat}} {{item.Quantity * item.Product.QuantityMultiplier}}</p>
                             </div>
 
                             <div class="mt-cart-item-price" ng-if="!(user.Permissions.contains('HidePricing'))">
