@@ -53,7 +53,10 @@
             </div>
 
             <div class="mt-checkout-address-display" ng-show="!currentOrder.IsMultipleShip() && orderShipAddress.ID">
-                <p class="mt-checkout-address-label">{{('Shipping' | r) + ' ' + ('Location' | r) | xlat}}</p>
+                <div class="mt-checkout-address-display-header">
+                    <p class="mt-checkout-address-label">{{('Shipping' | r) + ' ' + ('Location' | r) | xlat}}</p>
+                    <button type="button" class="mt-cart-remove-link" ng-show="orderShipAddress.IsCustEditable != false" ng-click="editShipAddress()">{{'Edit' | r | xlat}}</button>
+                </div>
                 <p ng-show="orderShipAddress.AddressName">{{orderShipAddress.AddressName}}</p>
                 <p ng-show="orderShipAddress.CompanyName">{{orderShipAddress.CompanyName}}</p>
                 <p ng-show="(orderShipAddress.FirstName || orderShipAddress.LastName) && (!user.Permissions.contains('EditShipToName') && !orderShipAddress.IsCustEditable)">

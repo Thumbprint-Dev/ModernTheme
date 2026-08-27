@@ -1513,6 +1513,16 @@ Template: Howdy
     margin-bottom: 6px !important;
 }
 
+.mt-checkout-address-display-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.mt-checkout-address-display-header .mt-checkout-address-label {
+    margin-bottom: 6px;
+}
+
 .mt-checkout-shipto-name-row {
     display: flex;
     gap: 10px;
