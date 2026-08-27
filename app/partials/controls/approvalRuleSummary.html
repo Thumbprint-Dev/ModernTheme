@@ -1,4 +1,4 @@
-<table class="table table-striped">
+<table class="mt-checkout-approval-table">
     <thead>
     <tr>
         <th>{{'Rule Summary' | r | xlat}}</th>
@@ -6,12 +6,13 @@
         <th>{{'Status' | r | xlat}}</th>
     </tr>
     </thead>
-    <tbody class="approval-rule-summary-rule" ng-repeat="rule in order.Approvals">
-    <tr ng-class="{success: rule.Status == 'Approved', danger: rule.Status == 'Declined'}">
+    <tbody class="mt-checkout-approval-rule" ng-repeat="rule in order.Approvals">
+    <tr ng-class="{'mt-checkout-approval-approved': rule.Status == 'Approved', 'mt-checkout-approval-declined': rule.Status == 'Declined'}">
         <td><div ng-repeat="summary in rule.Summary">{{summary | xlat}}</div></td>
         <td>
             <span ng-hide="order.Status == 'AwaitingApproval' && (order.UserCanApprove || user.Permissions.contains('ApproveAllOrders'))">{{rule.ApprovingPartyName}}</span>
-            <span ng-show="order.Status == 'AwaitingApproval' && (order.UserCanApprove || user.Permissions.contains('ApproveAllOrders'))">{{'You' | r | xlat}}</span></td>
+            <span ng-show="order.Status == 'AwaitingApproval' && (order.UserCanApprove || user.Permissions.contains('ApproveAllOrders'))">{{'You' | r | xlat}}</span>
+        </td>
         <td>
             <strong>{{rule.Status | xlat}}</strong><span ng-show="rule.ApprovedByUserName"> {{'by' | xlat}} </span>{{rule.ApprovedByUserName}}<span ng-show="rule.ApprovedByUserName"> {{'on' | xlat}} {{rule.TimeStamp | date:user.Culture.DateFormat.short}}</span>
         </td>
