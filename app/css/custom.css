@@ -1457,3 +1457,115 @@ Template: Howdy
     border-top: 1px solid #E8E4DA;
     padding-top: 16px;
 }
+
+/* ===== ModernTheme: checkout order shipping (always-open card, no accordion) ===== */
+
+.mt-checkout-shipto-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.mt-checkout-shipto-toggle .btn-group {
+    display: flex;
+    gap: 8px;
+}
+
+.mt-checkout-shipto-toggle .mt-header-btn.active {
+    border-color: #0F6B63;
+    background: #EAF3F1;
+}
+
+.mt-checkout-shipping-fields {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.mt-checkout-shipping-fields .mt-field {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.mt-checkout-address-display {
+    background: #FAF8F4;
+    border: 1px solid #E8E4DA;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: #4A463C;
+}
+
+.mt-checkout-address-display p {
+    margin: 0 0 2px;
+}
+
+.mt-checkout-address-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #726D5F;
+    margin-bottom: 6px !important;
+}
+
+.mt-checkout-shipto-name-row {
+    display: flex;
+    gap: 10px;
+    margin: 8px 0;
+}
+
+.mt-checkout-shipto-name-row .form-control {
+    flex: 1;
+}
+
+.mt-checkout-shipto-item {
+    border-top: 1px solid #E8E4DA;
+    padding: 16px 0;
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.mt-checkout-shipto-item:first-of-type {
+    border-top: none;
+    padding-top: 0;
+}
+
+.mt-checkout-shipto-item-info {
+    flex: 1 1 220px;
+    min-width: 0;
+}
+
+.mt-checkout-shipto-item-date {
+    font-size: 12px;
+    color: #0F6B63;
+    font-weight: 600;
+    margin: 0 0 4px;
+}
+
+.mt-checkout-shipto-item-product {
+    font-size: 13px;
+    color: #262420;
+    margin: 0 0 8px;
+}
+
+.mt-checkout-shipto-item-fields {
+    flex: 1 1 260px;
+    min-width: 0;
+}
+
+.mt-checkout-shipto-item-fields .mt-field {
+    margin-bottom: 12px;
+}
+
+@media (max-width: 767px) {
+    .mt-checkout-shipping-fields,
+    .mt-checkout-shipto-name-row {
+        flex-direction: column;
+    }
+}
