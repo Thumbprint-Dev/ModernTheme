@@ -21,7 +21,10 @@
             </div>
 
             <div class="mt-checkout-address-display" ng-show="BillAddress">
-                <p class="mt-checkout-address-label">{{('Billing' | r) + ' ' + ('Location' | r) | xlat}}</p>
+                <div class="mt-checkout-address-display-header">
+                    <p class="mt-checkout-address-label">{{('Billing' | r) + ' ' + ('Location' | r) | xlat}}</p>
+                    <button type="button" class="mt-cart-remove-link" ng-show="BillAddress.IsCustEditable != false" ng-click="editBillAddress()">{{'Edit' | r | xlat}}</button>
+                </div>
                 <p ng-show="BillAddress.AddressName">{{BillAddress.AddressName}}</p>
                 <p ng-show="BillAddress.CompanyName">{{BillAddress.CompanyName}}</p>
                 <p ng-show="(BillAddress.FirstName || BillAddress.LastName) && (!user.Permissions.contains('EditBillToName') && BillAddress.IsCustEditable)">

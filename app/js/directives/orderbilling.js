@@ -32,6 +32,11 @@ four51.app.directive('orderbilling', ['Address', 'AddressList', 'Order', functio
 			});
 			$scope.billaddress = { Country: 'US', IsShipping: false, IsBilling: true };
 
+			$scope.editBillAddress = function() {
+				$scope.billaddress = angular.copy($scope.BillAddress);
+				$scope.billaddressform = true;
+			};
+
 			$scope.$on('event:AddressSaved', function(event, address) {
 				if (address.IsBilling) {
 					$scope.currentOrder.BillAddressID = address.ID;
