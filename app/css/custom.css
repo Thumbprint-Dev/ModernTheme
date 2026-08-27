@@ -75,6 +75,11 @@ Template: Howdy
     text-decoration: none;
 }
 
+.mt-btn-accent[disabled] {
+    opacity: 0.5;
+    cursor: default;
+}
+
 .mt-quick-actions .mt-tile,
 .mt-dept-tile,
 .mt-product-card {
@@ -1185,6 +1190,137 @@ Template: Howdy
         flex-direction: column;
     }
     .mt-cart-side {
+        position: static;
+        width: 100%;
+    }
+}
+
+/* ===== ModernTheme: checkout (v1, shell + order summary only) ===== */
+/* orderDetails/orderShipping/orderBilling/orderApprovals/paymentSelection/addressInput/creditCard
+   are still the legacy styling - follow-up passes. This covers the outer layout and the summary
+   card, reusing .mt-cart-summary-card/.mt-cart-summary-title/.mt-cart-summary-row from cart. */
+
+.mt-checkout {
+    font-family: 'Inter', 'Droid Sans', sans-serif;
+    color: #262420;
+    background: #FAF8F4;
+    margin: -20px -15px 0;
+    padding-bottom: 60px;
+}
+
+.mt-checkout-inner {
+    padding-top: 40px;
+}
+
+.mt-checkout-inner > .mt-pdp-title {
+    margin-bottom: 20px;
+}
+
+.mt-checkout-layout {
+    display: flex;
+    align-items: flex-start;
+    gap: 32px;
+}
+
+.mt-checkout-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.mt-checkout-side {
+    flex: 0 0 340px;
+    position: sticky;
+    top: 76px;
+}
+
+.mt-checkout-summary-line {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #4A463C;
+    margin-bottom: 6px;
+}
+
+.mt-checkout-coupon {
+    border-top: 1px solid #E8E4DA;
+    border-bottom: 1px solid #E8E4DA;
+    padding: 16px 0;
+    margin: 12px 0;
+}
+
+.mt-checkout-coupon label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #726D5F;
+    margin-bottom: 6px;
+}
+
+.mt-checkout-coupon .mt-field-row input {
+    border: 1px solid #E8E4DA;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+    flex: 1;
+}
+
+.mt-checkout-coupon .mt-field-row .mt-btn-accent {
+    padding: 10px 16px;
+}
+
+.mt-checkout-coupon-applied {
+    font-size: 13px;
+}
+
+.mt-checkout-coupon-applied .mt-cart-remove-link {
+    display: block;
+    margin-top: 6px;
+}
+
+.mt-checkout-email-notify {
+    margin-top: 16px;
+}
+
+.mt-checkout-security-link {
+    margin-top: 16px;
+    width: 100%;
+    justify-content: center;
+}
+
+.mt-checkout .mt-field label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #726D5F;
+    margin-bottom: 6px;
+}
+
+.mt-checkout .mt-field input,
+.mt-checkout .mt-field select {
+    width: 100%;
+    border: 1px solid #E8E4DA;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+    color: #262420;
+    box-sizing: border-box;
+}
+
+.mt-checkout .mt-field input:focus,
+.mt-checkout .mt-field select:focus {
+    border-color: #0F6B63;
+    outline: none;
+}
+
+@media (max-width: 767px) {
+    .mt-checkout-layout {
+        flex-direction: column;
+    }
+    .mt-checkout-side {
         position: static;
         width: 100%;
     }

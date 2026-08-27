@@ -1,14 +1,22 @@
-<section>
-    <loadingindicator ng-show="displayLoadingIndicator" title="{{'Please wait while we update your order' | r | xlat}}" />
-    <div class="col-md-4 col-md-offset-1 col-md-push-7 col-collapse">
-        <ordersummary />
-    </div>
+<section class="mt-checkout">
+    <loadingindicator ng-show="displayLoadingIndicator" title="{{'Please wait while we update your order' | r | xlat}}"></loadingindicator>
 
-    <div class="col-md-7 col-md-pull-5 col-collapse" ng-show="currentOrder && currentOrder.isEditable" ng-click="showSuccessAlert = false">
-        <orderdetails ng-show="hasOrderConfig" />
-        <ordershipping />
-        <orderbilling ng-show="currentOrder.BillingEnabled" />
-        <orderapprovals ng-show="currentOrder.Approvals" />
+    <div class="mt-container mt-checkout-inner">
+        <h1 class="mt-pdp-title">{{'Checkout' | r | xlat}}</h1>
+
+        <div class="mt-checkout-layout">
+            <div class="mt-checkout-main" ng-show="currentOrder && currentOrder.isEditable" ng-click="showSuccessAlert = false">
+                <orderdetails ng-show="hasOrderConfig"></orderdetails>
+                <ordershipping></ordershipping>
+                <orderbilling ng-show="currentOrder.BillingEnabled"></orderbilling>
+                <orderapprovals ng-show="currentOrder.Approvals"></orderapprovals>
+            </div>
+
+            <aside class="mt-checkout-side">
+                <ordersummary></ordersummary>
+            </aside>
+        </div>
+
         <div class="navbar-fixed-bottom">
             <div class="view-response-message alert-success text-center" alert-show="actionMessage">
                 <p ng-bind-html="actionMessage | r | xlat"></p>
