@@ -18,10 +18,6 @@
 
                     <div class="mt-cart-list">
                         <div class="mt-cart-item" ng-repeat="item in currentOrder.LineItems">
-                            <button type="button" title="Remove Item" class="mt-cart-remove" ng-click="removeItem(item)">
-                                <span class="fa fa-minus-circle"></span>
-                            </button>
-
                             <img class="mt-cart-item-photo mt-real-photo" ng-show="item.Variant.LargeImageUrl || item.Product.SmallImageUrl" ng-src="{{item.Variant.LargeImageUrl || item.Product.SmallImageUrl}}" />
                             <div class="mt-placeholder-photo mt-cart-item-photo" ng-hide="item.Variant.LargeImageUrl || item.Product.SmallImageUrl">
                                 {{'[product photo]' | r | xlat}}
@@ -79,9 +75,12 @@
                                 </ul>
                             </div>
 
-                            <div class="mt-cart-item-qty" ng-if="!(user.Permissions.contains('HidePricing'))">
+                            <div class="mt-cart-item-qty">
                                 <label>{{'Quantity' | r | xlat}}</label>
-                                <quantityfield required="true" lineitem="item" class="quantity"></quantityfield>
+                                <div class="mt-cart-qty-row">
+                                    <quantityfield required="true" lineitem="item" class="quantity"></quantityfield>
+                                    <button type="button" class="mt-cart-remove-link" ng-click="removeItem(item)">{{'Remove' | r | xlat}}</button>
+                                </div>
                                 <p class="mt-pdp-meta" ng-show="item.Quantity * item.Product.QuantityMultiplier">{{'Total Quantity' | r | xlat}} {{item.Quantity * item.Product.QuantityMultiplier}}</p>
                             </div>
 

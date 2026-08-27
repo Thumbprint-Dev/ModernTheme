@@ -903,28 +903,10 @@ Template: Howdy
 }
 
 .mt-cart-item {
-    position: relative;
     display: flex;
     gap: 20px;
-    padding: 20px 28px 20px 0;
+    padding: 20px 0;
     border-bottom: 1px solid #E8E4DA;
-}
-
-.mt-cart-remove {
-    position: absolute;
-    top: 20px;
-    right: 0;
-    border: none;
-    background: none;
-    color: #9A9587;
-    font-size: 16px;
-    cursor: pointer;
-    padding: 4px;
-    line-height: 1;
-}
-
-.mt-cart-remove:hover {
-    color: #C0392B;
 }
 
 .mt-cart-item-photo {
@@ -1037,8 +1019,7 @@ Template: Howdy
 }
 
 .mt-cart-item-qty {
-    flex: 0 0 110px;
-    text-align: center;
+    flex: 0 0 170px;
 }
 
 .mt-cart-item-qty label {
@@ -1051,13 +1032,35 @@ Template: Howdy
     margin-bottom: 6px;
 }
 
+.mt-cart-qty-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
 .mt-cart-item-qty .form-control {
     border: 1px solid #E8E4DA;
     border-radius: 8px;
     padding: 8px 10px;
     font-size: 14px;
     text-align: center;
-    width: 100%;
+    width: 64px;
+    flex: 0 0 64px;
+}
+
+.mt-cart-remove-link {
+    border: none;
+    background: none;
+    padding: 0;
+    color: #A0522D;
+    font-size: 13px;
+    text-decoration: underline;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.mt-cart-remove-link:hover {
+    color: #7A3D1F;
 }
 
 .mt-cart-item-price {
