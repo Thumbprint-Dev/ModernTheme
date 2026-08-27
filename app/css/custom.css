@@ -1065,15 +1065,6 @@ Template: Howdy
     text-align: right;
 }
 
-.mt-cart-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 32px;
-    padding-top: 24px;
-    flex-wrap: wrap;
-}
-
 .mt-giftcard-form {
     max-width: 280px;
 }
@@ -1100,21 +1091,6 @@ Template: Howdy
     padding: 10px 16px;
 }
 
-.mt-cart-summary {
-    text-align: right;
-    margin-left: auto;
-}
-
-.mt-cart-subtotal {
-    font-size: 18px;
-    font-weight: 600;
-    margin: 0 0 4px;
-}
-
-.mt-cart-subtotal span {
-    color: #0F6B63;
-}
-
 .mt-cart-actions {
     display: flex;
     gap: 10px;
@@ -1128,6 +1104,71 @@ Template: Howdy
     cursor: default;
 }
 
+/* Two-column cart layout: line items left, sticky order-summary card right (desktop),
+   stacked (side below main) on mobile. */
+
+.mt-cart-layout {
+    display: flex;
+    align-items: flex-start;
+    gap: 32px;
+}
+
+.mt-cart-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.mt-cart-side {
+    flex: 0 0 320px;
+    position: sticky;
+    top: 76px;
+}
+
+.mt-cart-summary-card {
+    border: 1px solid #E8E4DA;
+    border-radius: 12px;
+    background: #fff;
+    padding: 24px;
+}
+
+.mt-cart-summary-title {
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    margin: 0 0 16px;
+    color: #211F19;
+}
+
+.mt-cart-summary-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.mt-cart-checkout-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin-top: 18px;
+}
+
+.mt-cart-neworder-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.mt-cart-secondary-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 20px 0;
+    border-top: 1px solid #E8E4DA;
+}
+
 @media (max-width: 767px) {
     .mt-cart-item {
         flex-wrap: wrap;
@@ -1136,5 +1177,12 @@ Template: Howdy
     .mt-cart-item-price {
         flex: 1 1 auto;
         text-align: left;
+    }
+    .mt-cart-layout {
+        flex-direction: column;
+    }
+    .mt-cart-side {
+        position: static;
+        width: 100%;
     }
 }

@@ -2,7 +2,7 @@
     <div ng-show="currentOrder" class="hidden-print">
         <form ng-submit="saveChanges()" name="cart" novalidate="" class="mt-container mt-cart-inner">
             <div class="mt-cart-header">
-                <h1 class="mt-pdp-title">{{'Cart' | r | xlat}}</h1>
+                <h1 class="mt-pdp-title">{{'Your cart' | r | xlat}}</h1>
                 <button type="button" class="mt-header-btn" ng-click="onPrint()">
                     <i class="fa fa-print"></i> {{'Print' | r | xlat}}
                 </button>
@@ -12,94 +12,123 @@
 
             <cartmessage></cartmessage>
 
-            <p class="mt-cart-count">{{currentOrder.LineItems.length}} {{'item' + (currentOrder.LineItems.length > 1 ? 's' : '') | rl | xlat}} {{'in your' | rl | xlat:(currentOrder.LineItems.length)}} {{'cart' | rl | xlat}}</p>
+            <div class="mt-cart-layout">
+                <div class="mt-cart-main">
+                    <p class="mt-cart-count">{{currentOrder.LineItems.length}} {{'item' + (currentOrder.LineItems.length > 1 ? 's' : '') | rl | xlat}} {{'in your' | rl | xlat:(currentOrder.LineItems.length)}} {{'cart' | rl | xlat}}</p>
 
-            <div class="mt-cart-list">
-                <div class="mt-cart-item" ng-repeat="item in currentOrder.LineItems">
-                    <button type="button" title="Remove Item" class="mt-cart-remove" ng-click="removeItem(item)">
-                        <span class="fa fa-minus-circle"></span>
-                    </button>
-
-                    <img class="mt-cart-item-photo mt-real-photo" ng-show="item.Variant.LargeImageUrl || item.Product.SmallImageUrl" ng-src="{{item.Variant.LargeImageUrl || item.Product.SmallImageUrl}}" />
-                    <div class="mt-placeholder-photo mt-cart-item-photo" ng-hide="item.Variant.LargeImageUrl || item.Product.SmallImageUrl">
-                        {{'[product photo]' | r | xlat}}
-                    </div>
-
-                    <div class="mt-cart-item-info">
-                        <a class="mt-cart-item-link" ng-if="currentOrder.Status != 'AwaitingApproval' || isEditforApproval" ng-href="{{(item.Product.Type == 'Kit' ? 'kit' : 'cart') + '/' + (item.Product.InteropID) + '/' + (isEditforApproval ? (currentOrder.ID + '/') : '') + ($index)}}">
-                            <i ng-show="item.KitIsInvalid" class="fa fa-exclamation-triangle"></i>
-                            <span class="mt-cart-item-name">{{item.Product.Name}}</span>
-                            <span class="mt-pdp-sku">{{item.ProductIDText}}</span>
-                        </a>
-                        <div ng-if="currentOrder.Status == 'AwaitingApproval' && !isEditforApproval">
-                            <span class="mt-cart-item-name">{{item.Product.Name}}</span>
-                            <span class="mt-pdp-sku">{{item.ProductIDText}}</span>
-                        </div>
-
-                        <div class="mt-cart-item-fields" ng-if="(user.Permissions.contains('DateNeededRequired') || user.Permissions.contains('DateNeededOptional')) || user.Permissions.contains('CostCenterPerLine')">
-                            <div class="mt-field" ng-if="user.Permissions.contains('DateNeededRequired') || user.Permissions.contains('DateNeededOptional')">
-                                <label ng-class="{required: user.Permissions.contains('DateNeededRequired')}">{{'Date' | r | xlat}}</label>
-                                <div class="mt-field-row">
-                                    <input name="dateneeded" placeholder="{{'Date' | xlat}}" ng-model="item.DateNeeded" ng-required="user.Permissions.contains('DateNeededRequired')"
-                                           type="text" datepicker-popup="{{user.Culture.DateFormat.short}}" is-open="item.dateOpened" min="currentDate" />
-                                    <button type="button" title="{{'copy to all' | r | xlat}}" class="mt-header-btn" ng-click="copyAddressToAll()" ng-show="item.DateNeeded" ng-if="$index == 0 && currentOrder.LineItems.length > 1 && user.CostCenters.length != 1">
-                                        <i class="fa fa-copy"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="mt-field" ng-if="user.Permissions.contains('CostCenterPerLine')">
-                                <label class="required" ng-if="user.CostCenters.length > 1 && !user.Permissions.contains('FreeFormCostCenter')">{{'Cost Center' | r | xlat}}</label>
-                                <div class="mt-field-row">
-                                    <select name="costcenter" required ng-if="user.CostCenters.length > 1 && !user.Permissions.contains('FreeFormCostCenter')"
-                                            ng-options="center.Name as center.Name for center in user.CostCenters" ng-model="item.CostCenter">
-                                        <option value=""></option>
-                                    </select>
-                                    <input name="costcenter" ng-if="user.Permissions.contains('FreeFormCostCenter')" ng-model="item.CostCenter" type="text" required placeholder="{{'Cost Center' | r | xlat}}" />
-                                    <span ng-if="user.CostCenters.length == 1 && !user.Permissions.contains('FreeFormCostCenter')">{{item.CostCenter}}</span>
-                                    <button type="button" title="{{'copy to all' | r | xlat}}" class="mt-header-btn" ng-click="copyCostCenterToAll()" ng-show="item.CostCenter" ng-hide="user.CostCenters.length == 1 && !user.Permissions.contains('FreeFormCostCenter')" ng-if="$index == 0 && currentOrder.LineItems.length > 1">
-                                        <i class="fa fa-copy"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mt-cart-item-specs-toggle" ng-if="item.Variant.IsMpowerVariant">
-                            <button type="button" class="mt-header-btn" ng-click="downloadProof(item)">
-                                <i class="fa fa-download"></i> {{'Download' | r | xlat}}
+                    <div class="mt-cart-list">
+                        <div class="mt-cart-item" ng-repeat="item in currentOrder.LineItems">
+                            <button type="button" title="Remove Item" class="mt-cart-remove" ng-click="removeItem(item)">
+                                <span class="fa fa-minus-circle"></span>
                             </button>
+
+                            <img class="mt-cart-item-photo mt-real-photo" ng-show="item.Variant.LargeImageUrl || item.Product.SmallImageUrl" ng-src="{{item.Variant.LargeImageUrl || item.Product.SmallImageUrl}}" />
+                            <div class="mt-placeholder-photo mt-cart-item-photo" ng-hide="item.Variant.LargeImageUrl || item.Product.SmallImageUrl">
+                                {{'[product photo]' | r | xlat}}
+                            </div>
+
+                            <div class="mt-cart-item-info">
+                                <a class="mt-cart-item-link" ng-if="currentOrder.Status != 'AwaitingApproval' || isEditforApproval" ng-href="{{(item.Product.Type == 'Kit' ? 'kit' : 'cart') + '/' + (item.Product.InteropID) + '/' + (isEditforApproval ? (currentOrder.ID + '/') : '') + ($index)}}">
+                                    <i ng-show="item.KitIsInvalid" class="fa fa-exclamation-triangle"></i>
+                                    <span class="mt-cart-item-name">{{item.Product.Name}}</span>
+                                    <span class="mt-pdp-sku">{{item.ProductIDText}}</span>
+                                </a>
+                                <div ng-if="currentOrder.Status == 'AwaitingApproval' && !isEditforApproval">
+                                    <span class="mt-cart-item-name">{{item.Product.Name}}</span>
+                                    <span class="mt-pdp-sku">{{item.ProductIDText}}</span>
+                                </div>
+
+                                <div class="mt-cart-item-fields" ng-if="(user.Permissions.contains('DateNeededRequired') || user.Permissions.contains('DateNeededOptional')) || user.Permissions.contains('CostCenterPerLine')">
+                                    <div class="mt-field" ng-if="user.Permissions.contains('DateNeededRequired') || user.Permissions.contains('DateNeededOptional')">
+                                        <label ng-class="{required: user.Permissions.contains('DateNeededRequired')}">{{'Date' | r | xlat}}</label>
+                                        <div class="mt-field-row">
+                                            <input name="dateneeded" placeholder="{{'Date' | xlat}}" ng-model="item.DateNeeded" ng-required="user.Permissions.contains('DateNeededRequired')"
+                                                   type="text" datepicker-popup="{{user.Culture.DateFormat.short}}" is-open="item.dateOpened" min="currentDate" />
+                                            <button type="button" title="{{'copy to all' | r | xlat}}" class="mt-header-btn" ng-click="copyAddressToAll()" ng-show="item.DateNeeded" ng-if="$index == 0 && currentOrder.LineItems.length > 1 && user.CostCenters.length != 1">
+                                                <i class="fa fa-copy"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="mt-field" ng-if="user.Permissions.contains('CostCenterPerLine')">
+                                        <label class="required" ng-if="user.CostCenters.length > 1 && !user.Permissions.contains('FreeFormCostCenter')">{{'Cost Center' | r | xlat}}</label>
+                                        <div class="mt-field-row">
+                                            <select name="costcenter" required ng-if="user.CostCenters.length > 1 && !user.Permissions.contains('FreeFormCostCenter')"
+                                                    ng-options="center.Name as center.Name for center in user.CostCenters" ng-model="item.CostCenter">
+                                                <option value=""></option>
+                                            </select>
+                                            <input name="costcenter" ng-if="user.Permissions.contains('FreeFormCostCenter')" ng-model="item.CostCenter" type="text" required placeholder="{{'Cost Center' | r | xlat}}" />
+                                            <span ng-if="user.CostCenters.length == 1 && !user.Permissions.contains('FreeFormCostCenter')">{{item.CostCenter}}</span>
+                                            <button type="button" title="{{'copy to all' | r | xlat}}" class="mt-header-btn" ng-click="copyCostCenterToAll()" ng-show="item.CostCenter" ng-hide="user.CostCenters.length == 1 && !user.Permissions.contains('FreeFormCostCenter')" ng-if="$index == 0 && currentOrder.LineItems.length > 1">
+                                                <i class="fa fa-copy"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-cart-item-specs-toggle" ng-if="item.Variant.IsMpowerVariant">
+                                    <button type="button" class="mt-header-btn" ng-click="downloadProof(item)">
+                                        <i class="fa fa-download"></i> {{'Download' | r | xlat}}
+                                    </button>
+                                </div>
+                                <ul ng-show="item.SpecsLength > 0" class="mt-cart-item-specs">
+                                    <li ng-repeat="spec in item.Specs | filter:{'CanSetForLineItem':true}">
+                                        <span class="mt-pdp-meta">{{spec.Label || spec.Name}}:</span>
+                                        <span ng-if="spec.ControlType == 'File'"><a ng-href="{{spec.File.Url}}">{{spec.File.OriginalName}}</a></span>
+                                        <span ng-if="spec.ControlType != 'File'">{{spec.Value || ('(unspecified)' | xlat)}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="mt-cart-item-qty" ng-if="!(user.Permissions.contains('HidePricing'))">
+                                <label>{{'Quantity' | r | xlat}}</label>
+                                <quantityfield required="true" lineitem="item" class="quantity"></quantityfield>
+                                <p class="mt-pdp-meta" ng-show="item.Quantity * item.Product.QuantityMultiplier">{{'Total Quantity' | r | xlat}} {{item.Quantity * item.Product.QuantityMultiplier}}</p>
+                            </div>
+
+                            <div class="mt-cart-item-price" ng-if="!(user.Permissions.contains('HidePricing'))">
+                                <p class="mt-pdp-meta">{{'Unit Price' | r | xlat}} {{item.UnitPrice | culturecurrency}}</p>
+                                <p class="mt-pdp-price">{{item.LineTotal | culturecurrency}}</p>
+                            </div>
                         </div>
-                        <ul ng-show="item.SpecsLength > 0" class="mt-cart-item-specs">
-                            <li ng-repeat="spec in item.Specs | filter:{'CanSetForLineItem':true}">
-                                <span class="mt-pdp-meta">{{spec.Label || spec.Name}}:</span>
-                                <span ng-if="spec.ControlType == 'File'"><a ng-href="{{spec.File.Url}}">{{spec.File.OriginalName}}</a></span>
-                                <span ng-if="spec.ControlType != 'File'">{{spec.Value || ('(unspecified)' | xlat)}}</span>
-                            </li>
-                        </ul>
                     </div>
 
-                    <div class="mt-cart-item-qty" ng-if="!(user.Permissions.contains('HidePricing'))">
-                        <label>{{'Quantity' | r | xlat}}</label>
-                        <quantityfield required="true" lineitem="item" class="quantity"></quantityfield>
-                        <p class="mt-pdp-meta" ng-show="item.Quantity * item.Product.QuantityMultiplier">{{'Total Quantity' | r | xlat}} {{item.Quantity * item.Product.QuantityMultiplier}}</p>
+                    <div class="mt-cart-secondary-actions">
+                        <button type="button" class="mt-header-btn" redirect="catalog">
+                            {{'Continue Shopping' | r | xlat}}
+                        </button>
+                        <button type="button" class="mt-header-btn" ng-click="currentOrder.Status == 'AwaitingApproval' ? cancelEdit() : cancelOrder()">
+                            <span ng-if="currentOrder.Status != 'AwaitingApproval'">{{('Cancel' | r) + ' ' + ('Order' | r) | xlat}}</span>
+                            <span ng-if="currentOrder.Status == 'AwaitingApproval'">{{('Cancel' | r) + ' ' + ('Edit' | r) | xlat}}</span>
+                        </button>
+                        <button type="submit" class="mt-header-btn" ng-click="saveChanges()">
+                            <loadingindicator ng-show="displayLoadingIndicator"></loadingindicator>
+                            {{('Save' | r) + ' ' + ('Order' | r) | xlat}}
+                        </button>
                     </div>
 
-                    <div class="mt-cart-item-price" ng-if="!(user.Permissions.contains('HidePricing'))">
-                        <p class="mt-pdp-meta">{{'Unit Price' | r | xlat}} {{item.UnitPrice | culturecurrency}}</p>
-                        <p class="mt-pdp-price">{{item.LineTotal | culturecurrency}}</p>
-                    </div>
+                    <giftcardredemption ng-if="user.Permissions.contains('ViewPromotions')"></giftcardredemption>
                 </div>
-            </div>
 
-            <div class="mt-cart-footer">
-                <giftcardredemption ng-if="user.Permissions.contains('ViewPromotions')"></giftcardredemption>
-                <div class="mt-cart-summary" ng-if="!(user.Permissions.contains('HidePricing'))">
-                    <p class="mt-cart-subtotal">{{'Subtotal' | r | xlat}} <span>{{currentOrder.Subtotal | culturecurrency}}</span></p>
-                    <p class="mt-pdp-meta" ng-show="TaxMethod" ng-if="user.Company.TaxMethod != 'NoTax'">{{'Shipping, handling and tax may be added to this subtotal.' | r | xlat}}</p>
-                    <button type="button" neworder ng-if="user.Permissions.contains('MultipleShoppingCart') && currentOrder" class="mt-header-btn" ng-click="newOrderLoadingIndicator = true;startNewOrder()">
-                        <loadingindicator ng-show="newOrderLoadingIndicator"></loadingindicator>
-                        {{"Start" | r | xlat}} {{"New" | r | xlat}} {{"Order" | r | xlat}}
-                    </button>
-                </div>
+                <aside class="mt-cart-side">
+                    <div class="mt-cart-summary-card">
+                        <h2 class="mt-cart-summary-title">{{'Order summary' | r | xlat}}</h2>
+                        <div class="mt-cart-summary-row" ng-if="!(user.Permissions.contains('HidePricing'))">
+                            <span>{{'Subtotal' | r | xlat}}</span>
+                            <span>{{currentOrder.Subtotal | culturecurrency}}</span>
+                        </div>
+                        <p class="mt-pdp-meta" ng-show="TaxMethod" ng-if="user.Company.TaxMethod != 'NoTax'">{{'Shipping, handling and tax may be added to this subtotal.' | r | xlat}}</p>
+
+                        <button type="button" class="mt-btn-accent mt-cart-checkout-btn" ng-click="checkOut()" ng-disabled="cart.$invalid || kitValidation">
+                            <i ng-show="cart.$invalid || kitValidation" class="fa fa-warning"></i>
+                            {{'Proceed to Checkout' | r | xlat}}
+                        </button>
+
+                        <button type="button" neworder ng-if="user.Permissions.contains('MultipleShoppingCart') && currentOrder" class="mt-header-btn mt-cart-neworder-btn" ng-click="newOrderLoadingIndicator = true;startNewOrder()">
+                            <loadingindicator ng-show="newOrderLoadingIndicator"></loadingindicator>
+                            {{"Start" | r | xlat}} {{"New" | r | xlat}} {{"Order" | r | xlat}}
+                        </button>
+                    </div>
+                </aside>
             </div>
 
             <div class="navbar-fixed-bottom">
@@ -137,7 +166,6 @@
                         </li>
                     </ul>
                 </div>
-                <orderbuttons view="cart" continue="true"></orderbuttons>
             </div>
         </form>
     </div>
