@@ -1,27 +1,34 @@
 four51.app.controller('AddressInputCtrl', ['$scope', '$rootScope', '$location', 'User', 'Address', 'Resources',
 function ($scope, $rootScope, $location, User, Address, Resources) {
-    $scope.autoSaveIfValid = function() {
-        if ($scope.addressEdit && $scope.addressEdit.$valid) {
-            $scope.save();
-        }
-    };
-
-    $scope.save = function() {
+    var persistAddress = function(success) {
 	    $scope.objectExists = false;
-        if(!this.address.State){
-            this.address.State  =  '';
+        if(!$scope.address.State){
+            $scope.address.State  =  '';
         }
-        Address.save(this.address,
+        Address.save($scope.address,
 	        function(address) {
                 $rootScope.$broadcast('event:AddressSaved', address);
-                $location.path($scope.return);
+                if (success) success(address);
             },
 	        function(ex) {
 	            if (ex.Code.is('ObjectExistsException'))
 	                $scope.objectExists = true;
-            }
+	            }
         );
     };
+
+    $scope.autoSaveIfValid = function() {
+        if ($scope.addressEdit && $scope.addressEdit.$valid) {
+            persistAddress();
+        }
+    };
+
+    $scope.save = function() {
+        persistAddress(function() {
+            $location.path($scope.return);
+        });
+    };
+
     $scope.delete = function() {
         Address.delete(this.address, function() {
             $location.path($scope.return);
