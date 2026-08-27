@@ -139,6 +139,7 @@ function ($scope, $routeParams, $location, $451, Order, OrderConfig, User, Favor
 
 	$scope.$watch('currentOrder.LineItems', function (newval) {
 		var newTotal = 0;
+		var newQtyTotal = 0;
 		var invalidKitFound = false;
 		if (!$scope.currentOrder) return newTotal;
 		angular.forEach($scope.currentOrder.LineItems, function (item) {
@@ -147,8 +148,10 @@ function ($scope, $routeParams, $location, $451, Order, OrderConfig, User, Favor
 				invalidKitFound = true;
 			}
 			newTotal += item.LineTotal;
+			newQtyTotal += (item.Quantity || 0) * (item.Product.QuantityMultiplier || 1);
 		});
 		$scope.currentOrder.Subtotal = newTotal;
+		$scope.totalItemQuantity = newQtyTotal;
 	}, true);
 
 	$scope.copyAddressToAll = function() {

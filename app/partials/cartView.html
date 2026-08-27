@@ -14,7 +14,7 @@
 
             <div class="mt-cart-layout">
                 <div class="mt-cart-main">
-                    <p class="mt-cart-count">{{currentOrder.LineItems.length}} {{'item' + (currentOrder.LineItems.length > 1 ? 's' : '') | rl | xlat}} {{'in your' | rl | xlat:(currentOrder.LineItems.length)}} {{'cart' | rl | xlat}}</p>
+                    <p class="mt-cart-count">{{totalItemQuantity}} {{'item' + (totalItemQuantity > 1 ? 's' : '') | rl | xlat}} {{'in your' | rl | xlat:(totalItemQuantity)}} {{'cart' | rl | xlat}}</p>
 
                     <div class="mt-cart-list">
                         <div class="mt-cart-item" ng-repeat="item in currentOrder.LineItems">
