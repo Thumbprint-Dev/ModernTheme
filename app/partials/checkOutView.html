@@ -27,7 +27,7 @@
             <div class="view-response-message alert-danger text-center" alert-show="couponError">
                 <p ng-bind-html="couponError | r | xlat"></p>
             </div>
-            <div class="view-error-message" ng-show="(cart_order.$error.required.length + cart_billing.$error.required.length + cart_shipping.$error.required.length + cart_billing.$error.paymentMethod.length) > 0">
+            <div class="view-error-message" ng-show="submitAttempted && (cart_order.$error.required.length + cart_billing.$error.required.length + cart_shipping.$error.required.length + cart_billing.$error.paymentMethod.length) > 0">
                 <ul class="alert-warning">
                     <li class="text-center">
                         <span class="badge">

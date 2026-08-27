@@ -107,6 +107,10 @@ function ($scope, $routeParams, $location, $filter, $rootScope, $451, User, Orde
     };
 
 	$scope.submitOrder = function() {
+		$scope.submitAttempted = true;
+		if ($scope.cart_order.$invalid || $scope.cart_shipping.$invalid || $scope.cart_billing.$invalid) {
+			return;
+		}
 		$scope.submitClicked = true;
 		saveChanges(function(data){
 			submitOrder();
