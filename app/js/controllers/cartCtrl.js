@@ -1,5 +1,5 @@
-four51.app.controller('CartViewCtrl', ['$scope', '$routeParams', '$location', '$451', 'Order', 'OrderConfig', 'User', 'FavoriteOrder',
-function ($scope, $routeParams, $location, $451, Order, OrderConfig, User, FavoriteOrder) {
+four51.app.controller('CartViewCtrl', ['$scope', '$routeParams', '$location', '$451', 'Order', 'OrderConfig', 'User',
+function ($scope, $routeParams, $location, $451, Order, OrderConfig, User) {
 	$scope.isEditforApproval = $routeParams.id != null && $scope.user.Permissions.contains('EditApprovalOrder');
 	if ($scope.isEditforApproval) {
 		Order.get($routeParams.id, function(order) {
@@ -176,21 +176,5 @@ function ($scope, $routeParams, $location, $451, Order, OrderConfig, User, Favor
 
     $scope.downloadProof = function(item) {
         window.location = item.Variant.ProofUrl;
-    };
-
-    $scope.saveFavorite = function() {
-        $scope.displayLoadingIndicator = true;
-        $scope.errorMessage = null;
-        $scope.actionMessage = null;
-        FavoriteOrder.save($scope.currentOrder,
-            function() {
-                $scope.displayLoadingIndicator = false;
-                $scope.actionMessage = 'Your order has been saved as a Favorite';
-            },
-            function(ex) {
-                $scope.displayLoadingIndicator = false;
-                $scope.errorMessage = ex.Message;
-            }
-        );
     };
 }]);
