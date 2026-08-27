@@ -38,7 +38,7 @@
 
     <div class="mt-checkout-payment-detail" ng-if="user.Permissions.contains('PayByBudgetAccount')" ng-show="currentOrder.PaymentMethod == 'BudgetAccount'">
         <div class="mt-checkout-budget-balance" ng-show="(SpendingAccounts|filter:{ForPurchase:true}).length == 1">
-            {{(selectedBudgetAccount.Label) + ' - ' + ('Balance' | xlat) + ': ' + (selectedBudgetAccount.Balance | culturecurrency)}}
+            {{(currentBudgetAccount.Label) + ' - ' + ('Balance' | xlat) + ': ' + (currentBudgetAccount.Balance | culturecurrency)}}
         </div>
         <div class="mt-field" ng-show="(SpendingAccounts|filter:{ForPurchase:true}).length > 1">
             <label ng-show="currentOrder.BudgetAccountID">{{'Spending Account' | r}}</label>
