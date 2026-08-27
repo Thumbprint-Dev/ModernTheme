@@ -314,6 +314,46 @@ Template: Howdy
     border-bottom-color: #0F6B63;
 }
 
+.mt-cat-nav-item {
+    position: relative;
+}
+
+.mt-cat-dropdown {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #fff;
+    border: 1px solid #E8E4DA;
+    border-radius: 8px;
+    padding: 6px 0;
+    min-width: 180px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    z-index: 30;
+}
+
+.mt-cat-nav-item.has-children:hover .mt-cat-dropdown,
+.mt-cat-nav-item.has-children:focus-within .mt-cat-dropdown {
+    display: flex;
+}
+
+.mt-cat-dropdown a {
+    display: block;
+    padding: 8px 16px;
+    font-size: 13px;
+    color: #4A463C;
+    text-decoration: none;
+    border-bottom: none;
+    white-space: nowrap;
+}
+
+.mt-cat-dropdown a:hover {
+    background: #FAF8F4;
+    color: #0F6B63;
+    text-decoration: none;
+}
+
 .mt-home-message:empty {
     display: none;
 }
@@ -396,6 +436,11 @@ Template: Howdy
     padding: 0;
 }
 
+.mt-sidebar-tree .451_cat_item {
+    display: block;
+    width: 100%;
+}
+
 .mt-sidebar-tree .451_cat_item > a {
     display: block;
     padding: 8px 0;
@@ -413,6 +458,17 @@ Template: Howdy
 .mt-sidebar-tree .451_cat_item.active > a {
     color: #0F6B63;
     font-weight: 600;
+}
+
+/* Nested subcategories (categorytree recurses a <ul> inside each parent <li>) - indent under the parent */
+.mt-sidebar-tree .451_cat_item ul {
+    padding-left: 16px;
+    margin: 0;
+}
+
+.mt-sidebar-tree .451_cat_item ul .451_cat_item > a {
+    font-size: 12px;
+    color: #726D5F;
 }
 
 .mt-category-desc {
