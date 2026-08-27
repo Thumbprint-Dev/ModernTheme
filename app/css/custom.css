@@ -906,13 +906,13 @@ Template: Howdy
     position: relative;
     display: flex;
     gap: 20px;
-    padding: 20px 0;
+    padding: 20px 28px 20px 0;
     border-bottom: 1px solid #E8E4DA;
 }
 
 .mt-cart-remove {
     position: absolute;
-    top: 16px;
+    top: 20px;
     right: 0;
     border: none;
     background: none;
@@ -920,6 +920,7 @@ Template: Howdy
     font-size: 16px;
     cursor: pointer;
     padding: 4px;
+    line-height: 1;
 }
 
 .mt-cart-remove:hover {
