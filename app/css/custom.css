@@ -455,3 +455,139 @@ Template: Howdy
 
 /* Product grid now uses the shared partials/controls/mtProductCard.html include (.mt-product-card,
    defined in the Home section above) instead of the legacy shortproductviewgallery markup. */
+
+/* ===== ModernTheme: PDP (v1) ===== */
+/* Markup lives in the Four51 admin's Product Detail Template editor, not this repo -
+   see pdt-templates/ModernTheme-PDP.html for the reference copy. This CSS still loads on
+   every page via custom.css, so it reaches the PDT-rendered markup the same as anywhere else. */
+
+.mt-pdp {
+    font-family: 'Inter', 'Droid Sans', sans-serif;
+    color: #262420;
+    background: #FAF8F4;
+    margin: -20px -15px 0;
+    padding-bottom: 60px;
+}
+
+.mt-pdp-inner {
+    padding-top: 24px;
+}
+
+.mt-pdp-image-wrap {
+    margin-bottom: 16px;
+}
+
+.mt-pdp-image {
+    aspect-ratio: 1 / 1;
+    width: 100%;
+}
+
+.mt-pdp-variant-actions {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.mt-variant-breadcrumb.breadcrumb {
+    background: transparent;
+    padding: 0;
+    font-size: 13px;
+}
+
+.mt-pdp-title {
+    font-size: 30px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    margin: 0 0 4px;
+    color: #211F19;
+}
+
+.mt-pdp-sku {
+    font-size: 13px;
+    color: #726D5F;
+    margin: 0 0 16px;
+}
+
+.mt-pdp-price {
+    font-size: 26px;
+    font-weight: 700;
+    color: #0F6B63;
+    margin: 0 0 20px;
+}
+
+.mt-order-panel {
+    border-top: 1px solid #E8E4DA;
+    padding-top: 20px;
+    margin-bottom: 20px;
+}
+
+.mt-pdp-alert {
+    border-radius: 8px;
+}
+
+.mt-variant-list-wrap {
+    margin-bottom: 20px;
+}
+
+.mt-variant-search {
+    display: flex;
+    gap: 8px;
+    margin: 12px 0;
+}
+
+.mt-variant-search input {
+    flex: 1;
+    border: 1px solid #E8E4DA;
+    border-radius: 8px;
+    padding: 8px 12px;
+}
+
+.mt-variant-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.mt-variant-row {
+    border: 1px solid #E8E4DA;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+}
+
+.mt-order-actions {
+    margin-top: 16px;
+}
+
+.mt-pdp-meta {
+    font-size: 13px;
+    color: #726D5F;
+    margin: 0 0 8px;
+}
+
+.mt-order-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.mt-order-row label {
+    margin: 0;
+    font-size: 13px;
+}
+
+.mt-pdp-add-btn {
+    flex: 1;
+    text-align: center;
+    font-size: 15px;
+    padding: 14px 24px;
+}
+
+.mt-pdp-description {
+    border-top: 1px solid #E8E4DA;
+    padding-top: 24px;
+    margin-top: 24px;
+    font-size: 14px;
+    color: #4A463C;
+}
