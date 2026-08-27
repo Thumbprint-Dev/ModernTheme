@@ -34,9 +34,9 @@
     </div>
 
     <div class="mt-container mt-section" ng-if="tree.length">
-        <h2 class="mt-eyebrow">{{'Shop by department' | r | xlat}}</h2>
+        <h2 class="mt-eyebrow">{{'Shop by category' | r | xlat}}</h2>
         <div class="row">
-            <div class="col-sm-3" ng-repeat="dept in tree">
+            <div class="col-sm-3" ng-repeat="dept in tree | filter:isNotFeaturedCategory">
                 <a ng-href="catalog/{{dept.InteropID}}" class="mt-dept-tile">
                     <img ng-if="dept.Image.URL" ng-src="{{dept.Image.URL}}" class="mt-placeholder-photo mt-real-photo" alt="" />
                     <div ng-if="!dept.Image.URL" class="mt-placeholder-photo">{{'[lifestyle photo]' | r | xlat}}</div>
@@ -47,9 +47,17 @@
     </div>
 
     <div class="mt-container mt-section" ng-if="featuredProducts.length">
-        <h2 class="mt-eyebrow">{{'Featured for your team' | r | xlat}}</h2>
-        <div class="row">
-            <div class="col-sm-3" ng-repeat="product in featuredProducts | limitTo:4" ng-include="'partials/controls/mtProductCard.html'"></div>
+        <div class="mt-carousel-header">
+            <h2 class="mt-eyebrow">{{'Featured for your team' | r | xlat}}</h2>
+            <div class="mt-carousel-controls" ng-if="featuredTotalPages > 1">
+                <button type="button" class="mt-header-btn" ng-click="featuredPrev()" ng-disabled="featuredPage == 0" aria-label="{{'Previous' | r | xlat}}">&lsaquo;</button>
+                <button type="button" class="mt-header-btn" ng-click="featuredNext()" ng-disabled="featuredPage == featuredTotalPages - 1" aria-label="{{'Next' | r | xlat}}">&rsaquo;</button>
+            </div>
+        </div>
+        <div class="mt-carousel-viewport">
+            <div class="mt-carousel-track" ng-style="{transform: 'translateX(-' + (featuredPage * 100) + '%)'}">
+                <div class="mt-carousel-card" ng-repeat="product in featuredProducts" ng-include="'partials/controls/mtProductCard.html'"></div>
+            </div>
         </div>
     </div>
 
