@@ -2,7 +2,8 @@ four51.app.factory('OrderConfig', ['Address', function(Address) {
     var user, order;
     var setCostCenter = function() {
         //set the cost center if the user only has 1 assigned to them and the order doesn't already have a cost center assigned
-        if (user.CostCenters.length == 1 && order.CostCenter === null) {
+        //skip for FreeFormCostCenter users - they can type any value, so don't presume one for them
+        if (user.CostCenters.length == 1 && order.CostCenter === null && !user.Permissions.contains('FreeFormCostCenter')) {
             order.CostCenter = user.CostCenters[0].Name;
             //also need to set each individual line item because Order doesn't actually save the CostCenter
             angular.forEach(order.LineItems, function(n) {
