@@ -83,8 +83,13 @@
         <p class="mt-checkout-payment-warning" ng-show="objectExists">{{'An address with that name already exists. Please specify another name' | r | xlat}}</p>
 
         <div class="mt-checkout-shipto-toggle">
-            <button ng-if="(user.Permissions.contains('CreateShipToAddress') || user.Permissions.contains('CreateBillToAddress')) && address.IsCustEditable" class="mt-header-btn" ng-click="delete()" type="button">{{'Delete' | r | xlat}}</button>
-            <button class="mt-header-btn" type="button" ng-click="cancel()">{{'Cancel' | r | xlat}}</button>
+            <span class="btn-group">
+                <button ng-if="(user.Permissions.contains('CreateShipToAddress') || user.Permissions.contains('CreateBillToAddress')) && address.IsCustEditable" class="mt-header-btn" ng-click="delete()" type="button">{{'Delete' | r | xlat}}</button>
+                <button class="mt-header-btn" type="button" ng-click="cancel()">{{'Cancel' | r | xlat}}</button>
+            </span>
+            <button ng-if="(user.Permissions.contains('CreateShipToAddress') || user.Permissions.contains('CreateBillToAddress')) && address.IsCustEditable != false" class="mt-btn-accent" type="submit" ng-disabled="addressEdit.$invalid">
+                {{'Done' | r | xlat}}
+            </button>
         </div>
     </form>
 </div>
