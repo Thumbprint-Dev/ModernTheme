@@ -770,3 +770,103 @@ Template: Howdy
     border-color: #0F6B63;
     box-shadow: none;
 }
+
+/* ===== ModernTheme: login screen (v1) ===== */
+/* index.html wraps <login/> in a Bootstrap .container - the negative margin below cancels its
+   default padding, matching the same trick used for .mt-home/.mt-plp/.mt-pdp. */
+
+.mt-login {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #FAF8F4;
+    font-family: 'Inter', 'Droid Sans', sans-serif;
+    margin: -20px -15px 0;
+    padding: 40px 20px;
+}
+
+.mt-login-card {
+    width: 100%;
+    max-width: 380px;
+    background: #fff;
+    border: 1px solid #E8E4DA;
+    border-radius: 12px;
+    padding: 40px 32px;
+}
+
+.mt-login-title {
+    font-size: 24px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    text-align: center;
+    margin: 0 0 24px;
+    color: #211F19;
+}
+
+.mt-login-alert {
+    font-size: 13px;
+    background: #F0EDE4;
+    color: #4A463C;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin: 0 0 16px;
+}
+
+.mt-login-link {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background: none;
+    border: none;
+    color: #0F6B63;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 0 16px;
+    cursor: pointer;
+}
+
+.mt-login-link:hover {
+    text-decoration: underline;
+}
+
+.mt-login-submit {
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin-top: 8px;
+}
+
+.mt-login-submit[disabled] {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.mt-login .mt-field {
+    margin-bottom: 16px;
+}
+
+.mt-login .mt-field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #726D5F;
+    margin-bottom: 6px;
+}
+
+.mt-login .mt-field input {
+    width: 100%;
+    border: 1px solid #E8E4DA;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+    color: #262420;
+    box-sizing: border-box;
+}
+
+.mt-login .mt-field input:focus {
+    border-color: #0F6B63;
+    outline: none;
+}
