@@ -104,9 +104,10 @@
                             <loadingindicator ng-show="displayLoadingIndicator"></loadingindicator>
                             {{('Save' | r) + ' ' + ('Order' | r) | xlat}}
                         </button>
+                        <button type="button" class="mt-header-btn" ng-click="saveFavorite()">
+                            {{'Save cart for later' | r | xlat}}
+                        </button>
                     </div>
-
-                    <giftcardredemption ng-if="user.Permissions.contains('ViewPromotions')"></giftcardredemption>
                 </div>
 
                 <aside class="mt-cart-side">
