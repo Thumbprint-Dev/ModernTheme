@@ -63,16 +63,12 @@
                             </div>
                         </div>
 
-                        <div class="mt-cart-item-specs-toggle">
-                            <button type="button" class="mt-header-btn" ng-if="item.Variant.IsMpowerVariant" ng-click="downloadProof(item)">
+                        <div class="mt-cart-item-specs-toggle" ng-if="item.Variant.IsMpowerVariant">
+                            <button type="button" class="mt-header-btn" ng-click="downloadProof(item)">
                                 <i class="fa fa-download"></i> {{'Download' | r | xlat}}
                             </button>
-                            <button type="button" class="mt-header-btn" ng-show="item.SpecsLength > 0" ng-click="item.toggleSpecs = !item.toggleSpecs">
-                                <span ng-show="!item.toggleSpecs">{{('Show' | r) + ' ' + ('Specification' | r) | xlat}}</span>
-                                <span ng-show="item.toggleSpecs">{{('Hide' | r) + ' ' + ('Specification' | r) | xlat}}</span>
-                            </button>
                         </div>
-                        <ul ng-show="item.toggleSpecs == true" class="mt-cart-item-specs">
+                        <ul ng-show="item.SpecsLength > 0" class="mt-cart-item-specs">
                             <li ng-repeat="spec in item.Specs | filter:{'CanSetForLineItem':true}">
                                 <span class="mt-pdp-meta">{{spec.Label || spec.Name}}:</span>
                                 <span ng-if="spec.ControlType == 'File'"><a ng-href="{{spec.File.Url}}">{{spec.File.OriginalName}}</a></span>
