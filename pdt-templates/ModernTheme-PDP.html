@@ -8,9 +8,18 @@
   LineItem.PriceSchedule, allowAddToOrder, etc.) - only markup/classes changed for the ModernTheme visual design.
   quantityfield, addtoorderspecs, priceScheduleTable, staticSpecsTable, relatedproducts and productnav are
   separate directives whose own templates live in app/partials/ and ARE git-deployed - restyle those there.
+
+  IMPORTANT: custom (non-standard) elements like <priceScheduleTable>, <productnav>, <staticspecstable>,
+  <quantityfield>, <relatedproducts>, <loadingindicator> must use explicit closing tags, NOT self-closing
+  "/>" syntax. Browsers don't treat self-closing syntax as meaningful on unknown elements - the slash is
+  ignored and the tag is parsed as an unclosed opener, silently swallowing every sibling after it as its
+  children until it hits SOME closing tag. This broke the add-to-cart section for any product with more
+  than one price break (which is when <priceScheduleTable> actually renders) - found via live DOM
+  inspection on 2026-08-27, confirmed by the fact that removing <staticspecstable> (which comes after
+  priceScheduleTable) had zero effect, since it was already being swallowed either way.
 -->
 <section class="product-detail-default mt-pdp">
-    <loadingindicator ng-show="loadingIndicator" title="{{'Please wait while we fetch product information' | r | xlat}}" />
+    <loadingindicator ng-show="loadingIndicator" title="{{'Please wait while we fetch product information' | r | xlat}}"></loadingindicator>
 
     <div class="mt-container mt-pdp-inner">
         <p class="mt-breadcrumb"><a href="catalog">{{'Home' | r | xlat}}</a> / {{LineItem.Product.Name}}</p>
@@ -19,7 +28,7 @@
             <!-- PRODUCT IMAGE -->
             <div class="col-md-5">
                 <div class="mt-pdp-image-wrap">
-                    <loadingindicator ng-show="loadingImage && LineItem.Variant.IsMpowerVariant" />
+                    <loadingindicator ng-show="loadingImage && LineItem.Variant.IsMpowerVariant"></loadingindicator>
                     <img id="451_img_prod_lg" class="mt-placeholder-photo mt-real-photo mt-pdp-image" ng-src="{{LineItem.Variant.PreviewUrl || LineItem.Variant.LargeImageUrl || LineItem.Product.LargeImageUrl}}"
                          ng-show="LineItem.Variant.PreviewUrl || LineItem.Variant.LargeImageUrl || LineItem.Product.LargeImageUrl" imageonload />
                     <div class="mt-placeholder-photo mt-pdp-image" ng-hide="LineItem.Variant.PreviewUrl || LineItem.Variant.LargeImageUrl || LineItem.Product.LargeImageUrl">
@@ -42,7 +51,7 @@
                     </button>
                 </div>
 
-                <productnav product="LineItem.Product" variant="LineItem.Variant" class="mt-variant-breadcrumb" />
+                <productnav product="LineItem.Product" variant="LineItem.Variant" class="mt-variant-breadcrumb"></productnav>
             </div>
 
             <!-- PRODUCT INFO / ORDER PANEL -->
@@ -55,9 +64,9 @@
                     {{LineItem.PriceSchedule.PriceBreaks[0].Price | culturecurrency}}
                 </p>
 
-                <priceScheduleTable ng-if="!(user.Permissions.contains('HidePricing')) && LineItem.PriceSchedule.PriceBreaks.length > 1" ps='LineItem.PriceSchedule' p='LineItem.Product'/>
+                <priceScheduleTable ng-if="!(user.Permissions.contains('HidePricing')) && LineItem.PriceSchedule.PriceBreaks.length > 1" ps='LineItem.PriceSchedule' p='LineItem.Product'></priceScheduleTable>
 
-                <staticspecstable ng-show="StaticSpecGroups && user.Permissions.contains('ViewNonCustomizableSpecs')" specgroups="StaticSpecGroups" length="LineItem.Product.StaticSpecLength" />
+                <staticspecstable ng-show="StaticSpecGroups && user.Permissions.contains('ViewNonCustomizableSpecs')" specgroups="StaticSpecGroups" length="LineItem.Product.StaticSpecLength"></staticspecstable>
 
                 <form name="addToOrderForm" novalidate="" class="mt-order-panel">
                     <div class="alert alert-danger mt-pdp-alert" ng-show="(!allowAddToOrder && !canCreateVariant && (!allowAddFromVariantList && (LineItem.Product.Variants.length == 0 || LineItem.Variant)))">
@@ -84,7 +93,7 @@
                             <button type="button" ng-click="searchVariants(searchTerm)">{{'Search' | r | xlat}}</button>
                         </div>
                         <ul id="451qa_list_variants" class="mt-variant-list">
-                            <loadingindicator ng-show="searchIndicator" />
+                            <loadingindicator ng-show="searchIndicator"></loadingindicator>
                             <li ng-repeat="v in LineItem.Product.Variants | paginate:(settings.currentPage-1) * settings.pageSize | limitTo:settings.pageSize" class="mt-variant-row">
                                 <div class="row">
                                     <a ng-class="{'col-sm-6': allowAddFromVariantList, 'col-sm-11': !allowAddFromVariantList }" href=#/product/{{LineItem.Product.InteropID}}/{{v.InteropID}}>
@@ -100,7 +109,7 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-3" ng-show="allowAddFromVariantList">
-                                        <quantityfield required="false" calculated="calcVariantLineItems" lineitem="variantLineItems[v.InteropID]" class="quantity" />
+                                        <quantityfield required="false" calculated="calcVariantLineItems" lineitem="variantLineItems[v.InteropID]" class="quantity"></quantityfield>
                                     </div>
                                     <div class="col-sm-1" ng-show="v.IsMpowerVariant">
                                         <button type="button" ng-click="deleteVariant(v, false)" class="mt-header-btn">
@@ -131,18 +140,10 @@
                         </p>
                         <div class="mt-order-row" ng-if="!allowAddFromVariantList">
                             <label ng-class="{required: !allowAddFromVariantList}">{{('Order' | r) + ' ' + ('Quantity' | r) | xlat}}</label>
-                            <quantityfield required="true" lineitem="LineItem" class="quantity" />
-                            <button class="mt-btn-accent mt-pdp-add-btn" type="button" id="451_btn_orderadd" ng-click="addToOrder()">
-                                <loadingindicator ng-show="addToOrderIndicator" />
-                                <i ng-show="lineItemErrors.length > 0" class="fa fa-warning"></i>
-                                {{addToOrderText | r | xlat}}
-                                <span id="451qa_lineitem_total" ng-if="!(user.Permissions.contains('HidePricing')) && (LineItem.LineTotal || variantLineItemsOrderTotal) > 0">
-                                    &middot; {{(LineItem.LineTotal || variantLineItemsOrderTotal) | culturecurrency}}
-                                </span>
-                            </button>
+                            <quantityfield required="true" lineitem="LineItem" class="quantity"></quantityfield>
                         </div>
-                        <button ng-if="allowAddFromVariantList" class="mt-btn-accent mt-pdp-add-btn" type="button" id="451_btn_orderadd" ng-click="addToOrder()">
-                            <loadingindicator ng-show="addToOrderIndicator" />
+                        <button class="mt-btn-accent mt-pdp-add-btn" type="button" id="451_btn_orderadd" ng-click="addToOrder()">
+                            <loadingindicator ng-show="addToOrderIndicator"></loadingindicator>
                             <i ng-show="lineItemErrors.length > 0" class="fa fa-warning"></i>
                             {{addToOrderText | r | xlat}}
                             <span id="451qa_lineitem_total" ng-if="!(user.Permissions.contains('HidePricing')) && (LineItem.LineTotal || variantLineItemsOrderTotal) > 0">
@@ -152,7 +153,7 @@
                     </div>
                 </form>
 
-                <relatedproducts ng-if="LineItem.Product.RelatedProductsGroupID" relatedgroupid="LineItem.Product.RelatedProductsGroupID" />
+                <relatedproducts ng-if="LineItem.Product.RelatedProductsGroupID" relatedgroupid="LineItem.Product.RelatedProductsGroupID"></relatedproducts>
 
                 <div class="mt-pdp-description">
                     <h2 class="mt-eyebrow">{{'Description & specs' | r | xlat}}</h2>
