@@ -43,6 +43,12 @@
     </div>
     <p class="mt-pdp-meta" ng-if="user.Company.TaxMethod != 'NoTax' && !user.Permissions.contains('HidePricing')">{{('Shipping' | r) + ', handling and tax may be added to this subtotal.' | xlat}}</p>
 
+    <button type="button" class="mt-btn-accent mt-cart-checkout-btn" ng-click="submitOrder()"
+            ng-disabled="cart_shipping.$invalid || cart_order.$invalid || cart_billing.$invalid || submitClicked">
+        <i ng-show="cart_shipping.$invalid || cart_order.$invalid || cart_billing.$invalid || submitClicked" class="fa fa-warning"></i>
+        {{('Submit' | r) + ' ' + ('Order' | r) | xlat}}
+    </button>
+
     <div class="mt-field mt-checkout-email-notify" ng-show="user.Permissions.contains('SendOrderNotificationToOthers') && !(cart_shipping.$invalid || cart_order.$invalid || cart_billing.$invalid)">
         <label ng-show="currentOrder.ExternalOrderDetailRecipients">{{('Email' | r) + ' ' + ('Notification' | r) | xlat}}</label>
         <input type="email" ng-disabled="cart_shipping.$invalid || cart_order.$invalid || cart_billing.$invalid" ng-model="currentOrder.ExternalOrderDetailRecipients" placeholder="{{('Email' | r) + ' ' +  ('Address' | r) | xlat}}" autocomplete="off" />

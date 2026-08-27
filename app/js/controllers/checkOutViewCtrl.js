@@ -1,5 +1,5 @@
-four51.app.controller('CheckOutViewCtrl', ['$scope', '$routeParams', '$location', '$filter', '$rootScope', '$451', 'User', 'Order', 'OrderConfig', 'FavoriteOrder', 'AddressList', 'GoogleAnalytics',
-function ($scope, $routeParams, $location, $filter, $rootScope, $451, User, Order, OrderConfig, FavoriteOrder, AddressList, GoogleAnalytics) {
+four51.app.controller('CheckOutViewCtrl', ['$scope', '$routeParams', '$location', '$filter', '$rootScope', '$451', 'User', 'Order', 'OrderConfig', 'AddressList', 'GoogleAnalytics',
+function ($scope, $routeParams, $location, $filter, $rootScope, $451, User, Order, OrderConfig, AddressList, GoogleAnalytics) {
 	$scope.errorSection = 'open';
 
 	$scope.isEditforApproval = $routeParams.id != null && $scope.user.Permissions.contains('EditApprovalOrder');
@@ -14,7 +14,6 @@ function ($scope, $routeParams, $location, $filter, $rootScope, $451, User, Orde
     }
 
 	$scope.hasOrderConfig = OrderConfig.hasConfig($scope.currentOrder, $scope.user);
-	$scope.checkOutSection = $scope.hasOrderConfig ? 'order' : 'shipping';
 
     function submitOrder() {
 	    $scope.displayLoadingIndicator = true;
@@ -107,43 +106,10 @@ function ($scope, $routeParams, $location, $filter, $rootScope, $451, User, Orde
 		    $location.path('catalog');
     };
 
-    $scope.cancelOrder = function() {
-	    if (confirm('Are you sure you wish to cancel your order?') == true) {
-		    $scope.displayLoadingIndicator = true;
-	        Order.delete($scope.currentOrder,
-		        function() {
-		            $scope.user.CurrentOrderID = null;
-		            $scope.currentOrder = null;
-			        User.save($scope.user, function(data) {
-				        $scope.user = data;
-				        $scope.displayLoadingIndicator = false;
-				        $location.path('catalog');
-			        });
-		        },
-		        function(ex) {
-			        $scope.actionMessage = ex.Message;
-			        $scope.displayLoadingIndicator = false;
-		        }
-	        );
-	    }
-    };
-
-    $scope.saveChanges = function() {
-        saveChanges();
-    };
-
 	$scope.submitOrder = function() {
 		$scope.submitClicked = true;
 		saveChanges(function(data){
 			submitOrder();
 		});
-	};
-
-    $scope.saveFavorite = function() {
-        FavoriteOrder.save($scope.currentOrder);
-    };
-
-	$scope.cancelEdit = function() {
-		$location.path('order');
 	};
 }]);
