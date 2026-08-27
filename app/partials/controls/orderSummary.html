@@ -44,8 +44,8 @@
     <p class="mt-pdp-meta" ng-if="user.Company.TaxMethod != 'NoTax' && !user.Permissions.contains('HidePricing')">{{('Shipping' | r) + ', handling and tax may be added to this subtotal.' | xlat}}</p>
 
     <button type="button" class="mt-btn-accent mt-cart-checkout-btn" ng-click="submitOrder()"
-            ng-disabled="cart_shipping.$invalid || cart_order.$invalid || cart_billing.$invalid || submitClicked">
-        <i ng-show="cart_shipping.$invalid || cart_order.$invalid || cart_billing.$invalid || submitClicked" class="fa fa-warning"></i>
+            ng-disabled="submitClicked">
+        <i ng-show="submitAttempted && (cart_shipping.$invalid || cart_order.$invalid || cart_billing.$invalid)" class="fa fa-warning"></i>
         {{('Submit' | r) + ' ' + ('Order' | r) | xlat}}
     </button>
 
