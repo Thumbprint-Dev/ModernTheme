@@ -1196,9 +1196,9 @@ Template: Howdy
 }
 
 /* ===== ModernTheme: checkout (v1, shell + order summary only) ===== */
-/* orderDetails/orderShipping/orderBilling/orderApprovals/paymentSelection/addressInput/creditCard
-   are still the legacy styling - follow-up passes. This covers the outer layout and the summary
-   card, reusing .mt-cart-summary-card/.mt-cart-summary-title/.mt-cart-summary-row from cart. */
+/* orderShipping/orderBilling/orderApprovals/paymentSelection/addressInput/creditCard are still
+   the legacy styling - follow-up passes. This covers the outer layout and the summary card,
+   reusing .mt-cart-summary-card/.mt-cart-summary-title/.mt-cart-summary-row from cart. */
 
 .mt-checkout {
     font-family: 'Inter', 'Droid Sans', sans-serif;
@@ -1324,4 +1324,136 @@ Template: Howdy
         position: static;
         width: 100%;
     }
+}
+
+/* ===== ModernTheme: checkout order details (always-open card, no accordion) ===== */
+
+.mt-checkout-card {
+    border: 1px solid #E8E4DA;
+    border-radius: 12px;
+    background: #fff;
+    padding: 24px;
+    margin-bottom: 20px;
+}
+
+.mt-checkout-card-title {
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    margin: 0 0 20px;
+    color: #211F19;
+}
+
+.mt-checkout-card .mt-field,
+.mt-checkout-card .view-form-icon {
+    margin-bottom: 16px;
+}
+
+.mt-checkout-card .mt-field:last-child,
+.mt-checkout-card .view-form-icon:last-child {
+    margin-bottom: 0;
+}
+
+.mt-checkout-card label,
+.mt-checkout-card .view-form-icon label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #726D5F;
+    margin-bottom: 6px;
+}
+
+.mt-checkout-card label.required:after,
+.mt-checkout-card .view-form-icon label.required:after {
+    content: ' *';
+    color: #B3261E;
+}
+
+.mt-checkout-card .form-control {
+    width: 100%;
+    height: auto;
+    border: 1px solid #E8E4DA;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+    color: #262420;
+    box-sizing: border-box;
+    font-family: inherit;
+    box-shadow: none;
+}
+
+.mt-checkout-card .form-control:focus {
+    border-color: #0F6B63;
+    outline: none;
+    box-shadow: none;
+}
+
+.mt-checkout-card textarea.form-control {
+    resize: vertical;
+}
+
+.mt-checkout-card .view-form-icon > div > i.fa {
+    display: none;
+}
+
+.mt-checkout-card .input-group {
+    display: flex;
+    align-items: stretch;
+}
+
+.mt-checkout-card .input-group .form-control {
+    border-radius: 0;
+}
+
+.mt-checkout-card .input-group-addon {
+    display: flex;
+    align-items: center;
+    padding: 10px 12px;
+    border: 1px solid #E8E4DA;
+    background: #F5F3EE;
+    font-size: 13px;
+    color: #4A463C;
+}
+
+.mt-checkout-card .input-group-addon:first-child {
+    border-radius: 8px 0 0 8px;
+    border-right: 0;
+}
+
+.mt-checkout-card .input-group-addon:last-child {
+    border-radius: 0 8px 8px 0;
+    border-left: 0;
+}
+
+.mt-checkout-orderid-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.mt-checkout-orderid-row input.form-control {
+    flex: 1;
+}
+
+.mt-checkout-auto-id {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #4A463C;
+    text-transform: none;
+    white-space: nowrap;
+    margin-bottom: 0 !important;
+}
+
+.mt-checkout-auto-id input[type="checkbox"] {
+    margin: 0;
+}
+
+.mt-checkout-orderfields {
+    border-top: 1px solid #E8E4DA;
+    padding-top: 16px;
 }
