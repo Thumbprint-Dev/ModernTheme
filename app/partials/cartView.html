@@ -100,12 +100,9 @@
                             <span ng-if="currentOrder.Status != 'AwaitingApproval'">{{('Cancel' | r) + ' ' + ('Order' | r) | xlat}}</span>
                             <span ng-if="currentOrder.Status == 'AwaitingApproval'">{{('Cancel' | r) + ' ' + ('Edit' | r) | xlat}}</span>
                         </button>
-                        <button type="submit" class="mt-header-btn" ng-click="saveChanges()">
+                        <button type="submit" class="mt-header-btn" ng-click="saveChanges(saveFavorite)">
                             <loadingindicator ng-show="displayLoadingIndicator"></loadingindicator>
                             {{('Save' | r) + ' ' + ('Order' | r) | xlat}}
-                        </button>
-                        <button type="button" class="mt-header-btn" ng-click="saveFavorite()">
-                            {{'Save cart for later' | r | xlat}}
                         </button>
                     </div>
                 </div>
