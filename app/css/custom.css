@@ -24,6 +24,16 @@ body {
 
 #content > .container-view {
     flex: 1 0 auto;
+    /* Without an explicit width, this flex item's cross-axis (width, since #content is a column
+       flex) doesn't reliably stretch to 100% on its own - it was instead sizing to its content's
+       min-content width, which is wider than the viewport on any narrow/mobile screen once a
+       page has a long unwrapped heading or a multi-column row inside it. That silently caused
+       horizontal page overflow on every page (confirmed live: ~135px of overflow on the home
+       page at a 500px-wide viewport) ever since #content became a flex container for the footer
+       fix. align-items:stretch should have handled this without an explicit width, but did not
+       in practice, so setting it directly here is the reliable fix. */
+    width: 100%;
+    min-width: 0;
 }
 
 /* ===== ModernTheme: Footer ===== */
