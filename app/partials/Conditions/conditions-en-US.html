@@ -1,10 +1,10 @@
-<section>
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title panel-primary">Terms and Conditions</h3>
-        </div>
-        <div class="panel-body">
-            <button id="451qa_btn_terms_accept" ng-show="user.TermsAccepted == null" class="btn btn-default btn-info" ng-click="accept()">I accept the terms and conditions</button>
+<section class="mt-legal">
+    <div class="mt-container mt-legal-inner">
+        <div class="mt-legal-body">
+            <p class="mt-eyebrow">{{'Legal' | r | xlat}}</p>
+            <h1 class="mt-pdp-title">Terms and Conditions</h1>
+
+            <div class="mt-legal-actions"><button id="451qa_btn_terms_accept" ng-show="user.TermsAccepted == null" class="mt-btn-accent" ng-click="accept()">I accept the terms and conditions</button></div>
             <p><strong>Storefront - End User License Agreement</strong></p>
             <p>(For information on how we use, protect, and share your data, please refer to our <a href="https://www.sitecore.com/trust/privacy-policy/" target="_blank">Privacy Policy</a>.)</p>
             <p>THIS AGREEMENT is entered into between the following parties:</p>
@@ -38,7 +38,7 @@
             <p>(b)        Four51 maintains the controls and procedures required for CCPA and GDPR compliance. Client agrees that if they do not have consumer approval, Client will not sell the personal information obtained through the application, reporting or integration services, and Client will only use such personal information as necessary to perform Client’s anticipated business purpose and in compliance with applicable Privacy Acts. Additionally, Client is responsible for their own required compliance with any Privacy Acts.</p>
             <p><strong>(8) Indemnity.</strong> User shall indemnify and hold harmless Provider and its employees, agents and consultants from any and all loss or liability for any and all claims, causes of action, suits, proceedings, losses, damages, demands, fees, expenses, fines, penalties and costs (including with limitation reasonable attorneys' fees and expenses) arising from claims, actions or proceedings brought against Provider by any third party relating to the Project or the services rendered hereunder, except to the extent such loss is the fault of Provider.</p>
             <p><strong>(9) Acceptable Use Policy.</strong> User shall limit its use of the Provider Application to the commercial purposes for which it is intended. In particular, User shall not upload, post or transmit to or distribute or otherwise publish through the Provider Application any materials which (a) restrict or inhibit any other user from using the Application, (b) are unlawful, threatening, abusive, libelous, defamatory, obscene, profane or indecent, (c) constitute or encourage conduct that would constitute a criminal offense, give rise to a civil liability or otherwise violate law, (d) violate, plagiarize or infringe the rights of third parties whether of a proprietary nature or otherwise, or (e) contain a virus or other harmful component.  Additionally, User shall not use the Provider Work Product or Application in conjunction with or to facilitate a third party service or product that is competitive to Provider.</p>
-            <button ng-show="user.TermsAccepted == null" class="btn btn-default btn-info" ng-click="accept()">I accept the terms and conditions</button>
+            <div class="mt-legal-actions"><button ng-show="user.TermsAccepted == null" class="mt-btn-accent" ng-click="accept()">I accept the terms and conditions</button></div>
         </div>
     </div>
 </section>
