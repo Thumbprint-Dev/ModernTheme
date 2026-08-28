@@ -91,8 +91,8 @@ body {
        .mt-container's own 24px left/right padding - which is exactly what was happening,
        leaving every section heading (Quick Actions, Shop by Category, etc.) flush against the
        screen edge on narrow viewports where there's no surrounding whitespace to hide it. */
-    padding-top: 40px;
-    padding-bottom: 40px;
+    padding-top: 28px;
+    padding-bottom: 28px;
 }
 
 .mt-eyebrow {
