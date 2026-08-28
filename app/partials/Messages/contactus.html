@@ -1,13 +1,9 @@
-<section>
-    <accountnavigation ng-show="user.Permissions.contains('ViewSelfAdmin') || user.Type == 'Customer'" />
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title panel-primary">{{('Contact' | r) + ' ' + ('Us' | r) | xlat }}</h3>
-        </div>
-        <div class="panel-body">
+<section class="mt-contact">
+    <accountnavigation ng-show="user.Permissions.contains('ViewSelfAdmin') || user.Type == 'Customer'"></accountnavigation>
+    <div class="mt-container mt-contact-inner">
+        <h1 class="mt-pdp-title">{{('Contact' | r) + ' ' + ('Us' | r) | xlat }}</h1>
+        <div class="mt-checkout-card">
 			<p></p>
 		</div>
-        <div class="panel-footer">
-        </div>
     </div>
 </section>

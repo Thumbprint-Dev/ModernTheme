@@ -1,43 +1,39 @@
-<loadingindicator ng-show="searchLoading" title="{{'Please wait while we fetch all products' | r}}" />
-<section>
-    <div class="panel panel-search">
-        <div class="panel-heading">
-            <h3 class="panel-title">
-                {{'Search' | r | xlat}}
-            </h3>
+<loadingindicator ng-show="searchLoading" title="{{'Please wait while we fetch all products' | r | xlat}}"></loadingindicator>
+<section class="mt-search-results">
+    <div class="mt-container mt-plp-header">
+        <p class="mt-breadcrumb"><a href="catalog">{{'Home' | r | xlat}}</a> / <span>{{'Search' | r | xlat}}</span></p>
+        <div class="mt-plp-title-row">
+            <h1>{{'Search results for' | r | xlat}} &ldquo;{{searchTerm}}&rdquo;</h1>
         </div>
-        <div class="panel-body">
-            <form role="search">
-                <div class="view-form-icon">
-                    <div class="input-group">
-                        <input type="text" ng-model="searchTerm"  class="form-control" placeholder="{{('Search' | r) + ' ' + ('Products' | r) | xlat}}" autocomplete="off" />
-                        <i class="fa fa-search"></i>
-                        <div class="input-group-btn">
-                            <button type="submit" ng-click="search()" class="btn btn-default">{{'Search' | r | xlat}}</button>
-                        </div>
-                    </div>
-                </div>
-            </form>
+        <form role="search" class="mt-search-form">
+            <div class="mt-field-row">
+                <input type="text" ng-model="searchTerm" class="form-control" placeholder="{{('Search' | r) + ' ' + ('Products' | r) | xlat}}" autocomplete="off" />
+                <button type="submit" ng-click="search()" class="mt-btn-accent">{{'Search' | r | xlat}}</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="mt-container">
+        <div ng-show="productCount == 0" class="alert alert-info mt-pdp-alert">
+            {{'Your search resulted in no records. Please refine your search.' | r | xlat}}
         </div>
-        <div ng-show="productCount == 0" class="panel-product-list">
-            <p class="alert alert-info">
-                {{'Your search resulted in no records. Please refine your search.' | r | xlat}}
-            </p>
+
+        <div ng-show="productCount > 0" class="mt-plp-toolbar">
+            <p class="mt-plp-count">{{productCount}} {{'products' | r | xlat}}</p>
         </div>
-        <div class="panel-footer" ng-show="productCount > settings.pageSize">
+
+        <div ng-show="productCount > settings.pageSize" class="mt-pagination">
             <pagination page="settings.currentPage" max-size="10" rotate="false" boundary-links="true" total-items="productCount"
                         items-per-page="settings.pageSize" direction-links="true" previous-text="{{'Previous' | xlat}}" next-text="{{'Next' | xlat}}" first-text="{{'First' | xlat}}" last-text="{{'Last' | xlat}}"></pagination>
         </div>
-        <div ng-show="productCount > 0" class="panel-product-list">
-            <nav class="nav">
-                <ul>
-                    <li class="well" ng-repeat="product in products | paginate:(settings.currentPage-1) * settings.pageSize | limitTo:settings.pageSize">
-                        <shortproductview p="product" user="user" />
-                    </li>
-                </ul>
-            </nav>
+
+        <div ng-show="productCount > 0" class="mt-product-grid-wrap">
+            <div class="row">
+                <div class="col-sm-3 col-xs-6" ng-repeat="product in products | paginate:(settings.currentPage-1) * settings.pageSize | limitTo:settings.pageSize" ng-include="'partials/controls/mtProductCard.html'"></div>
+            </div>
         </div>
-        <div class="panel-footer" ng-show="productCount > settings.pageSize">
+
+        <div ng-show="productCount > settings.pageSize" class="mt-pagination">
             <pagination page="settings.currentPage" max-size="10" rotate="false" boundary-links="true" total-items="productCount"
                         items-per-page="settings.pageSize" direction-links="true" previous-text="{{'Previous' | xlat}}" next-text="{{'Next' | xlat}}" first-text="{{'First' | xlat}}" last-text="{{'Last' | xlat}}"></pagination>
         </div>
