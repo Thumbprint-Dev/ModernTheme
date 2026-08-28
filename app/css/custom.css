@@ -210,7 +210,11 @@ body {
     position: relative;
     display: block;
     aspect-ratio: 3 / 4;
-    border-radius: 14px;
+    /* 14px (matching the radius used elsewhere, e.g. .mt-checkout-card) was genuinely clipping
+       correctly (verified with elementFromPoint at the literal corner pixel) but was too subtle
+       to read as "rounded" rather than "square" at this tile's actual rendered size - confirmed
+       live by testing 24px (still read as square) and 40px (clearly rounded) side by side. */
+    border-radius: 40px;
     overflow: hidden;
     /* isolation:isolate is required, not decorative: without it, Chrome composites the large
        absolutely-positioned photo onto its own GPU layer and that layer ignores this element's
