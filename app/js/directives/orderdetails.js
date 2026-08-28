@@ -33,9 +33,17 @@ four51.app.directive('orderdetails', ['Order', function(Order) {
 
             $scope.saveOrderDetails = function() {
                 var auto = $scope.currentOrder.autoID;
+                var budgetAccountID = $scope.currentOrder.BudgetAccountID;
+                var creditCardID = $scope.currentOrder.CreditCardID;
                 Order.save($scope.currentOrder,
                     function(data) {
                         $scope.currentOrder = data;
+                        if (budgetAccountID) {
+                            $scope.currentOrder.BudgetAccountID = budgetAccountID;
+                        }
+                        if (creditCardID) {
+                            $scope.currentOrder.CreditCardID = creditCardID;
+                        }
                         if (auto) {
                             $scope.currentOrder.autoID = true;
                             $scope.currentOrder.ExternalID = 'auto';
