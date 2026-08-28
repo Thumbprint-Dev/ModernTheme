@@ -49,13 +49,13 @@
     <div class="mt-container mt-section" ng-if="featuredProducts.length">
         <div class="mt-carousel-header">
             <h2 class="mt-eyebrow">{{'Featured for your team' | r | xlat}}</h2>
-            <div class="mt-carousel-controls" ng-if="featuredTotalPages > 1">
-                <button type="button" class="mt-header-btn" ng-click="featuredPrev()" ng-disabled="featuredPage == 0" aria-label="{{'Previous' | r | xlat}}">&lsaquo;</button>
-                <button type="button" class="mt-header-btn" ng-click="featuredNext()" ng-disabled="featuredPage == featuredTotalPages - 1" aria-label="{{'Next' | r | xlat}}">&rsaquo;</button>
+            <div class="mt-carousel-controls" ng-if="featuredProducts.length > 4">
+                <button type="button" class="mt-header-btn" ng-click="featuredPrev()" aria-label="{{'Previous' | r | xlat}}">&lsaquo;</button>
+                <button type="button" class="mt-header-btn" ng-click="featuredNext()" aria-label="{{'Next' | r | xlat}}">&rsaquo;</button>
             </div>
         </div>
-        <div class="mt-carousel-viewport">
-            <div class="mt-carousel-track" ng-style="{transform: 'translateX(-' + (featuredPage * 100) + '%)'}">
+        <div class="mt-carousel-viewport" mt-featured-carousel>
+            <div class="mt-carousel-track">
                 <div class="mt-carousel-card" ng-repeat="product in featuredProducts" ng-include="'partials/controls/mtProductCard.html'"></div>
             </div>
         </div>

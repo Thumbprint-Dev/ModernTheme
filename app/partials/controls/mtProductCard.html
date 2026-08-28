@@ -1,8 +1,20 @@
-<a href="{{product.Type == 'Kit' ? 'kit' : 'product'}}/{{product.InteropID}}" class="mt-product-card">
-    <img ng-if="product.SmallImageUrl" ng-src="{{product.SmallImageUrl}}" class="mt-placeholder-photo mt-real-photo" alt="" />
-    <div ng-if="!product.SmallImageUrl" class="mt-placeholder-photo">{{'[product photo]' | r | xlat}}</div>
-    <p class="mt-product-name">{{product.Name}}</p>
-    <p class="mt-product-price" ng-if="product.StandardPriceSchedule.PriceBreaks[0] && !(user.Permissions.contains('HidePricing'))">
-        {{product.StandardPriceSchedule.PriceBreaks[0].Price | culturecurrency}}
-    </p>
-</a>
+<div class="mt-product-card">
+    <a href="{{product.Type == 'Kit' ? 'kit' : 'product'}}/{{product.InteropID}}" class="mt-product-card-link">
+        <img ng-if="product.SmallImageUrl" ng-src="{{product.SmallImageUrl}}" class="mt-placeholder-photo mt-real-photo" alt="" />
+        <div ng-if="!product.SmallImageUrl" class="mt-placeholder-photo">{{'[product photo]' | r | xlat}}</div>
+        <p class="mt-product-name">{{product.Name}}</p>
+        <p class="mt-pdp-sku" ng-if="product.ExternalID">{{'SKU' | r | xlat}} {{product.ExternalID}}</p>
+        <p class="mt-product-price" ng-if="product.StandardPriceSchedule.PriceBreaks[0] && !(user.Permissions.contains('HidePricing'))">
+            {{product.StandardPriceSchedule.PriceBreaks[0].Price | culturecurrency}}
+        </p>
+    </a>
+    <button type="button" class="mt-btn-accent mt-product-card-add" ng-if="canQuickAdd(product)"
+            ng-click="quickAddToCart(product)" ng-disabled="quickAddIndicator[product.InteropID]">
+        <i ng-show="quickAddIndicator[product.InteropID]" class="fa fa-spinner fa-spin"></i>
+        {{'Add to cart' | r | xlat}}
+    </button>
+    <a ng-if="!canQuickAdd(product)" href="{{product.Type == 'Kit' ? 'kit' : 'product'}}/{{product.InteropID}}" class="mt-header-btn mt-product-card-add">
+        {{'Select Options' | r | xlat}}
+    </a>
+    <p class="mt-product-card-error" ng-show="quickAddError[product.InteropID]">{{quickAddError[product.InteropID]}}</p>
+</div>
