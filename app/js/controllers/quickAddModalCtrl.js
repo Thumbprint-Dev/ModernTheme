@@ -38,6 +38,10 @@ function ($scope, $modalInstance, product, currentOrder, ProductDisplayService, 
 	};
 
 	$scope.confirmAdd = function () {
+		$scope.addAttempted = true;
+		if ($scope.lineItemErrors && $scope.lineItemErrors.length) {
+			return;
+		}
 		$scope.addToOrderIndicator = true;
 		if (!$scope.currentOrder) {
 			$scope.currentOrder = {};

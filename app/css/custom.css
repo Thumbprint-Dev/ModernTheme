@@ -1818,10 +1818,6 @@ Template: Howdy
     color: #262420;
 }
 
-.mt-quickadd-modal-image {
-    width: 160px;
-    margin: 0 0 16px;
-}
 
 .mt-quickadd-modal-body .mt-product-price {
     font-size: 18px;
@@ -1830,4 +1826,60 @@ Template: Howdy
 
 .mt-quickadd-modal-body .mt-field {
     margin-top: 16px;
+}
+
+/* The Location/Size-style pickers come from the admin-managed spec form (ocselectionfield etc.,
+   app/lib/oc/ordercloud-specforms.js) - same .view-form-icon markup already restyled elsewhere
+   (PDP, checkout), so apply the same treatment here instead of the raw red required-label/pencil
+   icon look. */
+
+.mt-quickadd-modal-body .view-form-icon {
+    margin-bottom: 16px;
+}
+
+.mt-quickadd-modal-body .view-form-icon label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #726D5F;
+    margin-bottom: 6px;
+}
+
+.mt-quickadd-modal-body .view-form-icon label.required:after {
+    content: " *";
+    color: #0F6B63;
+}
+
+.mt-quickadd-modal-body .view-form-icon .form-control {
+    border: 1px solid #E8E4DA;
+    border-radius: 8px;
+    padding: 10px 12px;
+    background: #fff;
+    font-size: 14px;
+    color: #262420;
+    box-shadow: none;
+    height: auto;
+}
+
+.mt-quickadd-modal-body .view-form-icon .form-control:focus {
+    border-color: #0F6B63;
+    box-shadow: none;
+}
+
+.mt-quickadd-modal-body .view-form-icon .fa-edit {
+    display: none;
+}
+
+.mt-quickadd-modal-body .quantity .form-control {
+    border: 1px solid #E8E4DA;
+    border-radius: 8px;
+    padding: 10px 12px;
+    background: #fff;
+    font-size: 14px;
+    color: #262420;
+    box-shadow: none;
+    height: auto;
+    max-width: 160px;
 }
