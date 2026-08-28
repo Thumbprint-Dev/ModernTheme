@@ -32,7 +32,7 @@ function ($scope, $routeParams, $location, $451, Order, OrderConfig, User) {
 	};
 
 	$scope.cancelOrder = function() {
-		if (confirm('Are you sure you wish to cancel your order?') == true) {
+		if (confirm('Are you sure you wish to clear your cart?') == true) {
 			$scope.displayLoadingIndicator = true;
 			$scope.actionMessage = null;
 			Order.delete($scope.currentOrder,

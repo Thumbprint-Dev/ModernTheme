@@ -95,7 +95,7 @@
                             {{'Continue Shopping' | r | xlat}}
                         </button>
                         <button type="button" class="mt-header-btn" ng-click="currentOrder.Status == 'AwaitingApproval' ? cancelEdit() : cancelOrder()">
-                            <span ng-if="currentOrder.Status != 'AwaitingApproval'">{{('Cancel' | r) + ' ' + ('Order' | r) | xlat}}</span>
+                            <span ng-if="currentOrder.Status != 'AwaitingApproval'">{{('Clear' | r) + ' ' + ('Cart' | r) | xlat}}</span>
                             <span ng-if="currentOrder.Status == 'AwaitingApproval'">{{('Cancel' | r) + ' ' + ('Edit' | r) | xlat}}</span>
                         </button>
                         <button type="submit" class="mt-header-btn" ng-click="saveChanges()">
