@@ -11,6 +11,21 @@ body {
     margin-bottom: 0;
 }
 
+/* Pin the footer to the bottom of the viewport on short pages instead of leaving it floating
+   right after content with empty page background below it. #content (index.html) holds the
+   nav/branding sections, the .container-view (ng-view) section, and the footer section as
+   siblings - making it a flex column and letting .container-view absorb the extra space pushes
+   the footer down to the true bottom without needing a fixed/absolute position. */
+#content {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+#content > .container-view {
+    flex: 1 0 auto;
+}
+
 /* ===== ModernTheme: Footer ===== */
 .mt-footer {
     background: #fff;
@@ -1281,10 +1296,15 @@ body {
     .mt-cart-item {
         flex-wrap: wrap;
     }
+    /* flex-basis:100% forces each onto its own full-width line below the photo+info row -
+       without it these stayed flexible enough to share a line with .mt-cart-item-info, which has
+       min-width:0 and no floor, so the browser squeezed the product name/SKU column down to
+       almost nothing instead of stacking qty/price underneath. */
     .mt-cart-item-qty,
     .mt-cart-item-price {
-        flex: 1 1 auto;
+        flex: 1 1 100%;
         text-align: left;
+        margin-top: 12px;
     }
     .mt-cart-layout {
         flex-direction: column;
@@ -2296,5 +2316,150 @@ body {
 }
 
 .mt-address-edit-inner .mt-pdp-title {
+    margin-bottom: 20px;
+}
+
+/* ===== ModernTheme: Search / Messages / Contact (v1) ===== */
+
+.mt-search-results {
+    font-family: 'Inter', 'Droid Sans', sans-serif;
+    color: #262420;
+    background: #FAF8F4;
+    margin: -20px -15px 0;
+    padding-bottom: 40px;
+}
+
+.mt-search-form {
+    margin-top: 16px;
+    max-width: 480px;
+}
+
+.mt-search-form .mt-field-row input {
+    border: 1px solid #E8E4DA;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+    color: #262420;
+    flex: 1;
+    min-width: 0;
+    box-shadow: none;
+}
+
+.mt-search-form .mt-field-row input:focus {
+    border-color: #0F6B63;
+    outline: none;
+}
+
+.mt-search-form .mt-field-row .mt-btn-accent {
+    padding: 10px 16px;
+    white-space: nowrap;
+}
+
+.mt-messages {
+    font-family: 'Inter', 'Droid Sans', sans-serif;
+    color: #262420;
+    background: #FAF8F4;
+    margin: -20px -15px 0;
+    padding-bottom: 60px;
+}
+
+.mt-messages-inner {
+    padding-top: 40px;
+}
+
+.mt-messages-inner > .mt-pdp-title {
+    margin-bottom: 20px;
+}
+
+.mt-messages-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.mt-messages-table th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #726D5F;
+    padding: 8px 10px;
+    border-bottom: 1px solid #E8E4DA;
+}
+
+.mt-messages-table td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #E8E4DA;
+    color: #262420;
+    vertical-align: middle;
+}
+
+.mt-messages-table tr:last-child td {
+    border-bottom: none;
+}
+
+.mt-messages-subject-link {
+    color: #262420;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.mt-messages-subject-link:hover,
+.mt-messages-subject-link:focus {
+    color: #0F6B63;
+    text-decoration: underline;
+}
+
+.mt-messages-date {
+    color: #726D5F;
+    white-space: nowrap;
+}
+
+.mt-messages-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.mt-messages-body {
+    font-family: inherit;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    background: #FAF8F4;
+    border: 1px solid #E8E4DA;
+    border-radius: 8px;
+    padding: 16px;
+    color: #262420;
+    margin: 0 0 20px;
+}
+
+@media (max-width: 767px) {
+    .mt-messages-table th:nth-child(2),
+    .mt-messages-table td:nth-child(2) {
+        display: none;
+    }
+
+    .mt-messages-actions {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+}
+
+.mt-contact {
+    font-family: 'Inter', 'Droid Sans', sans-serif;
+    color: #262420;
+    background: #FAF8F4;
+    margin: -20px -15px 0;
+    padding-bottom: 60px;
+}
+
+.mt-contact-inner {
+    padding-top: 40px;
+}
+
+.mt-contact-inner > .mt-pdp-title {
     margin-bottom: 20px;
 }
