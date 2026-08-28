@@ -1,0 +1,43 @@
+<div class="modal-header">
+    <button type="button" class="close" ng-click="close()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h3 class="mt-checkout-card-title">{{LineItem.Product.Name}}</h3>
+</div>
+<div class="modal-body mt-quickadd-modal-body">
+    <loadingindicator ng-show="modalLoading"></loadingindicator>
+
+    <div ng-show="!modalLoading && !needsFullPdpFallback">
+        <img ng-if="LineItem.Product.LargeImageUrl || LineItem.Product.SmallImageUrl" ng-src="{{LineItem.Product.LargeImageUrl || LineItem.Product.SmallImageUrl}}" class="mt-placeholder-photo mt-real-photo mt-quickadd-modal-image" alt="" />
+        <div ng-if="!(LineItem.Product.LargeImageUrl || LineItem.Product.SmallImageUrl)" class="mt-placeholder-photo mt-quickadd-modal-image">{{'[product photo]' | r | xlat}}</div>
+
+        <p class="mt-product-price" ng-if="LineItem.PriceSchedule.PriceBreaks[0] && !(user.Permissions.contains('HidePricing'))">
+            {{LineItem.PriceSchedule.PriceBreaks[0].Price | culturecurrency}}
+        </p>
+
+        <kitaddtoorderspecs template="{{LineItem.Product.InteropID}}"></kitaddtoorderspecs>
+
+        <div class="mt-field">
+            <label>{{'Quantity' | r | xlat}}</label>
+            <quantityfield lineitem="LineItem" required="true" class="quantity"></quantityfield>
+        </div>
+
+        <ul class="mt-checkout-payment-warning" ng-show="lineItemErrors.length">
+            <li ng-repeat="e in lineItemErrors">{{e | xlat}}</li>
+        </ul>
+
+        <p class="mt-product-card-note" ng-show="errorMessage">{{errorMessage}}</p>
+    </div>
+
+    <div ng-show="!modalLoading && needsFullPdpFallback">
+        <p class="mt-product-card-note">{{'This item has options to choose before adding to your cart.' | r | xlat}}</p>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="mt-header-btn" ng-click="close()">{{'Cancel' | r | xlat}}</button>
+    <a ng-if="!modalLoading && needsFullPdpFallback" href="{{(LineItem.Product.Type == 'Kit' ? 'kit' : 'product') + '/' + LineItem.Product.InteropID}}" class="mt-btn-accent">
+        {{'Select Options' | r | xlat}}
+    </a>
+    <button ng-if="!modalLoading && !needsFullPdpFallback" type="button" class="mt-btn-accent" ng-click="confirmAdd()" ng-disabled="lineItemErrors.length || addToOrderIndicator">
+        <i ng-show="addToOrderIndicator" class="fa fa-spinner fa-spin"></i>
+        {{'Add to cart' | r | xlat}}
+    </button>
+</div>
