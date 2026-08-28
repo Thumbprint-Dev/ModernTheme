@@ -85,15 +85,16 @@ function ($scope, $routeParams, $route, $location, $451, Product, ProductDisplay
 		}
 		if (!$scope.currentOrder.LineItems)
 			$scope.currentOrder.LineItems = [];
+		var pendingAdds = [];
 		if($scope.allowAddFromVariantList){
 			angular.forEach($scope.variantLineItems, function(item){
 				if(item.Quantity > 0){
-					$scope.currentOrder.LineItems.push(item);
+					pendingAdds.push(ProductDisplayService.addOrMergeLineItem($scope.currentOrder, item));
 					$scope.currentOrder.Type = item.PriceSchedule.OrderType;
 				}
 			});
 		}else{
-			$scope.currentOrder.LineItems.push($scope.LineItem);
+			pendingAdds.push(ProductDisplayService.addOrMergeLineItem($scope.currentOrder, $scope.LineItem));
 			$scope.currentOrder.Type = $scope.LineItem.PriceSchedule.OrderType;
 		}
 		$scope.addToOrderIndicator = true;
@@ -109,8 +110,7 @@ function ($scope, $routeParams, $route, $location, $451, Product, ProductDisplay
 					});
 				},
 				function(ex) {
-					//remove the last LineItem added to the cart.
-					$scope.currentOrder.LineItems.pop();
+					angular.forEach(pendingAdds, function(pending) { pending.undo(); });
 					$scope.addToOrderIndicator = false;
 					$scope.lineItemErrors.push(ex.Detail);
 					$scope.showAddToCartErrors = true;

@@ -47,7 +47,7 @@ function ($scope, $modalInstance, product, currentOrder, ProductDisplayService, 
 			$scope.currentOrder = {};
 		}
 		if (!$scope.currentOrder.LineItems) $scope.currentOrder.LineItems = [];
-		$scope.currentOrder.LineItems.push($scope.LineItem);
+		var pending = ProductDisplayService.addOrMergeLineItem($scope.currentOrder, $scope.LineItem);
 		$scope.currentOrder.Type = $scope.LineItem.PriceSchedule.OrderType;
 		Order.clearshipping($scope.currentOrder).save($scope.currentOrder,
 			function (o) {
@@ -57,7 +57,7 @@ function ($scope, $modalInstance, product, currentOrder, ProductDisplayService, 
 				});
 			},
 			function (ex) {
-				$scope.currentOrder.LineItems.pop();
+				pending.undo();
 				$scope.addToOrderIndicator = false;
 				$scope.errorMessage = ex.Message;
 			}

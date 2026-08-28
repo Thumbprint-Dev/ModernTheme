@@ -371,8 +371,68 @@ four51.app.factory('ProductDisplayService', ['$sce', '$451', 'Variant', 'Product
 			}
 		}, page, pagesize, searchTerm);
 	};
+
+	// Only compares CanSetForLineItem specs - DefinesVariant specs are already captured by
+	// Variant.InteropID, and comparing them again here would just be redundant.
+	function customSpecsMatch(specsA, specsB) {
+		var keysA = [], keysB = [];
+		angular.forEach(specsA, function(s, name) { if (s.CanSetForLineItem) keysA.push(name); });
+		angular.forEach(specsB, function(s, name) { if (s.CanSetForLineItem) keysB.push(name); });
+		if (keysA.length != keysB.length) return false;
+		for (var i = 0; i < keysA.length; i++) {
+			var name = keysA[i];
+			if (!specsB[name]) return false;
+			var valueA = specsA[name].SelectedOptionID || specsA[name].Value || null;
+			var valueB = specsB[name].SelectedOptionID || specsB[name].Value || null;
+			if (valueA !== valueB) return false;
+		}
+		return true;
+	}
+
+	// Finds an existing cart line item that represents the exact same purchase (same product,
+	// same variant, same custom spec values) as lineItem, so adding again can bump its quantity
+	// instead of creating a visually-identical duplicate row in the cart.
+	function findMatchingLineItem(currentOrder, lineItem) {
+		if (!currentOrder || !currentOrder.LineItems || !lineItem.Product) return null;
+		// VariableText/VBOSS (personalized print) items are never merged - each add represents a
+		// distinct customization (imprint text, uploaded design, etc.) even when quantity matches.
+		if (lineItem.Product.Type == 'VariableText' || lineItem.Product.IsVBOSS) return null;
+		var variantID = lineItem.Variant ? lineItem.Variant.InteropID : null;
+		var match = null;
+		angular.forEach(currentOrder.LineItems, function(li) {
+			if (match || !li.Product || li === lineItem) return;
+			var liVariantID = li.Variant ? li.Variant.InteropID : null;
+			if (li.Product.InteropID == lineItem.Product.InteropID && liVariantID == variantID && customSpecsMatch(li.Specs, lineItem.Specs)) {
+				match = li;
+			}
+		});
+		return match;
+	}
+
+	// Adds lineItem to currentOrder, merging its quantity into a matching existing line item when
+	// one exists. Returns an undo() so the caller can cleanly reverse this specific add/merge if the
+	// order save that follows fails - restoring the previous quantity rather than always popping the
+	// last array entry, which would remove the wrong line item once merges are possible.
+	function addOrMergeLineItem(currentOrder, lineItem) {
+		var existing = findMatchingLineItem(currentOrder, lineItem);
+		if (existing) {
+			var previousQuantity = existing.Quantity;
+			existing.Quantity = (existing.Quantity || 0) + (lineItem.Quantity || 0);
+			return { lineItem: existing, undo: function() { existing.Quantity = previousQuantity; } };
+		}
+		currentOrder.LineItems.push(lineItem);
+		return {
+			lineItem: lineItem,
+			undo: function() {
+				var idx = currentOrder.LineItems.indexOf(lineItem);
+				if (idx > -1) currentOrder.LineItems.splice(idx, 1);
+			}
+		};
+	}
+
 	return{
 		getProductAndVariant: _getProductAndVariant,
+		addOrMergeLineItem: addOrMergeLineItem,
 		setNewLineItemScope: function(scope){
 			newLineItemScope(scope);
 		},

@@ -1,5 +1,5 @@
-four51.app.controller('CategoryCtrl', ['$routeParams', '$sce', '$scope', '$451', 'Category', 'Product', 'Nav', 'AppConst', 'Order', 'User', '$modal',
-function ($routeParams, $sce, $scope, $451, Category, Product, Nav, AppConst, Order, User, $modal) {
+four51.app.controller('CategoryCtrl', ['$routeParams', '$sce', '$scope', '$451', 'Category', 'Product', 'Nav', 'AppConst', 'Order', 'User', '$modal', 'ProductDisplayService',
+function ($routeParams, $sce, $scope, $451, Category, Product, Nav, AppConst, Order, User, $modal, ProductDisplayService) {
 	$scope.isHome = !$routeParams.categoryInteropID;
 	$scope.isNotFeaturedCategory = function(cat) {
 		return cat.InteropID !== AppConst.featuredCategoryInteropID;
@@ -45,7 +45,7 @@ function ($routeParams, $sce, $scope, $451, Category, Product, Nav, AppConst, Or
 			PriceSchedule: product.StandardPriceSchedule,
 			Quantity: 1
 		};
-		$scope.currentOrder.LineItems.push(lineItem);
+		var pending = ProductDisplayService.addOrMergeLineItem($scope.currentOrder, lineItem);
 		$scope.currentOrder.Type = lineItem.PriceSchedule.OrderType;
 		Order.clearshipping($scope.currentOrder).save($scope.currentOrder,
 			function(o) {
@@ -57,7 +57,7 @@ function ($routeParams, $sce, $scope, $451, Category, Product, Nav, AppConst, Or
 				});
 			},
 			function(ex) {
-				$scope.currentOrder.LineItems.pop();
+				pending.undo();
 				$scope.quickAddIndicator[product.InteropID] = false;
 				$scope.quickAddNeedsOptions[product.InteropID] = true;
 			}
