@@ -12,21 +12,35 @@ function ($routeParams, $sce, $scope, $451, Category, Product, Nav, AppConst, Or
 		}, 1, 20);
 	}
 
-	// Quick add-to-cart from a product card (home featured carousel and PLP grid). Attempted only
-	// for products that look simple (no variant, kit, or custom-text selection) based on list-level
-	// data - Product.search() results don't reliably include VariantCount/spec info the way the
-	// full product detail fetch does, so this is a best-effort gate, not a guarantee. If the add
-	// is rejected server-side (most commonly because the product actually needs options chosen),
-	// fall back to a friendly "choose options" prompt linking to the product page - never show the
-	// raw server exception to the customer.
+	// Quick add-to-cart from a product card (home featured carousel and PLP grid). Product.search()
+	// list results don't reliably carry VariantCount/Specs the way the full product detail fetch
+	// does, so we never decide "can this be quick-added" from list data - canQuickAdd() below is
+	// only a pre-fetch optimization to skip an unnecessary request for obviously non-simple
+	// products. The real decision happens in needsFullPdp(), against the authoritative product
+	// fetched via Product.get() (same call productCtrl.js's PDP flow uses), every time a card is
+	// clicked. This replaces an earlier version that trusted the list-level VariantCount and let a
+	// product that actually needed Location/Size options through, which failed server-side and
+	// briefly showed the customer a raw server exception - see git history for that hotfix.
+	//
+	// A product with real variants or specs still falls back to "Select Options" -> the full
+	// product page for now; a modal for the simple variant-selection case is a planned follow-up.
 	$scope.quickAddIndicator = {};
 	$scope.quickAddNeedsOptions = {};
 	$scope.canQuickAdd = function(product) {
-		return product && !product.VariantCount && product.Type != 'VariableText' && product.Type != 'Kit';
+		return product && product.Type != 'VariableText' && product.Type != 'Kit';
 	};
-	$scope.quickAddToCart = function(product) {
-		$scope.quickAddNeedsOptions[product.InteropID] = false;
-		$scope.quickAddIndicator[product.InteropID] = true;
+
+	function needsFullPdp(product) {
+		if (product.Type == 'Kit' || product.Type == 'VariableText') return true;
+		if (product.VariantCount > 0) return true;
+		var needsSpec = false;
+		angular.forEach(product.Specs, function(s) {
+			if (s.Required) needsSpec = true;
+		});
+		return needsSpec;
+	}
+
+	function addSimpleProductToCart(product) {
 		if (!$scope.currentOrder) {
 			$scope.currentOrder = {};
 			$scope.currentOrder.LineItems = [];
@@ -54,6 +68,19 @@ function ($routeParams, $sce, $scope, $451, Category, Product, Nav, AppConst, Or
 				$scope.quickAddNeedsOptions[product.InteropID] = true;
 			}
 		);
+	}
+
+	$scope.quickAddToCart = function(product) {
+		$scope.quickAddNeedsOptions[product.InteropID] = false;
+		$scope.quickAddIndicator[product.InteropID] = true;
+		Product.clearCache().get(product.InteropID, function(fullProduct) {
+			if (needsFullPdp(fullProduct)) {
+				$scope.quickAddIndicator[product.InteropID] = false;
+				$scope.quickAddNeedsOptions[product.InteropID] = true;
+				return;
+			}
+			addSimpleProductToCart(fullProduct);
+		});
 	};
 	$scope.productLoadingIndicator = true;
 	$scope.settings = {
