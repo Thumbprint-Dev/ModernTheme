@@ -106,6 +106,46 @@ Mixing in a second unrelated palette makes the site look inconsistent page-to-pa
 - `.mt-report-table` — generic striped/bordered data table, wrap in `.mt-report-table-wrap` with
   `overflow-x: auto` for wide tables on mobile
 
+### Kit data model: `NextKitLineItem` chain + `IsConfigurable`/`IsConfigured` flags
+
+A kit's components are NOT a nested array on the order response - they're a singly-linked list
+off the kit-parent line item: `parentLineItem.NextKitLineItem.NextKitLineItem...`, each node a
+full LineItem-shaped object (same shape as a top-level `order.LineItems[i]` - real `Product`,
+`Variant`, `Specs`, `Quantity`, not a partial/synthetic stub) carrying `KitItemID` (matches it back
+to `Kit.KitItems[i].ID`), `IsKitChild`, `IsConfigurable` (false = the component is fixed/included,
+never shown as needing action), and `IsConfigured` (server-computed - true once whatever that
+component requires, variant selection and/or specs, is satisfied). `app/js/services/kitService.js`'s
+`Kit.mapKitToOrder(kit, lineitem)` walks this chain and cross-assigns `kititem.LineItem = lineitem`
+for each match - this mutates in place, it never replaces the `Kit.KitItems` array or its entries,
+so object references captured before a save stay valid to reuse after one (just make sure to
+re-derive anything that reads mutable fields - see the next entry).
+
+Any kit-aware UI (the builder wizard, the cart's kit-contents summary) should walk this same chain
+rather than inventing a new data shape - `app/js/services/orderService.js`'s `_extend()` already
+walks it once (for `KitIsInvalid`) and again for `KitChildren` (see below), and
+`app/js/controllers/kitCtrl.js`'s `findNextUnconfiguredItem()` walks `Kit.KitItems` filtering on
+`IsConfigurable && !IsConfigured` - reuse these flags rather than re-deriving "does this need
+attention" from scratch.
+
+**`orderService.js`'s `_extend()` now also builds `li.KitChildren`** (a flat array, single level,
+matching the existing `KitIsInvalid` walk's depth - no kits-of-kits) on every kit-parent line item,
+with the same per-item processing (`SpecsLength`, File-spec auth-URL fixup) applied to top-level
+line items - available anywhere `_extend()` runs (every order fetch/save), so the cart's "View kit
+contents" toggle needed zero new API calls.
+
+### Don't cache a line-item/order reference across saves - re-derive it fresh instead
+
+The kit builder wizard (`kitCtrl.js`) auto-advances to the next unconfigured component after each
+save, and returns to the kit-parent panel once everything's done. The first draft of that "return
+to parent" logic cached the parent's `LineItem` object once, at initial page load, to restore later.
+That's wrong: every `saveItem()` call replaces `$scope.currentOrder` wholesale with a fresh server
+object graph - updated pricing (`LineTotal`) included, as children get configured - so a reference
+captured once at load goes stale. The fix: always re-derive from the current state instead of
+trusting a cached pointer - `$scope.LineItem = $scope.currentOrder.LineItems[$scope.kitIndex]`,
+computed fresh at the moment you need it, not stored ahead of time. **General lesson: in a flow
+with repeated save-then-redisplay cycles, anything you show the user afterward should be read from
+the just-returned fresh state, never a reference kept from before the save.**
+
 ## Latent bugs found in the stock Four51 templates (not introduced by us — pre-existing)
 
 ### Self-closing custom element tags
