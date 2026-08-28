@@ -12,24 +12,24 @@
     <div class="mt-container mt-section">
         <h2 class="mt-eyebrow">{{'Quick actions' | r | xlat}}</h2>
         <div class="row mt-quick-actions">
-            <div ng-class="(tree | filter:{InteropID:'all-products'}:true).length ? 'col-sm-4' : 'col-sm-6'">
+            <div ng-class="allProductsCategory ? 'col-sm-4' : 'col-sm-6'">
                 <a href="order" class="mt-tile">
                     <p class="mt-tile-title">{{'Reorder your last order' | r | xlat}}</p>
                     <p class="mt-tile-sub">{{'View your recent orders' | r | xlat}}</p>
                 </a>
             </div>
-            <div ng-class="(tree | filter:{InteropID:'all-products'}:true).length ? 'col-sm-4' : 'col-sm-6'">
+            <div ng-class="allProductsCategory ? 'col-sm-4' : 'col-sm-6'">
                 <a href="favoriteorders" class="mt-tile">
                     <p class="mt-tile-title">{{'Saved carts' | r | xlat}}</p>
                     <p class="mt-tile-sub">{{'Load a cart you saved earlier' | r | xlat}}</p>
                 </a>
             </div>
-            <!-- Only appears when a top-level category with InteropID exactly "all-products"
-                 exists (e.g. named "All Products" in the admin) - links straight to it as a
-                 real full-catalog browse. Otherwise there is nothing to link to, since Four51
-                 has no unscoped whole-catalog view (see the removed Browse full catalog tile). -->
-            <div class="col-sm-4" ng-repeat="allProductsCat in tree | filter:{InteropID:'all-products'}:true">
-                <a ng-href="catalog/{{allProductsCat.InteropID}}" class="mt-tile">
+            <!-- Only appears when a top-level category with InteropID exactly
+                 AppConst.allProductsCategoryInteropID exists (e.g. named "All Products" in the
+                 admin) - links straight to it as a real full-catalog browse. Otherwise there is
+                 nothing to link to, since Four51 has no unscoped whole-catalog view. -->
+            <div class="col-sm-4" ng-if="allProductsCategory">
+                <a ng-href="catalog/{{allProductsCategory.InteropID}}" class="mt-tile">
                     <p class="mt-tile-title">{{'Browse full catalog' | r | xlat}}</p>
                     <p class="mt-tile-sub">{{'Your team\'s approved products' | r | xlat}}</p>
                 </a>
@@ -37,10 +37,10 @@
         </div>
     </div>
 
-    <div class="mt-container mt-section" ng-if="tree.length">
+    <div class="mt-container mt-section" ng-if="shopByCategories.length">
         <h2 class="mt-eyebrow">{{'Shop by category' | r | xlat}}</h2>
         <div class="row">
-            <div class="col-sm-3" ng-repeat="dept in tree | filter:isNotFeaturedCategory">
+            <div class="col-sm-3" ng-repeat="dept in shopByCategories">
                 <a ng-href="catalog/{{dept.InteropID}}" class="mt-dept-tile">
                     <img ng-if="dept.Image.URL" ng-src="{{dept.Image.URL}}" class="mt-placeholder-photo mt-real-photo" alt="" />
                     <div ng-if="!dept.Image.URL" class="mt-placeholder-photo">{{'[lifestyle photo]' | r | xlat}}</div>
