@@ -204,6 +204,19 @@ wasn't decorative, it was the only thing making the clip work. **If a container 
 (or any other stacking-context-establishing property) from it without re-checking the actual
 rendered corner, not just re-reading the CSS.**
 
+**Coda — a second, unrelated round of "still looks square" after the real fix landed**: once
+`isolation: isolate` was restored, the clip genuinely worked (confirmed with the definitive test
+below), but the user still reported square corners. The actual remaining issue was that 14px is
+just too small a radius to visually register as "rounded" rather than "square" at this tile's
+real rendered size (roughly 280-380px wide) — especially compressed in a screenshot. Bumped to
+40px and it read as clearly rounded. **Don't assume every "still looks wrong" report is the same
+bug reappearing — verify the actual current state again** (in this case, with
+`document.elementFromPoint(tile.getBoundingClientRect().left + 2, top + 2)`: for any radius > 0,
+that exact corner pixel can never be part of the rounded shape, so if it resolves to the `<img>`
+the clip is broken, and if it resolves to something behind/around it the clip is working — a
+strictly more reliable check than eyeballing a screenshot, which is easy to misjudge for a subtle
+radius).
+
 ### `align-items: stretch` doesn't always reliably size a flex item — verify, don't assume
 
 Making a page's outer wrapper (`#content`) a flex column for a sticky footer turned its child
