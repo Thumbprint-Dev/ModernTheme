@@ -289,6 +289,12 @@ stale value while the first save is still in flight, and your "preserved" value 
   file with a cache-busting query string) before concluding a fix didn't work — the browser doing
   the visual check is very likely just serving a stale cached copy of an asset, not proof the
   deploy failed. This happened repeatedly this session; the deploy was fine every time.
+- Auto-deploy on merge is usually near-instant (seconds to ~1 minute), but **it can silently
+  stall for a specific commit** — confirmed once this session via the same `curl`-the-live-file
+  check above, still showing the pre-merge content 10+ minutes after merging with no sign of
+  picking it up. If a deploy is taking far longer than every prior one in the same session, don't
+  keep waiting indefinitely — check the Four51 admin's **Git File Deployment** page for that
+  commit and use its **Redeploy** button to force it through manually.
 - A live walkthrough via a connected real browser (Claude in Chrome) catches things a code review
   never will — several of the bugs above were only found by actually looking at a rendered page
   at a real mobile width and noticing something was visually wrong, then tracing back to the
