@@ -1,99 +1,89 @@
-<section>
+<section class="mt-order-detail">
     <loadingindicator ng-show="loadingIndicator" title="{{'Please wait while we fetch your order' | r | xlat}}"></loadingindicator>
     <div class="hidden-print">
-        <div>
-            <orderacknowledgemessage ng-show="order.recent" />
-        </div>
-        <nav class="nav">
-            <ul>
-                <li><span class="text-primary">{{(order.Type) + ' ' + ('Order' | r) | xlat}}<span ng-show="order.ExternalID"> {{'ID' | r}}: </span>{{order.ExternalID}}</span></li>
-                <li class="pull-right" ng-click="onPrint()"><span><i class="fa fa-print text-primary" rel="tooltip" title="{{'Print' | r | xlat}}"></i></span></li>
-            </ul>
-        </nav>
-        <div class="col-md-3 col-md-offset-1 col-md-push-8">
-            <div class="row">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">
-                            {{('Order' | r) + ' ' + ('Details' | r) | xlat}}
-                        </h3>
-                    </div>
-                    <div class="panel-body">
-                        <orderhistorydetails></orderhistorydetails>
-                        <orderhistorysummary ng-if="!(user.Permissions.contains('HidePricing'))"></orderhistorysummary>
-                    </div>
-                    <div class="panel-footer" ng-if="order.FromUserID == user.ID && order.Status != 'Unsubmitted'">
-                        <button ng-disabled="currentOrder" class="btn btn-primary pull-right" ng-click="repeatOrder()">
-                            <i ng-show="currentOrder" class="fa fa-warning"></i>
-                            {{('Repeat' | r) + ' ' + ('Order' | r) | xlat}}
-                        </button>
-                    </div>
-                </div>
+        <div class="mt-container mt-order-detail-inner">
+            <orderacknowledgemessage ng-show="order.recent"></orderacknowledgemessage>
+
+            <div class="mt-order-detail-header">
+                <h1 class="mt-pdp-title">{{(order.Type) + ' ' + ('Order' | r) | xlat}}<span ng-show="order.ExternalID"> {{'ID' | r}}: </span>{{order.ExternalID}}</h1>
+                <button type="button" class="mt-header-btn" ng-click="onPrint()">
+                    <i class="fa fa-print"></i> {{'Print' | r | xlat}}
+                </button>
             </div>
-        </div>
-        <div class="col-md-8 col-md-pull-4">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title panel-primary">
-                        {{order.LineItems.length}} {{'Item' + (order.LineItems.length > 1 ? 's' : '') | rl | xlat}} {{'in this' | rl | xlat:(currentOrder.LineItems.length)}} {{'Order' | rl | xlat}}
-                    </h3>
-                </div>
-                <lineitemhistorygrid />
 
-				<div class="panel-body" ng-show="shipments" ng-repeat="s in shipments">
-					<b>Shipper:</b> {{s.Shipper}}<br/>
-					<b>Tracking number:</b> {{s.TrackingNumber}}<br/>
-					<b>URL:</b> <a href="{{s.TrackingURL}}">{{s.TrackingURL}}</a><br>
-					<b>Items: </b> <ul><li ng-repeat="item in s.Items">{{item.ProductID}} - {{item.QuantityShipped}}</li></ul>
-					<hr>
-				</div>
+            <div class="mt-order-detail-layout">
+                <div class="mt-order-detail-main">
+                    <div class="mt-checkout-card">
+                        <h2 class="mt-checkout-card-title">
+                            {{order.LineItems.length}} {{'Item' + (order.LineItems.length > 1 ? 's' : '') | rl | xlat}} {{'in this' | rl | xlat:(currentOrder.LineItems.length)}} {{'Order' | rl | xlat}}
+                        </h2>
+                        <lineitemhistorygrid></lineitemhistorygrid>
 
+                        <div class="mt-order-detail-shipment" ng-show="shipments" ng-repeat="s in shipments">
+                            <p><strong>Shipper:</strong> {{s.Shipper}}</p>
+                            <p><strong>Tracking number:</strong> {{s.TrackingNumber}}</p>
+                            <p><strong>URL:</strong> <a href="{{s.TrackingURL}}">{{s.TrackingURL}}</a></p>
+                            <p><strong>Items: </strong></p>
+                            <ul class="mt-order-detail-shipment-items"><li ng-repeat="item in s.Items">{{item.ProductID}} - {{item.QuantityShipped}}</li></ul>
+                        </div>
 
-
-                <div class="panel-footer" ng-if="order.FromUserID == user.ID && order.Status != 'Unsubmitted' && user.Type !='TempCustomer'">
-                   <loadingindicator ng-show="displayLoadingIndicator" />
-                   <div class="form-group view-form-icon">
-                        <div class="input-group">
-                            <input type="text" ng-model="order.FavoriteName" placeholder="{{('Favorite' | r) + ' ' + ('Name' | r) | xlat}}" class="form-control" autocomplete="off" />
-                            <i class="fa fa-star"></i>
-                            <span class="input-group-btn">
-                                <button type="button" ng-click="saveFavorite()" class="btn btn-info">{{('Save' | r) + ' ' + ('Favorite' | r) | xlat}}</button>
-                            </span>
+                        <div class="mt-order-detail-card-footer" ng-if="order.FromUserID == user.ID && order.Status != 'Unsubmitted' && user.Type !='TempCustomer'">
+                            <loadingindicator ng-show="displayLoadingIndicator"></loadingindicator>
+                            <div class="form-group view-form-icon">
+                                <div class="input-group">
+                                    <input type="text" ng-model="order.FavoriteName" placeholder="{{('Favorite' | r) + ' ' + ('Name' | r) | xlat}}" class="form-control" autocomplete="off" />
+                                    <i class="fa fa-star"></i>
+                                    <span class="input-group-btn">
+                                        <button type="button" ng-click="saveFavorite()" class="mt-btn-accent">{{('Save' | r) + ' ' + ('Favorite' | r) | xlat}}</button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-order-detail-card-footer" ng-if="order.FromUserID == user.ID && order.Status == 'Unsubmitted'">
+                            <loadingindicator ng-show="displayLoadingIndicator"></loadingindicator>
+                            <div class="mt-order-detail-setcurrent">
+                                <loadingindicator ng-show="currentLoadingIndicator"></loadingindicator>
+                                <button ng-if="order.ID != currentOrder.ID" type="button" ng-click="currentLoadingIndicator = true; setCurrent()" class="mt-header-btn">
+                                    <i class="fa fa-icon-random"></i>
+                                    {{'Set as Current' | r}} {{'Order' | r}}
+                                </button>
+                            </div>
                         </div>
                     </div>
+
+                    <div ng-show="order.Approvals" class="mt-checkout-card mt-order-detail-approvals">
+                        <h2 class="mt-checkout-card-title">{{'Approvals' | r | xlat}}</h2>
+                        <approval ng-show="order.Status == 'AwaitingApproval' && (order.UserCanApprove || user.Permissions.contains('ApproveAllOrders'))" order="order"></approval>
+                        <approvalrulelist order="order"></approvalrulelist>
+                    </div>
                 </div>
-                <div class="panel-footer" ng-if="order.FromUserID == user.ID && order.Status == 'Unsubmitted'">
-                    <loadingindicator ng-show="displayLoadingIndicator" />
-                    <div class="form-group view-form-icon">
-                        <div class="pull-right">
-                            <loadingindicator  ng-show="currentLoadingIndicator" />
-                            <i class="fa fa-icon-random"></i>
-                            <button ng-if="order.ID != currentOrder.ID" type="button" ng-click="currentLoadingIndicator = true; setCurrent()" class="btn btn-info">
-                                {{'Set as Current' | r}} {{'Order' | r}}
+
+                <aside class="mt-order-detail-side">
+                    <div class="mt-checkout-card">
+                        <h2 class="mt-checkout-card-title">
+                            {{('Order' | r) + ' ' + ('Details' | r) | xlat}}
+                        </h2>
+                        <orderhistorydetails></orderhistorydetails>
+                        <orderhistorysummary ng-if="!(user.Permissions.contains('HidePricing'))"></orderhistorysummary>
+                        <div class="mt-order-detail-card-footer" ng-if="order.FromUserID == user.ID && order.Status != 'Unsubmitted'">
+                            <button ng-disabled="currentOrder" class="mt-btn-accent" ng-click="repeatOrder()">
+                                <i ng-show="currentOrder" class="fa fa-warning"></i>
+                                {{('Repeat' | r) + ' ' + ('Order' | r) | xlat}}
                             </button>
                         </div>
                     </div>
-                </div>
+                </aside>
             </div>
 
-            <div ng-show="order.Approvals" class="panel panel-default approval-rule-status-summary">
-                <div class="panel-heading">
-                    <h3 class="panel-title panel-primary">{{'Approvals' | r | xlat}}</h3>
+            <div class="navbar-fixed-bottom">
+                <div class="view-response-message alert-success text-center" alert-show="actionMessage">
+                    <p>{{actionMessage | r | xlat}}</p>
                 </div>
-                <div class="panel-body">
-                    <approval ng-show="order.Status == 'AwaitingApproval' && (order.UserCanApprove || user.Permissions.contains('ApproveAllOrders'))" order="order"/>
-                    <approvalrulelist order="order" />
+                <div class="view-response-message alert-danger text-center" alert-show="errorMessage">
+                    <p>{{errorMessage | r | xlat}}</p>
                 </div>
-            </div>
-        </div>
-        <div class="navbar-fixed-bottom">
-            <div class="view-response-message alert-success text-center" alert-show="actionMessage">
-                <p>{{actionMessage | r | xlat}}</p>
-            </div>
-            <div class="view-response-message alert-danger text-center" alert-show="errorMessage">
-                <p>{{errorMessage | r | xlat}}</p>
             </div>
         </div>
     </div>
-    <orderprint class="visible-print" />
+    <orderprint class="visible-print"></orderprint>
 </section>
