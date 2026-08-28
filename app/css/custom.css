@@ -1883,3 +1883,153 @@ Template: Howdy
     height: auto;
     max-width: 160px;
 }
+
+/* ===== ModernTheme: Kit product pages (v1) ===== */
+/* kitView.html / kitVariantView.html - built on top of the same .mt-pdp base styles as the
+   real PDP (image wrap, title/price/description, view-form-icon spec fields, quantity field),
+   scoped additionally under .mt-kit for the kit-item list and "configuring item" card, which
+   have no equivalent on the standard product page. */
+
+.mt-eyebrow-inverse {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.mt-kit-items {
+    border: 1px solid #E8E4DA;
+    border-radius: 12px;
+    background: #fff;
+    overflow: hidden;
+    margin-top: 16px;
+}
+
+.mt-kit-items-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #0F6B63;
+    color: #fff;
+    padding: 14px 18px;
+}
+
+.mt-kit-items-header h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #fff;
+}
+
+.mt-kit-items-count {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.mt-kit-items-list {
+    list-style: none;
+    margin: 0;
+    padding: 10px;
+}
+
+.mt-kit-item-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border: 1px solid #E8E4DA;
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    background: #FAF8F4;
+}
+
+.mt-kit-item-row:last-child {
+    margin-bottom: 0;
+}
+
+.mt-kit-item-row.mt-kit-item-noclick {
+    cursor: default;
+}
+
+.mt-kit-item-row.mt-kit-item-active {
+    border-color: #0F6B63;
+    background: #EAF4F2;
+}
+
+.mt-kit-item-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #211F19;
+}
+
+.mt-kit-item-qty {
+    display: block;
+    font-size: 12px;
+    font-weight: 400;
+    color: #726D5F;
+    margin-top: 2px;
+}
+
+.mt-kit-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    border-radius: 999px;
+    padding: 5px 10px;
+}
+
+.mt-kit-pill-muted {
+    background: #EFEDE6;
+    color: #726D5F;
+}
+
+.mt-kit-pill-warn {
+    background: #FCEFD8;
+    color: #A85D00;
+}
+
+.mt-kit-pill-active {
+    background: #0F6B63;
+    color: #fff;
+}
+
+.mt-kit-pill-done {
+    background: #E3F1EE;
+    color: #0F6B63;
+}
+
+.mt-kit-config-card {
+    border: 1px solid #E8E4DA;
+    border-radius: 12px;
+    background: #fff;
+    overflow: hidden;
+    margin-bottom: 24px;
+}
+
+.mt-kit-config-card-header {
+    background: #0F6B63;
+    color: #fff;
+    padding: 14px 20px;
+}
+
+.mt-kit-config-card-header h3 {
+    margin: 4px 0 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.mt-kit-config-card-body {
+    padding: 20px;
+}
