@@ -2070,3 +2070,422 @@ body {
 .mt-kit-config-card-body {
     padding: 20px;
 }
+
+/* ===== ModernTheme: Order History / Favorites (v1) ===== */
+
+.mt-orders,
+.mt-order-detail,
+.mt-line-item-detail,
+.mt-favorites {
+    font-family: 'Inter', 'Droid Sans', sans-serif;
+    color: #262420;
+    background: #FAF8F4;
+    margin: -20px -15px 0;
+    padding-bottom: 60px;
+}
+
+.mt-orders-inner,
+.mt-order-detail-inner,
+.mt-line-item-detail-inner,
+.mt-favorites-inner {
+    padding-top: 24px;
+}
+
+.mt-orders .mt-pdp-title,
+.mt-favorites .mt-pdp-title {
+    margin-bottom: 20px;
+}
+
+.mt-orders-empty-message {
+    color: #726D5F;
+    font-size: 14px;
+    margin: 0 0 16px;
+}
+
+.mt-orders-alert-error {
+    display: block;
+    color: #B3261E;
+    font-size: 13px;
+    margin-top: 12px;
+}
+
+/* Order search: quick-filter cards (Standard / Replenishment / Price Request) */
+.mt-orders-type-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 4px;
+}
+
+.mt-orders-type-card {
+    flex: 1;
+    min-width: 0;
+}
+
+.mt-orders-type-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.mt-orders-type-list li {
+    border-bottom: 1px solid #F0EDE4;
+}
+
+.mt-orders-type-list li:last-child {
+    border-bottom: none;
+}
+
+.mt-orders-type-list a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    color: #262420;
+    text-decoration: none;
+}
+
+.mt-orders-type-list a:hover {
+    color: #0F6B63;
+}
+
+.mt-orders-type-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: #EFEDE6;
+    color: #726D5F;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Order search: search panel */
+.mt-orders-search-row {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.mt-orders-search-fields {
+    flex: 1;
+    min-width: 0;
+}
+
+.mt-orders-search-fields .view-form-icon {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.mt-orders-search-fields .form-group {
+    flex: 1 1 200px;
+    min-width: 160px;
+    margin: 0;
+}
+
+.mt-orders-search-lastn {
+    flex: 0 0 260px;
+}
+
+.mt-orders-search-lastn-inner {
+    background: #FCEFD8;
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 13px;
+    color: #A85D00;
+}
+
+.mt-orders-search-lastn-inner .view-form-icon {
+    margin-top: 8px;
+}
+
+.mt-orders-search-actions {
+    margin-top: 20px;
+    text-align: right;
+}
+
+@media (max-width: 767px) {
+    .mt-orders-search-row {
+        flex-direction: column;
+    }
+    .mt-orders-search-lastn {
+        flex: 1 1 auto;
+        width: 100%;
+    }
+}
+
+/* Order search: results list */
+.mt-orders-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #F0EDE4;
+}
+
+.mt-orders-row:last-child {
+    border-bottom: none;
+}
+
+.mt-orders-row-head {
+    color: #726D5F;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    border-bottom: 1px solid #E8E4DA;
+}
+
+.mt-orders-col-id,
+.mt-orders-col-type,
+.mt-orders-col-status,
+.mt-orders-col-submitted,
+.mt-orders-col-date,
+.mt-orders-col-total {
+    flex: 1;
+    min-width: 0;
+}
+
+.mt-orders-row-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #726D5F;
+    margin-bottom: 2px;
+}
+
+@media (max-width: 767px) {
+    .mt-orders-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
+    }
+}
+
+.mt-orders-status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    border-radius: 999px;
+    padding: 5px 10px;
+    background: #EFEDE6;
+    color: #726D5F;
+}
+
+.mt-orders-status-pill-open,
+.mt-orders-status-pill-approved {
+    background: #E3F1EE;
+    color: #0F6B63;
+}
+
+.mt-orders-status-pill-pending {
+    background: #FCEFD8;
+    color: #A85D00;
+}
+
+.mt-orders-status-pill-unsubmitted {
+    background: #EFEDE6;
+    color: #726D5F;
+}
+
+.mt-orders-status-pill-declined {
+    background: #FBE7E5;
+    color: #B3261E;
+}
+
+/* Order detail page */
+.mt-order-detail-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.mt-order-detail-header .mt-pdp-title {
+    margin: 0;
+}
+
+.mt-order-detail-layout {
+    display: flex;
+    align-items: flex-start;
+    gap: 32px;
+}
+
+.mt-order-detail-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.mt-order-detail-side {
+    flex: 0 0 320px;
+}
+
+@media (max-width: 767px) {
+    .mt-order-detail-layout {
+        flex-direction: column;
+    }
+    .mt-order-detail-side {
+        width: 100%;
+    }
+}
+
+.mt-order-detail-card-footer {
+    border-top: 1px solid #E8E4DA;
+    margin-top: 20px;
+    padding-top: 20px;
+}
+
+.mt-order-detail-setcurrent {
+    text-align: right;
+}
+
+.mt-order-detail-shipment {
+    border-top: 1px solid #E8E4DA;
+    margin-top: 20px;
+    padding-top: 16px;
+    font-size: 14px;
+}
+
+.mt-order-detail-shipment p {
+    margin: 0 0 6px;
+}
+
+.mt-order-detail-shipment-items {
+    margin: 0;
+    padding-left: 18px;
+}
+
+.mt-order-detail-approvals {
+    margin-top: 20px;
+}
+
+/* Order detail: the shared orderhistorydetails / orderhistorysummary directive templates
+   (partials/Reporting/orderHistoryDetailsView.html and orderHistorySummaryView.html) are not
+   restyled directly since they are shared includes rendered elsewhere too - their generic
+   markup (p/span.text-info/span.pull-right/address/hr) is styled here instead, scoped to
+   only take effect inside the new .mt-order-detail-side wrapper. */
+.mt-order-detail-side p {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 0 0 10px;
+    font-size: 13px;
+}
+
+.mt-order-detail-side p .text-info {
+    color: #726D5F;
+    flex-shrink: 0;
+}
+
+.mt-order-detail-side p .pull-right {
+    text-align: right;
+}
+
+.mt-order-detail-side hr {
+    border: none;
+    border-top: 1px solid #E8E4DA;
+    margin: 16px 0;
+}
+
+.mt-order-detail-side address {
+    font-size: 13px;
+    font-style: normal;
+    margin-bottom: 16px;
+}
+
+/* Order detail: the shared lineitemhistorygrid directive template
+   (partials/Reporting/lineItemHistoryGridView.html) renders a .panel-order-history block per
+   line item inside .mt-order-detail-main - style those generically the same way. */
+.mt-order-detail-main .panel-order-history {
+    border-top: 1px solid #E8E4DA;
+    padding: 20px 0;
+}
+
+.mt-order-detail-main .panel-order-history:first-child {
+    border-top: none;
+    padding-top: 0;
+}
+
+/* Line item detail page */
+.mt-line-item-detail-layout {
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
+}
+
+.mt-line-item-detail-image-wrap {
+    flex: 0 0 40%;
+}
+
+.mt-line-item-detail-image-wrap figure {
+    margin: 0;
+}
+
+.mt-line-item-detail-image-wrap img {
+    width: 100%;
+    border-radius: 12px;
+}
+
+.mt-line-item-detail-content {
+    flex: 1;
+    min-width: 0;
+}
+
+@media (max-width: 767px) {
+    .mt-line-item-detail-layout {
+        flex-direction: column;
+    }
+    .mt-line-item-detail-image-wrap {
+        flex: 1 1 auto;
+        width: 100%;
+    }
+}
+
+/* Favorite orders page */
+.mt-favorites-search {
+    margin-bottom: 20px;
+}
+
+.mt-favorites-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.mt-favorites-table th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #726D5F;
+    padding: 8px 10px;
+    border-bottom: 1px solid #E8E4DA;
+}
+
+.mt-favorites-table td {
+    padding: 10px;
+    border-bottom: 1px solid #F0EDE4;
+    color: #262420;
+    vertical-align: middle;
+}
+
+.mt-favorites-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 20px;
+}
