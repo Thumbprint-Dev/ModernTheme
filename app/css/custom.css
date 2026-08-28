@@ -212,7 +212,6 @@ body {
     aspect-ratio: 3 / 4;
     border-radius: 14px;
     overflow: hidden;
-    isolation: isolate;
     margin-bottom: 20px;
     text-decoration: none;
 }
@@ -233,14 +232,6 @@ body {
     transform: scale(1.06);
 }
 
-.mt-dept-tile::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, rgba(33, 31, 25, 0) 45%, rgba(33, 31, 25, 0.75) 100%);
-    pointer-events: none;
-}
-
 .mt-dept-tile:focus-visible {
     outline: 2px solid #0F6B63;
     outline-offset: 3px;
@@ -258,6 +249,10 @@ body {
     font-weight: 600;
     letter-spacing: -0.01em;
     color: #fff;
+    /* No background scrim behind the text - keeps the photo clean and flat. A soft text-shadow
+       (not a box-shadow on the tile) is enough to keep the name legible over a bright photo
+       without darkening the image itself. */
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.45);
 }
 
 .mt-product-card {
