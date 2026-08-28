@@ -33,6 +33,10 @@ function ($scope, $route, $rootScope, $timeout, $document, $window, $location, $
 				$scope.user.Culture.CurrencyPrefix = XLATService.getCurrentLanguage(user.CultureUI, user.Culture.Name)[1];
 				$scope.user.Culture.DateFormat = XLATService.getCurrentLanguage(user.CultureUI, user.Culture.Name)[2];
 
+				if (user.Company && user.Company.Name) {
+					$document[0].title = user.Company.Name + ' - ' + $window.location.hostname;
+				}
+
 				if (!$scope.user.TermsAccepted)
 					$location.path('conditions');
 
