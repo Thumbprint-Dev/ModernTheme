@@ -1,5 +1,5 @@
-four51.app.controller('CategoryCtrl', ['$routeParams', '$sce', '$scope', '$451', 'Category', 'Product', 'Nav', 'AppConst',
-function ($routeParams, $sce, $scope, $451, Category, Product, Nav, AppConst) {
+four51.app.controller('CategoryCtrl', ['$routeParams', '$sce', '$scope', '$451', 'Category', 'Product', 'Nav', 'AppConst', 'Order', 'User',
+function ($routeParams, $sce, $scope, $451, Category, Product, Nav, AppConst, Order, User) {
 	$scope.isHome = !$routeParams.categoryInteropID;
 	$scope.isNotFeaturedCategory = function(cat) {
 		return cat.InteropID !== AppConst.featuredCategoryInteropID;
@@ -7,21 +7,51 @@ function ($routeParams, $sce, $scope, $451, Category, Product, Nav, AppConst) {
 	if ($scope.isHome) {
 		// "Featured for your team" pulls from a dedicated real category (see AppConst.featuredCategoryInteropID)
 		// rather than a platform-wide "all products" query, which Product.search doesn't support unscoped.
-		var FEATURED_PAGE_SIZE = 4;
 		Product.search(AppConst.featuredCategoryInteropID, null, null, function (products) {
 			$scope.featuredProducts = products;
-			$scope.featuredPage = 0;
-			$scope.featuredTotalPages = Math.ceil((products || []).length / FEATURED_PAGE_SIZE);
 		}, 1, 20);
-		$scope.featuredNext = function() {
-			if ($scope.featuredPage < $scope.featuredTotalPages - 1)
-				$scope.featuredPage++;
-		};
-		$scope.featuredPrev = function() {
-			if ($scope.featuredPage > 0)
-				$scope.featuredPage--;
-		};
 	}
+
+	// Quick add-to-cart from a product card (home featured carousel and PLP grid). Only offered
+	// for simple products - no variant, kit, or custom-text selection to resolve first, since
+	// those all require the full product detail page. Mirrors the same LineItem shape and
+	// Order.save() call productCtrl.js's addToOrder() uses for the equivalent simple-product case.
+	$scope.quickAddIndicator = {};
+	$scope.quickAddError = {};
+	$scope.canQuickAdd = function(product) {
+		return product && !product.VariantCount && product.Type != 'VariableText' && product.Type != 'Kit';
+	};
+	$scope.quickAddToCart = function(product) {
+		$scope.quickAddError[product.InteropID] = null;
+		$scope.quickAddIndicator[product.InteropID] = true;
+		if (!$scope.currentOrder) {
+			$scope.currentOrder = {};
+			$scope.currentOrder.LineItems = [];
+		}
+		if (!$scope.currentOrder.LineItems) $scope.currentOrder.LineItems = [];
+		var lineItem = {
+			Product: product,
+			PriceSchedule: product.StandardPriceSchedule,
+			Quantity: 1
+		};
+		$scope.currentOrder.LineItems.push(lineItem);
+		$scope.currentOrder.Type = lineItem.PriceSchedule.OrderType;
+		Order.clearshipping($scope.currentOrder).save($scope.currentOrder,
+			function(o) {
+				$scope.currentOrder = o;
+				$scope.quickAddIndicator[product.InteropID] = false;
+				$scope.user.CurrentOrderID = o.ID;
+				User.save($scope.user, function(u) {
+					$scope.user = u;
+				});
+			},
+			function(ex) {
+				$scope.currentOrder.LineItems.pop();
+				$scope.quickAddIndicator[product.InteropID] = false;
+				$scope.quickAddError[product.InteropID] = ex.Message;
+			}
+		);
+	};
 	$scope.productLoadingIndicator = true;
 	$scope.settings = {
 		currentPage: 1,
