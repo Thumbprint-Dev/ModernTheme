@@ -1,10 +1,10 @@
-<section>
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title panel-primary">Condiciones de uso</h3>
-        </div>
-        <div class="panel-body">
-            <button id="451qa_btn_terms_accept" ng-show="user.TermsAccepted == null" class="btn btn-default btn-info" ng-click="accept()">Acepto los siguientes términos</button>
+<section class="mt-legal">
+    <div class="mt-container mt-legal-inner">
+        <div class="mt-legal-body">
+            <p class="mt-eyebrow">{{'Legal' | r | xlat}}</p>
+            <h1 class="mt-pdp-title">Condiciones de uso</h1>
+
+            <div class="mt-legal-actions"><button id="451qa_btn_terms_accept" ng-show="user.TermsAccepted == null" class="mt-btn-accent" ng-click="accept()">Acepto los siguientes términos</button></div>
             <p>EL PRESENTE CONTRATO es celebrado por las siguientes partes:</p>
             <p>el proveedor de servicios de comercio electrónico (en adelante, "proveedor") y el usuario del sitio Web.</p>
             <p>CONSIDERANDO que el usuario del sitio Web es un usuario final que desea participar en la plataforma basada en Internet del proveedor a fin de mejorar el funcionamiento y la eficacia de la distribución de materiales (en adelante, "proyecto");</p>
@@ -23,7 +23,7 @@
             <p>(3)<u>Componentes informáticos de hardware y software del usuario del sitio Web</u>.   El usuario del sitio Web es responsable de proporcionar, operar y mantener, bajo su propio costo, todos los componentes informáticos de hardware y software del usuario del sitio Web. Asimismo, el usuario del sitio Web es responsable de la seguridad de dichos componentes informáticos. Previa solicitud, el proveedor ayudará al usuario del sitio Web a detectar o identificar falencias en la seguridad de la red, pero no será responsable en modo alguno de la incapacidad del usuario del sitio Web de detectar o identificar falencias de seguridad. </p>
             <p>(4)<u>Garantías y descargos de responsabilidades</u>.</p>
             <p></p>
-            <table>
+            <table class="mt-legal-table">
                 <tbody>
                 <tr>
                     <td> </td>
@@ -39,7 +39,7 @@
             <p>(7)<u>Confidencialidad</u>.  Durante el período de vigencia del presente contrato, el usuario del sitio Web y el proveedor podrán intercambiar cierta información, que incluye, aunque no de manera exclusiva, conocimientos técnicos o comerciales, conocimientos prácticos, descubrimientos, invenciones, diagramas de flujos, algoritmos, procesos, programas de software, esquemas de hardware, gráficos, bases de datos, especificaciones, secretos comerciales, listas de clientes u otra información de clientes, datos que serán considerados "información confidencial" en virtud del presente contrato. El usuario del sitio Web y el proveedor convienen en tomar medidas razonables para prevenir la divulgación y la oferta a terceros de la información confidencial de su respectiva contraparte. Asimismo, tomarán medidas razonables para garantizar que sus respectivos empleados, agentes y asesores no divulguen ni ofrezcan a terceros la información confidencial de su respectiva contraparte. La obligación de confidencialidad de las partes perdurará tras la caducidad o rescisión del presente contrato y se mantendrá vigente durante un período de tres años. La información confidencial no incluirá información (i) que esté disponible al público por motivos ajenos a una de las partes; (ii) que sea recibida legítimamente por una de las partes de un tercero que no esté afecto a restricciones de divulgación; o (iii) que sea desarrollada de manera independiente por una de las partes sin empleo de información confidencial.  </p>
             <p>(8)<u>Indemnidad</u>.   El usuario del sitio Web liberará y mantendrá a salvo al proveedor y sus empleados, agentes y asesores de cualquier responsabilidad o pérdida relacionada con demandas, acciones judiciales, litigios, procedimientos legales, pérdidas, daños, peticiones, honorarios, cobros, multas, penalizaciones y costos (incluidos los honorarios y gastos razonables de abogados) que se originen por demandas, acciones judiciales o procedimientos legales que inicie un tercero contra el proveedor en relación con el proyecto o con los servicios prestados conforme al presente documento, excepto en aquellos casos en que la pérdida en cuestión sea responsabilidad del proveedor.</p>
             <p>(9)<u>Política de uso aceptable</u>.  El usuario del sitio Web limitará el uso del sitio Web del proveedor a los fines comerciales para los que está destinado. Específicamente, el usuario del sitio Web no cargará, publicará, transmitirá, distribuirá ni divulgará de otro modo mediante el sitio Web del proveedor materiales (a) que restrinjan o inhiban a otro usuario y le impidan utilizar el sitio Web; (b) que sean ilegítimos, dañinos, abusivos, injuriosos, difamatorios, obscenos, profanos o indecorosos; (c) que constituyan o incentiven conductas que representen un delito, den origen a responsabilidad civil o infrinjan la ley de otro modo; (d) que violen, plagien o infrinjan los derechos de terceros, ya sean derechos de propiedad o de otra naturaleza; o (e) que contengan un virus u otro componente dañino.</p>
-            <button ng-show="user.TermsAccepted == null" class="btn btn-default btn-info" ng-click="accept()">Acepto los siguientes términos</button>
+            <div class="mt-legal-actions"><button ng-show="user.TermsAccepted == null" class="mt-btn-accent" ng-click="accept()">Acepto los siguientes términos</button></div>
         </div>
     </div>
 </section>

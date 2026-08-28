@@ -2503,3 +2503,120 @@ body {
 .mt-contact-inner > .mt-pdp-title {
     margin-bottom: 20px;
 }
+
+/* ===== ModernTheme: Legal pages (Security / Conditions) (v1) ===== */
+
+.mt-legal {
+    font-family: 'Inter', 'Droid Sans', sans-serif;
+    color: #262420;
+    background: #FAF8F4;
+    margin: -20px -15px 0;
+    padding-bottom: 60px;
+}
+
+.mt-legal-inner {
+    padding-top: 40px;
+}
+
+.mt-legal-body {
+    max-width: 760px;
+    margin: 0 auto;
+    background: #fff;
+    border: 1px solid #E8E4DA;
+    border-radius: 12px;
+    padding: 48px 56px;
+}
+
+.mt-legal-body .mt-eyebrow {
+    margin: 0 0 12px;
+}
+
+.mt-legal-body .mt-pdp-title {
+    margin: 0 0 20px;
+}
+
+.mt-legal-lead {
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.5;
+    color: #211F19;
+    padding: 14px 18px;
+    margin: 0 0 32px;
+    background: #FAF8F4;
+    border-left: 3px solid #0F6B63;
+    border-radius: 4px;
+}
+
+.mt-legal-body h2 {
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #211F19;
+    margin: 32px 0 12px;
+}
+
+.mt-legal-body h2:first-of-type {
+    margin-top: 0;
+}
+
+.mt-legal-body p {
+    font-size: 15px;
+    line-height: 1.75;
+    color: #262420;
+    margin: 0 0 18px;
+}
+
+.mt-legal-body ol,
+.mt-legal-body ul {
+    margin: 0 0 18px;
+    padding-left: 22px;
+}
+
+.mt-legal-body li {
+    font-size: 15px;
+    line-height: 1.75;
+    color: #262420;
+    margin-bottom: 8px;
+}
+
+.mt-legal-body a {
+    color: #0F6B63;
+    text-decoration: underline;
+}
+
+.mt-legal-body a:hover,
+.mt-legal-body a:focus {
+    color: #0C544E;
+}
+
+.mt-legal-body strong {
+    color: #211F19;
+}
+
+.mt-legal-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 0 18px;
+}
+
+.mt-legal-table td {
+    padding: 0 0 0 8px;
+    vertical-align: top;
+    font-size: 15px;
+    line-height: 1.75;
+    color: #262420;
+}
+
+.mt-legal-table td p {
+    margin: 0 0 12px;
+}
+
+.mt-legal-actions {
+    margin: 8px 0 32px;
+}
+
+@media (max-width: 600px) {
+    .mt-legal-body {
+        padding: 32px 20px;
+    }
+}
