@@ -72,15 +72,19 @@ function ($scope, $routeParams, $location, $filter, $rootScope, $451, User, Orde
 		var cache = angular.copy($scope.currentOrder);
 	    Order.save($scope.currentOrder,
 	        function(data) {
+				// Read these at response time, not from the pre-request cache - a value set while
+				// this save was in flight would otherwise get clobbered by a stale snapshot.
+				var budgetAccountID = $scope.currentOrder.BudgetAccountID;
+				var creditCardID = $scope.currentOrder.CreditCardID;
 		        $scope.currentOrder = data;
 				if(cache.CreditCard){
 					$scope.currentOrder.CreditCard = cache.CreditCard;
 				}
-				if(cache.BudgetAccountID){
-					$scope.currentOrder.BudgetAccountID = cache.BudgetAccountID;
+				if(budgetAccountID){
+					$scope.currentOrder.BudgetAccountID = budgetAccountID;
 				}
-				if(cache.CreditCardID){
-					$scope.currentOrder.CreditCardID = cache.CreditCardID;
+				if(creditCardID){
+					$scope.currentOrder.CreditCardID = creditCardID;
 				}
 		        if (auto) {
 			        $scope.currentOrder.autoID = true;
