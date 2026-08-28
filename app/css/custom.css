@@ -1754,11 +1754,19 @@ body {
 @media (max-width: 767px) {
     /* margin-left:auto pushes New Address to the right of the payment method buttons on one
        row at desktop width - on mobile the row wraps instead, which left it floating alone at
-       the far right of its own line with a large empty gap. Drop the auto-margin and force it
-       onto its own full-width line below the payment buttons instead, left-aligned like them. */
+       the far right of its own line with a large empty gap. The standard flexbox line-break
+       trick (a zero-height sibling with flex-basis:100% right before the button) forces it onto
+       its own line without stretching the button itself to fill that line - flex-basis:100% on
+       the button directly would force a new line too, but it would also BE the button's width,
+       leaving it full-width instead of matching the compact, natural size of the Shipping
+       section's own New Address button. */
+    .mt-checkout-payment-break {
+        flex-basis: 100%;
+        height: 0;
+    }
     .mt-checkout-payment-toggle .mt-checkout-shipto-new {
         margin-left: 0;
-        flex: 1 1 100%;
+        flex: 0 0 auto;
     }
 }
 
