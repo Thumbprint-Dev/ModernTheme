@@ -12,16 +12,26 @@
     <div class="mt-container mt-section">
         <h2 class="mt-eyebrow">{{'Quick actions' | r | xlat}}</h2>
         <div class="row mt-quick-actions">
-            <div class="col-sm-6">
+            <div ng-class="(tree | filter:{InteropID:'all-products'}:true).length ? 'col-sm-4' : 'col-sm-6'">
                 <a href="order" class="mt-tile">
                     <p class="mt-tile-title">{{'Reorder your last order' | r | xlat}}</p>
                     <p class="mt-tile-sub">{{'View your recent orders' | r | xlat}}</p>
                 </a>
             </div>
-            <div class="col-sm-6">
+            <div ng-class="(tree | filter:{InteropID:'all-products'}:true).length ? 'col-sm-4' : 'col-sm-6'">
                 <a href="favoriteorders" class="mt-tile">
                     <p class="mt-tile-title">{{'Saved carts' | r | xlat}}</p>
                     <p class="mt-tile-sub">{{'Load a cart you saved earlier' | r | xlat}}</p>
+                </a>
+            </div>
+            <!-- Only appears when a top-level category with InteropID exactly "all-products"
+                 exists (e.g. named "All Products" in the admin) - links straight to it as a
+                 real full-catalog browse. Otherwise there is nothing to link to, since Four51
+                 has no unscoped whole-catalog view (see the removed Browse full catalog tile). -->
+            <div class="col-sm-4" ng-repeat="allProductsCat in tree | filter:{InteropID:'all-products'}:true">
+                <a ng-href="catalog/{{allProductsCat.InteropID}}" class="mt-tile">
+                    <p class="mt-tile-title">{{'Browse full catalog' | r | xlat}}</p>
+                    <p class="mt-tile-sub">{{'Your team\'s approved products' | r | xlat}}</p>
                 </a>
             </div>
         </div>
