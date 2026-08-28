@@ -144,17 +144,30 @@ Template: Howdy
 .mt-product-card {
     display: flex;
     flex-direction: column;
+    height: 100%;
+    box-sizing: border-box;
     border: 1px solid #E8E4DA;
     background: #fff;
     border-radius: 12px;
     padding: 14px;
     margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.mt-product-card-link {
+    display: flex;
+    flex-direction: column;
 }
 
 .mt-product-name {
     font-size: 14px;
     font-weight: 600;
     margin: 4px 0 2px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    min-height: 2.6em;
 }
 
 .mt-product-price {
@@ -176,9 +189,13 @@ Template: Howdy
     box-sizing: border-box;
 }
 
-.mt-product-card-error {
+.mt-product-card > .mt-product-card-add {
+    margin-top: auto;
+}
+
+.mt-product-card-note {
     font-size: 12px;
-    color: #B3261E;
+    color: #726D5F;
     margin: 6px 0 0;
 }
 
@@ -208,7 +225,6 @@ Template: Howdy
     overflow-x: auto;
     overflow-y: hidden;
     scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
@@ -574,6 +590,14 @@ Template: Howdy
     align-items: center;
     justify-content: space-between;
     margin-bottom: 16px;
+}
+
+/* Bootstrap 3's grid is float-based, so columns don't stretch to equal height by default -
+   make the product grid row a flex row so every .mt-product-card fills its column's full height
+   (via height:100% - see the Home section above) and lines up evenly regardless of text length. */
+.mt-product-grid-wrap .row {
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .mt-plp-count {

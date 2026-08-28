@@ -8,13 +8,13 @@
             {{product.StandardPriceSchedule.PriceBreaks[0].Price | culturecurrency}}
         </p>
     </a>
-    <button type="button" class="mt-btn-accent mt-product-card-add" ng-if="canQuickAdd(product)"
+    <button type="button" class="mt-btn-accent mt-product-card-add" ng-if="canQuickAdd(product) && !quickAddNeedsOptions[product.InteropID]"
             ng-click="quickAddToCart(product)" ng-disabled="quickAddIndicator[product.InteropID]">
         <i ng-show="quickAddIndicator[product.InteropID]" class="fa fa-spinner fa-spin"></i>
         {{'Add to cart' | r | xlat}}
     </button>
-    <a ng-if="!canQuickAdd(product)" href="{{product.Type == 'Kit' ? 'kit' : 'product'}}/{{product.InteropID}}" class="mt-header-btn mt-product-card-add">
+    <a ng-if="!canQuickAdd(product) || quickAddNeedsOptions[product.InteropID]" href="{{product.Type == 'Kit' ? 'kit' : 'product'}}/{{product.InteropID}}" class="mt-header-btn mt-product-card-add">
         {{'Select Options' | r | xlat}}
     </a>
-    <p class="mt-product-card-error" ng-show="quickAddError[product.InteropID]">{{quickAddError[product.InteropID]}}</p>
+    <p class="mt-product-card-note" ng-show="quickAddNeedsOptions[product.InteropID]">{{'This item has options to choose before adding to your cart.' | r | xlat}}</p>
 </div>

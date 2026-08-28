@@ -12,17 +12,20 @@ function ($routeParams, $sce, $scope, $451, Category, Product, Nav, AppConst, Or
 		}, 1, 20);
 	}
 
-	// Quick add-to-cart from a product card (home featured carousel and PLP grid). Only offered
-	// for simple products - no variant, kit, or custom-text selection to resolve first, since
-	// those all require the full product detail page. Mirrors the same LineItem shape and
-	// Order.save() call productCtrl.js's addToOrder() uses for the equivalent simple-product case.
+	// Quick add-to-cart from a product card (home featured carousel and PLP grid). Attempted only
+	// for products that look simple (no variant, kit, or custom-text selection) based on list-level
+	// data - Product.search() results don't reliably include VariantCount/spec info the way the
+	// full product detail fetch does, so this is a best-effort gate, not a guarantee. If the add
+	// is rejected server-side (most commonly because the product actually needs options chosen),
+	// fall back to a friendly "choose options" prompt linking to the product page - never show the
+	// raw server exception to the customer.
 	$scope.quickAddIndicator = {};
-	$scope.quickAddError = {};
+	$scope.quickAddNeedsOptions = {};
 	$scope.canQuickAdd = function(product) {
 		return product && !product.VariantCount && product.Type != 'VariableText' && product.Type != 'Kit';
 	};
 	$scope.quickAddToCart = function(product) {
-		$scope.quickAddError[product.InteropID] = null;
+		$scope.quickAddNeedsOptions[product.InteropID] = false;
 		$scope.quickAddIndicator[product.InteropID] = true;
 		if (!$scope.currentOrder) {
 			$scope.currentOrder = {};
@@ -48,7 +51,7 @@ function ($routeParams, $sce, $scope, $451, Category, Product, Nav, AppConst, Or
 			function(ex) {
 				$scope.currentOrder.LineItems.pop();
 				$scope.quickAddIndicator[product.InteropID] = false;
-				$scope.quickAddError[product.InteropID] = ex.Message;
+				$scope.quickAddNeedsOptions[product.InteropID] = true;
 			}
 		);
 	};
