@@ -26,7 +26,10 @@ function ($scope, $modalInstance, product, currentOrder, ProductDisplayService, 
 			});
 		}
 
-		if (!$scope.needsFullPdpFallback) {
+		if (!$scope.needsFullPdpFallback && !($scope.LineItem.PriceSchedule && $scope.LineItem.PriceSchedule.RestrictedQuantity)) {
+			// Skip defaulting for restricted-quantity price schedules (only specific break
+			// quantities allowed via a <select>, not an arbitrary number) - see the matching fix
+			// + full explanation in productCtrl.js's setDefaultQty.
 			$scope.LineItem.Quantity = ($scope.LineItem.PriceSchedule && $scope.LineItem.PriceSchedule.DefaultQuantity) || 1;
 		}
 

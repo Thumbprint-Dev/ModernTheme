@@ -30,7 +30,10 @@ four51.app.controller('KitCtrl', ['$scope', '$location', '$routeParams', 'Kit', 
 						}
 					});
 				}
-			} else if (!$scope.LineItem.Quantity) {
+			} else if (!$scope.LineItem.Quantity && !($scope.LineItem.PriceSchedule && $scope.LineItem.PriceSchedule.RestrictedQuantity)) {
+				// Skip defaulting for restricted-quantity price schedules (only specific break
+				// quantities allowed via a <select>, not an arbitrary number) - see the matching
+				// fix + full explanation in productCtrl.js's setDefaultQty.
 				$scope.LineItem.Quantity = ($scope.LineItem.PriceSchedule && $scope.LineItem.PriceSchedule.DefaultQuantity) || 1;
 			}
 		});
