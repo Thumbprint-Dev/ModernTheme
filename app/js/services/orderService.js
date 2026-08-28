@@ -33,13 +33,23 @@ four51.app.factory('Order', ['$resource', '$rootScope', '$451', 'Security', 'Err
 			return multi;
 		}
 
-		// if kit line items ensure all are configured
+		// if kit line items ensure all are configured, and collect the chain into a flat
+		// array (KitChildren) for display - mirrors the same per-item processing above
+		// (File-spec auth fixup, SpecsLength) since these are full LineItem-shaped objects
+		// just like top-level order.LineItems, not partial/synthetic ones.
 		angular.forEach(order.LineItems, function(li) {
 			if (li.IsKitParent) {
+				li.KitChildren = [];
 				var current = li.NextKitLineItem;
 				while (current) {
 					if (!current.IsConfigured)
 						li.KitIsInvalid = true;
+					angular.forEach(current.Specs, function(spec) {
+						if (spec.ControlType == 'File' && spec.File && spec.File.Url.indexOf('auth') == -1)
+							spec.File.Url += "&auth=" + Security.auth();
+					});
+					current.SpecsLength = Object.keys(current.Specs).length;
+					li.KitChildren.push(current);
 					current = current.NextKitLineItem;
 				}
 			}

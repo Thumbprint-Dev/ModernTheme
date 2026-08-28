@@ -73,6 +73,29 @@
                                         <span ng-if="spec.ControlType != 'File'">{{spec.Value || ('(unspecified)' | xlat)}}</span>
                                     </li>
                                 </ul>
+
+                                <div class="mt-cart-kit-contents" ng-if="item.IsKitParent && item.KitChildren.length">
+                                    <button type="button" class="mt-cart-kit-toggle" ng-click="item.kitContentsOpen = !item.kitContentsOpen">
+                                        <i class="fa" ng-class="item.kitContentsOpen ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                                        {{(item.kitContentsOpen ? 'Hide kit contents' : 'View kit contents') | r | xlat}}
+                                        <span class="mt-cart-kit-count">({{item.KitChildren.length}} {{'items' | r | xlat}})</span>
+                                    </button>
+                                    <ul class="mt-cart-kit-list" ng-show="item.kitContentsOpen">
+                                        <li class="mt-cart-kit-row" ng-repeat="child in item.KitChildren">
+                                            <div class="mt-cart-kit-row-main">
+                                                <span class="mt-cart-kit-name">{{child.Variant.ExternalID || child.Product.Name}}</span>
+                                                <span class="mt-pdp-meta">{{'Qty' | r | xlat}}: {{child.Quantity}}</span>
+                                            </div>
+                                            <ul ng-show="child.SpecsLength > 0" class="mt-cart-item-specs">
+                                                <li ng-repeat="spec in child.Specs | filter:{'CanSetForLineItem':true}">
+                                                    <span class="mt-pdp-meta">{{spec.Label || spec.Name}}:</span>
+                                                    <span ng-if="spec.ControlType == 'File'"><a ng-href="{{spec.File.Url}}">{{spec.File.OriginalName}}</a></span>
+                                                    <span ng-if="spec.ControlType != 'File'">{{spec.Value || ('(unspecified)' | xlat)}}</span>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
 
                             <div class="mt-cart-item-qty">
