@@ -217,6 +217,26 @@ the clip is broken, and if it resolves to something behind/around it the clip is
 strictly more reliable check than eyeballing a screenshot, which is easy to misjudge for a subtle
 radius).
 
+**Round three — `isolation: isolate` alone still wasn't 100% reliable across interaction states**:
+after the 40px fix shipped, the user reported the corners looking "weird cut off" at rest and
+"way more rounded" on hover — i.e. inconsistent between resting and hover-transform-triggered
+repaint states, not just uniformly wrong. Root cause: the container's clip (`overflow: hidden` +
+`isolation: isolate`) depends on the browser correctly re-applying the compositing-layer clip
+every time the child image repaints (e.g. on the `transform: scale(1.06)` hover), and that
+re-application isn't perfectly consistent — the corner-pixel test above can pass at rest and still
+flash incorrectly for a frame during/around the transform.
+
+**The more robust fix: don't rely solely on the parent's clip — also set `border-radius` directly
+on the clipped element itself** (here, `.mt-dept-tile .mt-placeholder-photo { border-radius: 40px }`
+in addition to the container's existing clip, not instead of it). This makes the image's own paint
+correct regardless of whether the ancestor's compositing-layer clip is applied at that instant.
+Verified with the same `elementFromPoint()` corner test run twice — once at rest, once with the
+hover transform forced on via JS (`img.style.transform = 'scale(1.06)'`) — both passed on all four
+corners of every tile. **Lesson: for "clip a large/transformed child to a rounded container" bugs,
+treat the container's `overflow: hidden` + `isolation: isolate` clip as necessary but not
+sufficient — belt-and-suspenders with a matching `border-radius` on the child itself is the
+reliable fix, especially when the child also has a `transition`/`transform` that triggers repaints.**
+
 ### `align-items: stretch` doesn't always reliably size a flex item — verify, don't assume
 
 Making a page's outer wrapper (`#content`) a flex column for a sticky footer turned its child
