@@ -1519,8 +1519,27 @@ body {
     align-items: stretch;
 }
 
+/* Overrides bootstrap-451's .input-group .form-control { width: 100% } and
+   .input-group-addon, .input-group-btn { width: 1% } - both legacy rules assumed the old
+   display:table layout, where those percentages were a table-layout quirk meaning roughly
+   "take remaining space" / "shrink to fit content". Under the display:flex above they become
+   real width constraints instead, and fight each other: the input claims the full row width
+   regardless of any button next to it, pushing the button (and on narrow cards, the whole page)
+   past the card's right edge. Every .input-group + button inside a .mt-checkout-card - the
+   Reports "New Report" toolbar, each report condition form's Name/Save row, the Favorite Orders
+   and Addresses search bars - inherits this rule, so the fix belongs here rather than repeated
+   per page. */
 .mt-checkout-card .input-group .form-control {
     border-radius: 0;
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
+}
+
+.mt-checkout-card .input-group-btn {
+    flex: 0 0 auto;
+    width: auto;
+    display: flex;
 }
 
 .mt-checkout-card .input-group-addon {
