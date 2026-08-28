@@ -7,21 +7,30 @@ function ($routeParams, $sce, $scope, $451, Category, Product, Nav, AppConst, Or
 	// never real departments, so they're always excluded from "Shop by category"; an optional
 	// curated list (AppConst.shopByCategoryInteropIDs) can further narrow + order which
 	// departments show there instead of defaulting to "all of them".
+	// Case-insensitive: the real Featured category's InteropID in this tenant's data turned out
+	// to be lowercase ("featured") even though AppConst.featuredCategoryInteropID is 'Featured'.
+	// Product.search's server-side category lookup apparently tolerates that mismatch, but a
+	// strict === comparison does not, and silently let Featured show up in Shop by category
+	// instead of being excluded like it always should have been. Applying this everywhere an
+	// InteropID gets compared here so the same class of mismatch cannot bite again.
+	function sameInteropID(a, b) {
+		return !!a && !!b && a.toLowerCase() === b.toLowerCase();
+	}
+
 	function computeHomeCategoryLists() {
 		if (!$scope.tree) return;
-		var excludedIDs = [AppConst.featuredCategoryInteropID, AppConst.allProductsCategoryInteropID];
-		var eligible = $scope.tree.filter(function(cat) { return excludedIDs.indexOf(cat.InteropID) === -1; });
+		var eligible = $scope.tree.filter(function(cat) {
+			return !sameInteropID(cat.InteropID, AppConst.featuredCategoryInteropID) && !sameInteropID(cat.InteropID, AppConst.allProductsCategoryInteropID);
+		});
 
 		if (AppConst.shopByCategoryInteropIDs && AppConst.shopByCategoryInteropIDs.length) {
-			var byInteropID = {};
-			eligible.forEach(function(cat) { byInteropID[cat.InteropID] = cat; });
 			eligible = AppConst.shopByCategoryInteropIDs
-				.map(function(id) { return byInteropID[id]; })
+				.map(function(id) { return eligible.filter(function(cat) { return sameInteropID(cat.InteropID, id); })[0]; })
 				.filter(Boolean);
 		}
 		$scope.shopByCategories = eligible;
 
-		var allProductsMatches = $scope.tree.filter(function(cat) { return cat.InteropID === AppConst.allProductsCategoryInteropID; });
+		var allProductsMatches = $scope.tree.filter(function(cat) { return sameInteropID(cat.InteropID, AppConst.allProductsCategoryInteropID); });
 		$scope.allProductsCategory = allProductsMatches[0];
 	}
 	computeHomeCategoryLists();

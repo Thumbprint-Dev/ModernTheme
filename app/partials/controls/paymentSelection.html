@@ -29,6 +29,8 @@
             <i ng-show="currentOrder.PaymentMethod == 'CreditCard'" class="fa fa-check"></i>
             {{'Credit Card' | r | xlat}}
         </button>
+        <span class="mt-checkout-payment-break" aria-hidden="true"
+              ng-hide="(billaddressform || (!addressform && (addresses | filter:{IsBilling:true}).length == 0) || !user.Permissions.contains('CreateBillToAddress'))"></span>
         <button class="mt-header-btn mt-checkout-shipto-new" type="button"
                 ng-hide="(billaddressform || (!addressform && (addresses | filter:{IsBilling:true}).length == 0) || !user.Permissions.contains('CreateBillToAddress'))"
                 ng-click="billaddressform = true">
