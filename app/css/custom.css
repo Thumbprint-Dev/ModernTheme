@@ -11,6 +11,21 @@ body {
     margin-bottom: 0;
 }
 
+/* Pin the footer to the bottom of the viewport on short pages instead of leaving it floating
+   right after content with empty page background below it. #content (index.html) holds the
+   nav/branding sections, the .container-view (ng-view) section, and the footer section as
+   siblings - making it a flex column and letting .container-view absorb the extra space pushes
+   the footer down to the true bottom without needing a fixed/absolute position. */
+#content {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+#content > .container-view {
+    flex: 1 0 auto;
+}
+
 /* ===== ModernTheme: Footer ===== */
 .mt-footer {
     background: #fff;
