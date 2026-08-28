@@ -1,19 +1,19 @@
-<div class="row">
-    <div class="col-sm-12 view-form-icon">
-        <div class="input-group">
-            <label>{{'Name' | r | xlat}}</label>
-            <input required class="form-control" type="text" ng-model="report.Name" placeholder="{{'Name' | r | xlat}}" />
-            <i class="fa fa-bookmark-o"></i>
-            <div class="input-group-btn">
-                <button type="submit" ng-disabled="reportForm.$invalid" class="btn btn-primary pull-right">
-                    <span>{{'Save' | r | xlat}}</span>
-                    <i class="fa fa-save"></i>
-                </button>
-            </div>
+<div class="mt-report-name-row view-form-icon">
+    <div class="input-group">
+        <label>{{'Name' | r | xlat}}</label>
+        <input required class="form-control" type="text" ng-model="report.Name" placeholder="{{'Name' | r | xlat}}" />
+        <i class="fa fa-bookmark-o"></i>
+        <div class="input-group-btn">
+            <button type="submit" ng-disabled="reportForm.$invalid" class="mt-btn-accent">
+                <span>{{'Save' | r | xlat}}</span>
+                <i class="fa fa-save"></i>
+            </button>
         </div>
     </div>
-    <div class="col-sm-6 view-form-icon">
-        <h3>{{'Conditions' | r | xlat}}</h3>
+</div>
+<div class="mt-report-columns">
+    <div class="mt-report-col view-form-icon">
+        <h3 class="mt-eyebrow">{{'Conditions' | r | xlat}}</h3>
         <div>
             <label>{{('Order' | r) + ' ' + ('ID' | r) | xlat}}</label>
             <input class="form-control" type="text" ng-model="report.ExternalID" placeholder="{{('Order' | r) + ' ' + ('ID' | r) | xlat}}" />
@@ -59,17 +59,17 @@
             <select class="form-control" ng-options="s for s in report.ShipAddresses" ng-model="report.ShipAddress"><option value=""></option></select>
             <i class="fa fa-truck"></i>
         </div>
-        <daterange ng-options="report.TimeSpanOptions" fromdate="report.FromDate" todate="report.ToDate" />
+        <daterange ng-options="report.TimeSpanOptions" fromdate="report.FromDate" todate="report.ToDate"></daterange>
         <hr />
-        <h3>{{'Subtotal Options' | r}}</h3>
+        <h3 class="mt-eyebrow">{{'Subtotal Options' | r}}</h3>
         <div>
             <label>{{'Subtotal by Column' | r | xlat}}</label>
             <select class="form-control" ng-options="key as (value | r | xlat) for (key,value) in report.SubtotalOptions" ng-model="report.Subtotal"><option value=""></option></select>
             <i class="fa fa-tasks"></i>
         </div>
     </div>
-    <div class="col-sm-6">
-        <h3>{{'Display Columns' | r | xlat}}</h3>
+    <div class="mt-report-col">
+        <h3 class="mt-eyebrow">{{'Display Columns' | r | xlat}}</h3>
         <div>
             <label>&nbsp;</label>
             <select multiple size="35" required class="form-control" ng-options="key as (value | r | xlat) for (key,value) in report.ColumnOptions" ng-model="report.SelectedColumns"><option value=""></option></select>

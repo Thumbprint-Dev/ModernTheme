@@ -3052,3 +3052,215 @@ body {
     gap: 12px;
     margin-top: 20px;
 }
+
+/* ===== ModernTheme: Reports (v1) ===== */
+
+.mt-reports,
+.mt-report-view {
+    font-family: 'Inter', 'Droid Sans', sans-serif;
+    color: #262420;
+    background: #FAF8F4;
+    margin: -20px -15px 0;
+    padding-bottom: 60px;
+}
+
+.mt-reports-inner,
+.mt-report-view-inner {
+    padding-top: 24px;
+}
+
+.mt-reports .mt-pdp-title,
+.mt-report-view .mt-pdp-title {
+    margin: 0 0 20px;
+}
+
+/* Reusable table component for report/tabular data (Saved Reports list, and the dynamic
+   Report Data grid). Wrap in .mt-report-table-wrap so wide, column-heavy report tables scroll
+   horizontally on narrow viewports instead of breaking the page layout. */
+.mt-report-table-wrap {
+    overflow-x: auto;
+}
+
+.mt-report-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.mt-report-table th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #726D5F;
+    padding: 10px 12px;
+    border-bottom: 1px solid #E8E4DA;
+    white-space: nowrap;
+}
+
+.mt-report-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #F0EDE4;
+    color: #262420;
+    vertical-align: middle;
+}
+
+.mt-report-table tbody tr:nth-child(even) td {
+    background: #FCFBF8;
+}
+
+.mt-report-table tbody tr:hover td {
+    background: #F5F3EE;
+}
+
+.mt-report-table .text-right {
+    text-align: right;
+}
+
+.mt-report-table-check {
+    width: 36px;
+}
+
+/* Saved Reports list (reportsView.html) */
+.mt-reports-toolbar {
+    margin-bottom: 20px;
+}
+
+.mt-reports-toolbar .input-group .form-control {
+    border-radius: 8px 0 0 8px;
+}
+
+.mt-reports-toolbar .input-group-btn > .mt-btn-accent {
+    border-radius: 0 8px 8px 0;
+}
+
+.mt-reports-new-menu {
+    font-family: 'Inter', 'Droid Sans', sans-serif;
+    border-radius: 8px;
+    border-color: #E8E4DA;
+    margin-top: 6px;
+}
+
+.mt-reports-new-menu > li > a:hover,
+.mt-reports-new-menu > li > a:focus {
+    background: #FAF8F4;
+    color: #0F6B63;
+}
+
+.mt-reports-footer {
+    margin-top: 20px;
+}
+
+/* Report viewer shell (Reporting/reportView.html) */
+.mt-report-tabset .nav-tabs {
+    border-bottom: 1px solid #E8E4DA;
+    margin-bottom: 20px;
+}
+
+.mt-report-tabset .nav-tabs > li > a {
+    border: none;
+    background: transparent;
+    color: #726D5F;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 4px;
+    margin-right: 24px;
+    border-radius: 0;
+    border-bottom: 2px solid transparent;
+}
+
+.mt-report-tabset .nav-tabs > li > a:hover,
+.mt-report-tabset .nav-tabs > li > a:focus {
+    background: transparent;
+    color: #211F19;
+    border-color: transparent;
+}
+
+.mt-report-tabset .nav-tabs > li.active > a,
+.mt-report-tabset .nav-tabs > li.active > a:hover,
+.mt-report-tabset .nav-tabs > li.active > a:focus {
+    background: transparent;
+    color: #0F6B63;
+    border-bottom-color: #0F6B63;
+}
+
+.mt-report-tabset .nav-tabs > li.disabled > a {
+    color: #B7B2A3;
+    cursor: default;
+}
+
+.mt-report-data-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.mt-report-data-footer .mt-pagination {
+    margin: 0;
+}
+
+/* Report condition/filter forms shared by all report-type templates (lineItemReport.html,
+   orderReport.html, inventoryReport.html, pendingApprovalReport.html, accountStatusReport.html,
+   accountTransactionReport.html, shipmentReport.html). These render inside the
+   .mt-checkout-card.mt-report-conditions wrapper in reportView.html, so the generic
+   .mt-checkout-card .view-form-icon / .form-control / .input-group rules already style their
+   labels, inputs and selects consistently. */
+.mt-report-conditions .mt-report-name-row {
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #E8E4DA;
+}
+
+.mt-report-columns {
+    display: flex;
+    align-items: flex-start;
+    gap: 32px;
+    flex-wrap: wrap;
+}
+
+.mt-report-col {
+    flex: 1 1 320px;
+    min-width: 260px;
+}
+
+.mt-report-col > div,
+.mt-report-col > daterange {
+    display: block;
+    margin-bottom: 16px;
+}
+
+.mt-report-col > div:last-child {
+    margin-bottom: 0;
+}
+
+.mt-report-col hr {
+    border: none;
+    border-top: 1px solid #E8E4DA;
+    margin: 16px 0;
+}
+
+.mt-checkout-card .mt-report-checkbox-field label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 400;
+    text-transform: none;
+    color: #262420;
+    margin: 0;
+    cursor: pointer;
+}
+
+.mt-report-checkbox-field input[type="checkbox"] {
+    margin: 0;
+}
+
+@media (max-width: 767px) {
+    .mt-report-columns {
+        flex-direction: column;
+    }
+}
