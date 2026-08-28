@@ -2070,3 +2070,231 @@ body {
 .mt-kit-config-card-body {
     padding: 20px;
 }
+
+/* ===== ModernTheme: Account / Addresses (v1) ===== */
+
+.mt-account-page {
+    background: #FAF8F4;
+    min-height: 70vh;
+    padding-bottom: 48px;
+}
+
+.mt-account-inner {
+    padding-top: 24px;
+}
+
+.mt-account-mobile-nav {
+    margin-bottom: 16px;
+}
+
+.mt-account-mobile-nav .account-navigation,
+.mt-addresses .account-navigation {
+    margin: 0;
+}
+
+.mt-account-page .mt-checkout-card-title,
+.mt-addresses .mt-checkout-card-title {
+    margin-bottom: 20px;
+}
+
+.mt-account-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 16px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 767px) {
+    .mt-account-card-footer {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+.mt-account-alert {
+    color: #726D5F;
+    font-size: 14px;
+    margin: 0 0 16px;
+}
+
+.mt-account-success {
+    flex: 1 1 auto;
+    margin: 0;
+}
+
+.mt-account-security-warning {
+    background: #FAF8F4;
+    border: 1px solid #E8E4DA;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-top: 16px;
+    font-size: 13px;
+    color: #262420;
+}
+
+.mt-account-security-warning ul {
+    margin-bottom: 0;
+}
+
+.mt-account-page .row + .row {
+    margin-top: 8px;
+}
+
+.mt-account-page form {
+    display: block;
+}
+
+/* userView.html stacks several forms/wrapper divs in sequence (logon-as, lost-login, my-account);
+   space every direct child of the page container after the first regardless of its tag. */
+.mt-account-inner > * + * {
+    margin-top: 20px;
+}
+
+.mt-account-inner form + form {
+    margin-top: 20px;
+}
+
+.mt-addresses {
+    background: #FAF8F4;
+    min-height: 70vh;
+    padding-bottom: 48px;
+}
+
+.mt-addresses-inner {
+    padding-top: 24px;
+}
+
+.mt-addresses-header {
+    margin-bottom: 20px;
+}
+
+.mt-addresses-search {
+    margin-bottom: 20px;
+}
+
+.mt-addresses-search .input-group {
+    display: flex;
+}
+
+.mt-addresses-search .form-control {
+    border: 1px solid #E8E4DA;
+    border-radius: 8px 0 0 8px;
+    border-right: 0;
+    padding: 10px 12px;
+    font-size: 14px;
+    color: #262420;
+    box-shadow: none;
+    height: auto;
+}
+
+.mt-addresses-search .form-control:focus {
+    border-color: #0F6B63;
+    outline: none;
+    box-shadow: none;
+}
+
+.mt-addresses-search .input-group-btn {
+    display: flex;
+}
+
+.mt-addresses-search .mt-header-btn {
+    border-radius: 0 8px 8px 0;
+    border-left: 0;
+}
+
+.mt-addresses-empty {
+    text-align: center;
+    padding: 32px 0 8px;
+}
+
+.mt-addresses-table-wrap {
+    margin-bottom: 20px;
+}
+
+.mt-addresses-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 0;
+}
+
+.mt-addresses-table th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #726D5F;
+    padding: 10px 12px;
+    border-bottom: 1px solid #E8E4DA;
+    background: transparent;
+}
+
+.mt-addresses-table td {
+    padding: 12px;
+    font-size: 14px;
+    color: #262420;
+    border-top: 1px solid #E8E4DA;
+    vertical-align: middle;
+}
+
+.mt-addresses-table tr:first-child td {
+    border-top: 0;
+}
+
+.mt-addresses-link {
+    color: #0F6B63;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.mt-addresses-link:hover,
+.mt-addresses-link:focus {
+    color: #0C544E;
+    text-decoration: underline;
+}
+
+.mt-addresses-table .fa-check {
+    color: #0F6B63;
+}
+
+.mt-addresses-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 4px;
+}
+
+@media (max-width: 767px) {
+    .mt-addresses-footer {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+.mt-addresses-new-btn {
+    margin-left: auto;
+}
+
+@media (max-width: 767px) {
+    .mt-addresses-new-btn {
+        margin-left: 0;
+    }
+}
+
+.mt-address-edit {
+    background: #FAF8F4;
+    min-height: 70vh;
+    padding-bottom: 48px;
+}
+
+.mt-address-edit-inner {
+    padding-top: 24px;
+}
+
+.mt-address-edit-inner .mt-pdp-title {
+    margin-bottom: 20px;
+}
