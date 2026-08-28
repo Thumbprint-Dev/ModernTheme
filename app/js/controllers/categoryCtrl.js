@@ -1,5 +1,5 @@
-four51.app.controller('CategoryCtrl', ['$routeParams', '$sce', '$scope', '$451', 'Category', 'Product', 'Nav', 'AppConst', 'Order', 'User',
-function ($routeParams, $sce, $scope, $451, Category, Product, Nav, AppConst, Order, User) {
+four51.app.controller('CategoryCtrl', ['$routeParams', '$sce', '$scope', '$451', 'Category', 'Product', 'Nav', 'AppConst', 'Order', 'User', '$modal',
+function ($routeParams, $sce, $scope, $451, Category, Product, Nav, AppConst, Order, User, $modal) {
 	$scope.isHome = !$routeParams.categoryInteropID;
 	$scope.isNotFeaturedCategory = function(cat) {
 		return cat.InteropID !== AppConst.featuredCategoryInteropID;
@@ -16,29 +16,23 @@ function ($routeParams, $sce, $scope, $451, Category, Product, Nav, AppConst, Or
 	// list results don't reliably carry VariantCount/Specs the way the full product detail fetch
 	// does, so we never decide "can this be quick-added" from list data - canQuickAdd() below is
 	// only a pre-fetch optimization to skip an unnecessary request for obviously non-simple
-	// products. The real decision happens in needsFullPdp(), against the authoritative product
-	// fetched via Product.get() (same call productCtrl.js's PDP flow uses), every time a card is
-	// clicked. This replaces an earlier version that trusted the list-level VariantCount and let a
-	// product that actually needed Location/Size options through, which failed server-side and
-	// briefly showed the customer a raw server exception - see git history for that hotfix.
+	// products. The real decision happens against the authoritative product fetched via
+	// Product.get() (same call productCtrl.js's PDP flow uses), every time a card is clicked. This
+	// replaces an earlier version that trusted the list-level VariantCount and let a product that
+	// actually needed Location/Size options through, which failed server-side and briefly showed
+	// the customer a raw server exception - see git history for that hotfix.
 	//
-	// A product with real variants or specs still falls back to "Select Options" -> the full
-	// product page for now; a modal for the simple variant-selection case is a planned follow-up.
+	// Kit and VariableText products still fall back to "Select Options" -> the full product page
+	// directly, since those are multi-step flows that don't fit a modal. Anything else with
+	// variants/specs opens QuickAddModalCtrl, which fetches the same ProductDisplayService setup
+	// the real PDP uses and shows its own "Select Options" fallback if it turns out the product
+	// needs something the modal can't handle either (a bulk multi-variant list, or a required
+	// custom spec that isn't itself a variant-defining dropdown).
 	$scope.quickAddIndicator = {};
 	$scope.quickAddNeedsOptions = {};
 	$scope.canQuickAdd = function(product) {
 		return product && product.Type != 'VariableText' && product.Type != 'Kit';
 	};
-
-	function needsFullPdp(product) {
-		if (product.Type == 'Kit' || product.Type == 'VariableText') return true;
-		if (product.VariantCount > 0) return true;
-		var needsSpec = false;
-		angular.forEach(product.Specs, function(s) {
-			if (s.Required) needsSpec = true;
-		});
-		return needsSpec;
-	}
 
 	function addSimpleProductToCart(product) {
 		if (!$scope.currentOrder) {
@@ -70,13 +64,40 @@ function ($routeParams, $sce, $scope, $451, Category, Product, Nav, AppConst, Or
 		);
 	}
 
+	function openQuickAddModal(product) {
+		$scope.quickAddIndicator[product.InteropID] = false;
+		$modal.open({
+			templateUrl: 'partials/controls/quickAddModal.html',
+			controller: 'QuickAddModalCtrl',
+			resolve: {
+				product: function() { return product; },
+				currentOrder: function() { return $scope.currentOrder; }
+			}
+		}).result.then(function(updatedOrder) {
+			$scope.currentOrder = updatedOrder;
+		}, angular.noop);
+	}
+
+	function hasVariantOrSpec(product) {
+		if (product.VariantCount > 0) return true;
+		var found = false;
+		angular.forEach(product.Specs, function(s) {
+			if (s.CanSetForLineItem || s.DefinesVariant) found = true;
+		});
+		return found;
+	}
+
 	$scope.quickAddToCart = function(product) {
 		$scope.quickAddNeedsOptions[product.InteropID] = false;
 		$scope.quickAddIndicator[product.InteropID] = true;
 		Product.clearCache().get(product.InteropID, function(fullProduct) {
-			if (needsFullPdp(fullProduct)) {
+			if (fullProduct.Type == 'Kit' || fullProduct.Type == 'VariableText') {
 				$scope.quickAddIndicator[product.InteropID] = false;
 				$scope.quickAddNeedsOptions[product.InteropID] = true;
+				return;
+			}
+			if (hasVariantOrSpec(fullProduct)) {
+				openQuickAddModal(fullProduct);
 				return;
 			}
 			addSimpleProductToCart(fullProduct);

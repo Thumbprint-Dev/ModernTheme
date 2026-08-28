@@ -1810,3 +1810,24 @@ Template: Howdy
         align-items: stretch;
     }
 }
+
+/* ===== ModernTheme: quick-add options modal ===== */
+
+.mt-quickadd-modal-body {
+    font-family: 'Inter', 'Droid Sans', sans-serif;
+    color: #262420;
+}
+
+.mt-quickadd-modal-image {
+    width: 160px;
+    margin: 0 0 16px;
+}
+
+.mt-quickadd-modal-body .mt-product-price {
+    font-size: 18px;
+    margin-bottom: 16px;
+}
+
+.mt-quickadd-modal-body .mt-field {
+    margin-top: 16px;
+}
