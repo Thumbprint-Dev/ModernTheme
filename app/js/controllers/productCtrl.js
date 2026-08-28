@@ -25,6 +25,16 @@ function ($scope, $routeParams, $route, $location, $451, Product, ProductDisplay
 		})
 	};
 	function setDefaultQty(lineitem) {
+		// Restricted-quantity price schedules only allow specific break quantities (e.g. 100 /
+		// 250 / 500 / 1000) via a <select>, not an arbitrary number - defaulting to 1 here set a
+		// value that matched none of those options, so quantityfield.js's <select> showed blank
+		// (Angular can't select an option that doesn't exist) while the real underlying value
+		// (1) still failed the MinQuantity check, showing a "must be equal or greater than 100"
+		// error before the customer had touched the page. Leaving Quantity unset instead lets
+		// the field start genuinely empty, matching what the dropdown shows, with no error until
+		// the customer actually picks a quantity.
+		if (lineitem.PriceSchedule && lineitem.PriceSchedule.RestrictedQuantity)
+			return;
 		if (lineitem.PriceSchedule && lineitem.PriceSchedule.DefaultQuantity != 0)
 			$scope.LineItem.Quantity = lineitem.PriceSchedule.DefaultQuantity;
 		else
