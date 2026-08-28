@@ -6,32 +6,38 @@ four51.app.directive('paymentselector', function() {
 	       $scope.paymentSelection = {};
 	       $scope.isSplitBilling = false;
 
+	       // Handles PaymentMethod already being 'BudgetAccount' and SpendingAccounts already being
+	       // loaded arriving in either order - whichever happens second is what actually needs to
+	       // derive/recompute the account, since a $watch on an unchanged value only fires once.
+	       var deriveBudgetAccountID = function() {
+		       if (!$scope.currentOrder || $scope.currentOrder.PaymentMethod != 'BudgetAccount' || !$scope.SpendingAccounts) return;
+		       if ($scope.currentOrder.BudgetAccountID) {
+			       budgetAccountCalculation($scope.currentOrder.BudgetAccountID);
+			       return;
+		       }
+		       if ($scope.SpendingAccounts.length == 1)
+			       $scope.currentOrder.BudgetAccountID = $scope.SpendingAccounts[0].ID;
+		       else {
+			       var count = 0, account;
+			       angular.forEach($scope.SpendingAccounts, function(s) {
+				       if (s.AccountType.PurchaseCredit) {
+					       count += 1;
+					       account = s;
+				       }
+			       });
+			       if (count == 1 && account)
+				       $scope.currentOrder.BudgetAccountID = account.ID;
+		       }
+	       };
+
 	       SpendingAccount.query(function(data) {
 		       $scope.SpendingAccounts = data;
-		       if ($scope.currentOrder && $scope.currentOrder.BudgetAccountID)
-		            budgetAccountCalculation($scope.currentOrder.BudgetAccountID);
+		       deriveBudgetAccountID();
 	       });
 
 	       $scope.$watch('currentOrder.PaymentMethod', function(event) {
 		       if (event == 'BudgetAccount') {
-			       if ($scope.SpendingAccounts) {
-				       if ($scope.SpendingAccounts.length == 1)
-					       $scope.currentOrder.BudgetAccountID = $scope.SpendingAccounts[0].ID;
-				       else {
-					       var count = 0, account;
-					       angular.forEach($scope.SpendingAccounts, function(s) {
-						       if (s.AccountType.PurchaseCredit) {
-							       count += 1;
-							       account = s;
-						       }
-					       });
-					       if (count == 1 && account)
-						       $scope.currentOrder.BudgetAccountID = account.ID;
-				       }
-			       }
-			       // else: SpendingAccounts hasn't loaded yet - leave BudgetAccountID alone rather than
-			       // wiping out a value already persisted on the order. SpendingAccount.query()'s own
-			       // callback re-derives currentBudgetAccount once the list actually arrives.
+			       deriveBudgetAccountID();
 		       }
 		       else {
 			       if (!$scope.isSplitBilling && $scope.currentOrder) {
