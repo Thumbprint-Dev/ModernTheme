@@ -180,6 +180,30 @@ compact size) on that new line.
 If the item is conditionally shown (`ng-hide`/`ng-if`), the spacer needs the *same* condition, or
 it'll force a blank line even when the item itself is hidden.
 
+### `overflow: hidden` + `border-radius` can silently stop clipping a large absolutely-positioned image — `isolation: isolate` fixes it
+
+A tile with `position: relative; border-radius: 14px; overflow: hidden;` containing a large
+absolutely-positioned `<img>` filling it via `inset: 0` rendered with **hard square corners** —
+the photo completely ignored the parent's rounded clip, even though the parent's own box was
+genuinely rounded (confirmed by temporarily giving it a plain `outline`, which showed the correct
+curve) and `getComputedStyle()` reported the correct `border-radius` the entire time. The
+computed style being correct is not proof the clip is actually being applied — check the real
+rendered corner (a screenshot, or a temporary bright `outline` on the container to compare its
+true shape against what the image is doing).
+
+**Cause**: Chrome promotes a large absolutely-positioned image to its own GPU compositing layer,
+and that layer can bypass an ancestor's `overflow: hidden` + `border-radius` clip entirely unless
+the ancestor establishes its own stacking context. Adding `isolation: isolate` to the clipping
+container (`.mt-dept-tile` here) fixed it immediately — confirmed live by toggling it on and off
+and watching the clip start/stop working.
+
+**We broke this once already** by removing `isolation: isolate` in a later pass, assuming it was
+only there to support a `::after` gradient overlay we were also removing in that same change — it
+wasn't decorative, it was the only thing making the clip work. **If a container relies on
+`overflow: hidden` + `border-radius` to clip a large image, don't remove `isolation: isolate`
+(or any other stacking-context-establishing property) from it without re-checking the actual
+rendered corner, not just re-reading the CSS.**
+
 ### `align-items: stretch` doesn't always reliably size a flex item — verify, don't assume
 
 Making a page's outer wrapper (`#content`) a flex column for a sticky footer turned its child
