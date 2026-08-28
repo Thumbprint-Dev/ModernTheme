@@ -1,9 +1,31 @@
 four51.app.controller('CategoryCtrl', ['$routeParams', '$sce', '$scope', '$451', 'Category', 'Product', 'Nav', 'AppConst', 'Order', 'User', '$modal', 'ProductDisplayService',
 function ($routeParams, $sce, $scope, $451, Category, Product, Nav, AppConst, Order, User, $modal, ProductDisplayService) {
 	$scope.isHome = !$routeParams.categoryInteropID;
-	$scope.isNotFeaturedCategory = function(cat) {
-		return cat.InteropID !== AppConst.featuredCategoryInteropID;
-	};
+
+	// Computes the home page's "Shop by category" tiles and the "Browse full catalog" tile's
+	// target category, both derived from the same top-level tree. Featured and All Products are
+	// never real departments, so they're always excluded from "Shop by category"; an optional
+	// curated list (AppConst.shopByCategoryInteropIDs) can further narrow + order which
+	// departments show there instead of defaulting to "all of them".
+	function computeHomeCategoryLists() {
+		if (!$scope.tree) return;
+		var excludedIDs = [AppConst.featuredCategoryInteropID, AppConst.allProductsCategoryInteropID];
+		var eligible = $scope.tree.filter(function(cat) { return excludedIDs.indexOf(cat.InteropID) === -1; });
+
+		if (AppConst.shopByCategoryInteropIDs && AppConst.shopByCategoryInteropIDs.length) {
+			var byInteropID = {};
+			eligible.forEach(function(cat) { byInteropID[cat.InteropID] = cat; });
+			eligible = AppConst.shopByCategoryInteropIDs
+				.map(function(id) { return byInteropID[id]; })
+				.filter(Boolean);
+		}
+		$scope.shopByCategories = eligible;
+
+		var allProductsMatches = $scope.tree.filter(function(cat) { return cat.InteropID === AppConst.allProductsCategoryInteropID; });
+		$scope.allProductsCategory = allProductsMatches[0];
+	}
+	computeHomeCategoryLists();
+
 	if ($scope.isHome) {
 		// "Featured for your team" pulls from a dedicated real category (see AppConst.featuredCategoryInteropID)
 		// rather than a platform-wide "all products" query, which Product.search doesn't support unscoped.
@@ -143,6 +165,7 @@ function ($routeParams, $sce, $scope, $451, Category, Product, Nav, AppConst, Or
 		if (!$routeParams.categoryInteropID) {
 			$scope.currentCategory ={SubCategories:$scope.tree};
 		}
+		computeHomeCategoryLists();
 	});
 
     // panel-nav
