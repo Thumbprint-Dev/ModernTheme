@@ -212,12 +212,16 @@ body {
     aspect-ratio: 3 / 4;
     border-radius: 14px;
     overflow: hidden;
-    /* The rounded corners are always on (not a hover-only effect) - they just read poorly at
-       rest with only the grid's own 10px column gutter to show them against, since a 14px
-       radius needs real breathing room on both sides to look rounded rather than square. Extra
-       horizontal margin here (on top of the column's own gutter) gives it that room; the hover
-       scale-up was making the rounding look more obvious only because scaling up ate into that
-       same tight gutter, not because the radius itself changed. */
+    /* isolation:isolate is required, not decorative: without it, Chrome composites the large
+       absolutely-positioned photo onto its own GPU layer and that layer ignores this element's
+       overflow:hidden + border-radius clip entirely, rendering the photo as a hard square even
+       though this element's own box (verified with a temporary outline) is genuinely rounded.
+       Removing this in an earlier pass (thinking it only mattered for a gradient overlay we'd
+       since dropped) silently broke the corner rounding - confirmed by re-adding it live and
+       watching the clip start working again. Do not remove this again without re-testing the
+       actual rendered corner, not just the computed border-radius value (which stayed correct
+       the whole time - the bug was the clip not applying, not the radius itself). */
+    isolation: isolate;
     margin: 0 6px 20px;
     text-decoration: none;
 }
