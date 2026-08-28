@@ -1,5 +1,5 @@
 <div class="mt-checkout-card">
-    <h2 class="mt-checkout-card-title">{{'Order' | r | xlat}}</h2>
+    <h2 class="mt-checkout-card-title">{{('Order' | r) + ' ' + ('Details' | r) | xlat}}</h2>
     <form name="cart_order" novalidate="">
         <div class="mt-field" ng-if="user.Permissions.contains('EditPOID')">
             <label class="required">{{('Order' | r) + ' '  + ('ID' | r) | xlat}}</label>
