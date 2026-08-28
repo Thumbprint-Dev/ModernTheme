@@ -2,8 +2,17 @@
     <accountnavigation ng-show="user.Permissions.contains('ViewSelfAdmin') || user.Type == 'Customer'"></accountnavigation>
     <div class="mt-container mt-contact-inner">
         <h1 class="mt-pdp-title">{{('Contact' | r) + ' ' + ('Us' | r) | xlat }}</h1>
+
         <div class="mt-checkout-card">
-			<p></p>
-		</div>
+            <h2 class="mt-checkout-card-title">Any Questions?</h2>
+            <p>Questions about your order? Need help ordering business cards? Need general site support?</p>
+            <p><strong>Email us at <a href="mailto:support@thumbprint.com">support@thumbprint.com</a></strong></p>
+        </div>
+
+        <div class="mt-checkout-card">
+            <h2 class="mt-checkout-card-title">Our Office Hours</h2>
+            <p><strong>Monday &ndash; Friday, 8am to 5pm</strong></p>
+            <p>Feel free to contact us outside of these hours and one of our team members will respond as soon as possible!</p>
+        </div>
     </div>
 </section>
