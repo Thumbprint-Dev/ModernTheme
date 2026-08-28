@@ -212,7 +212,13 @@ body {
     aspect-ratio: 3 / 4;
     border-radius: 14px;
     overflow: hidden;
-    margin-bottom: 20px;
+    /* The rounded corners are always on (not a hover-only effect) - they just read poorly at
+       rest with only the grid's own 10px column gutter to show them against, since a 14px
+       radius needs real breathing room on both sides to look rounded rather than square. Extra
+       horizontal margin here (on top of the column's own gutter) gives it that room; the hover
+       scale-up was making the rounding look more obvious only because scaling up ate into that
+       same tight gutter, not because the radius itself changed. */
+    margin: 0 6px 20px;
     text-decoration: none;
 }
 
