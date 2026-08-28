@@ -1223,6 +1223,69 @@ body {
     margin-bottom: 4px;
 }
 
+.mt-cart-kit-contents {
+    margin-top: 14px;
+}
+
+.mt-cart-kit-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: none;
+    background: none;
+    padding: 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #0F6B63;
+    cursor: pointer;
+}
+
+.mt-cart-kit-toggle:hover {
+    color: #0C544E;
+}
+
+.mt-cart-kit-count {
+    color: #726D5F;
+    font-weight: 400;
+}
+
+.mt-cart-kit-list {
+    list-style: none;
+    margin: 10px 0 0;
+    padding: 0;
+}
+
+.mt-cart-kit-row {
+    padding: 10px 12px;
+    background: #FAF8F4;
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+.mt-cart-kit-row:last-child {
+    margin-bottom: 0;
+}
+
+.mt-cart-kit-row-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    font-size: 13px;
+}
+
+.mt-cart-kit-name {
+    font-weight: 600;
+    color: #262420;
+}
+
+.mt-cart-kit-row .mt-cart-item-specs {
+    /* the row itself is already the cream #FAF8F4 tint - white here keeps the nested
+       spec block from blending invisibly into its parent */
+    margin-top: 8px;
+    background: #fff;
+}
+
 .mt-cart-item-qty {
     flex: 0 0 170px;
 }
