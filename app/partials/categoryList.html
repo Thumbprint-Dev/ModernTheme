@@ -1,7 +1,7 @@
 <div class="mt-section" ng-show="currentCategory.SubCategories.length">
     <h2 class="mt-eyebrow">{{'Categories' | r | xlat}}</h2>
     <div ng-show="currentCategory.Description" ng-bind-html="trusted(currentCategory.Description)" class="mt-category-desc"></div>
-    <loadingindicator ng-show="categoryLoadingIndicator" title="{{'Please wait while we fetch all categories' | r | xlat}}" />
+    <loadingindicator ng-show="categoryLoadingIndicator" title="{{'Please wait while we fetch all categories' | r | xlat}}"></loadingindicator>
     <div class="row">
         <div class="col-sm-4 col-xs-6" ng-repeat="c in currentCategory.SubCategories">
             <a ng-href="catalog/{{c.InteropID}}" class="mt-dept-tile">
