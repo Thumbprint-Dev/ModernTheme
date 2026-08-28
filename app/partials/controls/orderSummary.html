@@ -49,11 +49,6 @@
         {{('Submit' | r) + ' ' + ('Order' | r) | xlat}}
     </button>
 
-    <div class="mt-field mt-checkout-email-notify" ng-show="user.Permissions.contains('SendOrderNotificationToOthers') && !(cart_shipping.$invalid || cart_order.$invalid || cart_billing.$invalid)">
-        <label ng-show="currentOrder.ExternalOrderDetailRecipients">{{('Email' | r) + ' ' + ('Notification' | r) | xlat}}</label>
-        <input type="email" ng-disabled="cart_shipping.$invalid || cart_order.$invalid || cart_billing.$invalid" ng-model="currentOrder.ExternalOrderDetailRecipients" placeholder="{{('Email' | r) + ' ' +  ('Address' | r) | xlat}}" autocomplete="off" />
-        <p class="mt-pdp-meta">{{'Send a copy of the order details to above email address.' | r | xlat}}</p>
-    </div>
 
     <button type="button" class="mt-header-btn mt-checkout-security-link" redirect="/security">
         <i class="fa fa-info-circle"></i> {{'Concerned About Security?' | r | xlat}}
