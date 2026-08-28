@@ -11,6 +11,21 @@ body {
     margin-bottom: 0;
 }
 
+/* Pin the footer to the bottom of the viewport on short pages instead of leaving it floating
+   right after content with empty page background below it. #content (index.html) holds the
+   nav/branding sections, the .container-view (ng-view) section, and the footer section as
+   siblings - making it a flex column and letting .container-view absorb the extra space pushes
+   the footer down to the true bottom without needing a fixed/absolute position. */
+#content {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+#content > .container-view {
+    flex: 1 0 auto;
+}
+
 /* ===== ModernTheme: Footer ===== */
 .mt-footer {
     background: #fff;
@@ -1281,10 +1296,15 @@ body {
     .mt-cart-item {
         flex-wrap: wrap;
     }
+    /* flex-basis:100% forces each onto its own full-width line below the photo+info row -
+       without it these stayed flexible enough to share a line with .mt-cart-item-info, which has
+       min-width:0 and no floor, so the browser squeezed the product name/SKU column down to
+       almost nothing instead of stacking qty/price underneath. */
     .mt-cart-item-qty,
     .mt-cart-item-price {
-        flex: 1 1 auto;
+        flex: 1 1 100%;
         text-align: left;
+        margin-top: 12px;
     }
     .mt-cart-layout {
         flex-direction: column;
@@ -2069,6 +2089,419 @@ body {
 
 .mt-kit-config-card-body {
     padding: 20px;
+}
+
+/* ===== ModernTheme: Account / Addresses (v1) ===== */
+
+.mt-account-page {
+    background: #FAF8F4;
+    min-height: 70vh;
+    padding-bottom: 48px;
+}
+
+.mt-account-inner {
+    padding-top: 24px;
+}
+
+.mt-account-mobile-nav {
+    margin-bottom: 16px;
+}
+
+.mt-account-mobile-nav .account-navigation,
+.mt-addresses .account-navigation {
+    margin: 0;
+}
+
+.mt-account-page .mt-checkout-card-title,
+.mt-addresses .mt-checkout-card-title {
+    margin-bottom: 20px;
+}
+
+.mt-account-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 16px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 767px) {
+    .mt-account-card-footer {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+.mt-account-alert {
+    color: #726D5F;
+    font-size: 14px;
+    margin: 0 0 16px;
+}
+
+.mt-account-success {
+    flex: 1 1 auto;
+    margin: 0;
+}
+
+.mt-account-security-warning {
+    background: #FAF8F4;
+    border: 1px solid #E8E4DA;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-top: 16px;
+    font-size: 13px;
+    color: #262420;
+}
+
+.mt-account-security-warning ul {
+    margin-bottom: 0;
+}
+
+.mt-account-page .row + .row {
+    margin-top: 8px;
+}
+
+.mt-account-page form {
+    display: block;
+}
+
+/* userView.html stacks several forms/wrapper divs in sequence (logon-as, lost-login, my-account);
+   space every direct child of the page container after the first regardless of its tag. */
+.mt-account-inner > * + * {
+    margin-top: 20px;
+}
+
+.mt-account-inner form + form {
+    margin-top: 20px;
+}
+
+.mt-addresses {
+    background: #FAF8F4;
+    min-height: 70vh;
+    padding-bottom: 48px;
+}
+
+.mt-addresses-inner {
+    padding-top: 24px;
+}
+
+.mt-addresses-header {
+    margin-bottom: 20px;
+}
+
+.mt-addresses-search {
+    margin-bottom: 20px;
+}
+
+.mt-addresses-search .input-group {
+    display: flex;
+}
+
+.mt-addresses-search .form-control {
+    border: 1px solid #E8E4DA;
+    border-radius: 8px 0 0 8px;
+    border-right: 0;
+    padding: 10px 12px;
+    font-size: 14px;
+    color: #262420;
+    box-shadow: none;
+    height: auto;
+}
+
+.mt-addresses-search .form-control:focus {
+    border-color: #0F6B63;
+    outline: none;
+    box-shadow: none;
+}
+
+.mt-addresses-search .input-group-btn {
+    display: flex;
+}
+
+.mt-addresses-search .mt-header-btn {
+    border-radius: 0 8px 8px 0;
+    border-left: 0;
+}
+
+.mt-addresses-empty {
+    text-align: center;
+    padding: 32px 0 8px;
+}
+
+.mt-addresses-table-wrap {
+    margin-bottom: 20px;
+}
+
+.mt-addresses-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 0;
+}
+
+.mt-addresses-table th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #726D5F;
+    padding: 10px 12px;
+    border-bottom: 1px solid #E8E4DA;
+    background: transparent;
+}
+
+.mt-addresses-table td {
+    padding: 12px;
+    font-size: 14px;
+    color: #262420;
+    border-top: 1px solid #E8E4DA;
+    vertical-align: middle;
+}
+
+.mt-addresses-table tr:first-child td {
+    border-top: 0;
+}
+
+.mt-addresses-link {
+    color: #0F6B63;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.mt-addresses-link:hover,
+.mt-addresses-link:focus {
+    color: #0C544E;
+    text-decoration: underline;
+}
+
+.mt-addresses-table .fa-check {
+    color: #0F6B63;
+}
+
+.mt-addresses-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 4px;
+}
+
+@media (max-width: 767px) {
+    .mt-addresses-footer {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+.mt-addresses-new-btn {
+    margin-left: auto;
+}
+
+@media (max-width: 767px) {
+    .mt-addresses-new-btn {
+        margin-left: 0;
+    }
+}
+
+.mt-address-edit {
+    background: #FAF8F4;
+    min-height: 70vh;
+    padding-bottom: 48px;
+}
+
+.mt-address-edit-inner {
+    padding-top: 24px;
+}
+
+.mt-address-edit-inner .mt-pdp-title {
+    margin-bottom: 20px;
+}
+
+/* Restyle the legacy .view-form-icon fields on the My Account form (First/Last Name, Phone,
+   Email, Username, Password) - same fix already applied on the PDP/checkout/kit pages. This form
+   uses several different decorative icons (fa-user, fa-phone, fa-envelope-o, fa-lock), not just
+   fa-edit, so hide any icon inside .view-form-icon rather than just one class. */
+.mt-account-page .view-form-icon label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #726D5F;
+    margin-bottom: 6px;
+}
+
+.mt-account-page .view-form-icon label.required:after {
+    content: " *";
+    color: #0F6B63;
+}
+
+.mt-account-page .view-form-icon .form-control {
+    border: 1px solid #E8E4DA;
+    border-radius: 8px;
+    padding: 10px 12px;
+    background: #fff;
+    font-size: 14px;
+    color: #262420;
+    box-shadow: none;
+    height: auto;
+    margin-bottom: 16px;
+}
+
+.mt-account-page .view-form-icon .form-control:focus {
+    border-color: #0F6B63;
+    box-shadow: none;
+}
+
+.mt-account-page .view-form-icon i.fa {
+    display: none;
+}
+
+/* ===== ModernTheme: Search / Messages / Contact (v1) ===== */
+
+.mt-search-results {
+    font-family: 'Inter', 'Droid Sans', sans-serif;
+    color: #262420;
+    background: #FAF8F4;
+    margin: -20px -15px 0;
+    padding-bottom: 40px;
+}
+
+.mt-search-form {
+    margin-top: 16px;
+    max-width: 480px;
+}
+
+.mt-search-form .mt-field-row input {
+    border: 1px solid #E8E4DA;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+    color: #262420;
+    flex: 1;
+    min-width: 0;
+    box-shadow: none;
+}
+
+.mt-search-form .mt-field-row input:focus {
+    border-color: #0F6B63;
+    outline: none;
+}
+
+.mt-search-form .mt-field-row .mt-btn-accent {
+    padding: 10px 16px;
+    white-space: nowrap;
+}
+
+.mt-messages {
+    font-family: 'Inter', 'Droid Sans', sans-serif;
+    color: #262420;
+    background: #FAF8F4;
+    margin: -20px -15px 0;
+    padding-bottom: 60px;
+}
+
+.mt-messages-inner {
+    padding-top: 40px;
+}
+
+.mt-messages-inner > .mt-pdp-title {
+    margin-bottom: 20px;
+}
+
+.mt-messages-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.mt-messages-table th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #726D5F;
+    padding: 8px 10px;
+    border-bottom: 1px solid #E8E4DA;
+}
+
+.mt-messages-table td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #E8E4DA;
+    color: #262420;
+    vertical-align: middle;
+}
+
+.mt-messages-table tr:last-child td {
+    border-bottom: none;
+}
+
+.mt-messages-subject-link {
+    color: #262420;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.mt-messages-subject-link:hover,
+.mt-messages-subject-link:focus {
+    color: #0F6B63;
+    text-decoration: underline;
+}
+
+.mt-messages-date {
+    color: #726D5F;
+    white-space: nowrap;
+}
+
+.mt-messages-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.mt-messages-body {
+    font-family: inherit;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    background: #FAF8F4;
+    border: 1px solid #E8E4DA;
+    border-radius: 8px;
+    padding: 16px;
+    color: #262420;
+    margin: 0 0 20px;
+}
+
+@media (max-width: 767px) {
+    .mt-messages-table th:nth-child(2),
+    .mt-messages-table td:nth-child(2) {
+        display: none;
+    }
+
+    .mt-messages-actions {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+}
+
+.mt-contact {
+    font-family: 'Inter', 'Droid Sans', sans-serif;
+    color: #262420;
+    background: #FAF8F4;
+    margin: -20px -15px 0;
+    padding-bottom: 60px;
+}
+
+.mt-contact-inner {
+    padding-top: 40px;
+}
+
+.mt-contact-inner > .mt-pdp-title {
+    margin-bottom: 20px;
 }
 
 /* ===== ModernTheme: Legal pages (Security / Conditions) (v1) ===== */
