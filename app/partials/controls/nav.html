@@ -1,8 +1,8 @@
 <header class="mt-header" role="banner">
     <div class="mt-header-row mt-container">
         <a id="451qa_home_link" href="catalog" class="mt-brand" ng-show="Four51User.isAuthenticated()" aria-label="{{'Go to store home' | r | xlat}}">
-            <img ng-if="user.Company.LogoUrl" ng-src="{{user.Company.LogoUrl}}" class="mt-brand-logo" alt="" />
-            <span>{{user.Company.Name || 'Storefront'}}</span>
+            <img ng-if="user.Company.LogoUrl" ng-src="{{user.Company.LogoUrl}}" class="mt-brand-logo" alt="{{user.Company.Name || 'Storefront'}}" />
+            <span ng-if="!user.Company.LogoUrl">{{user.Company.Name || 'Storefront'}}</span>
         </a>
 
         <form class="mt-search hidden-xs" ng-submit="doSearch()" role="search">
