@@ -48,12 +48,20 @@ four51.app.directive('ordershipping', ['Order', 'Shipper', 'Address', 'AddressLi
 			var saveChanges = function(callback, error) {
 				$scope.errorMessage = null;
 				var auto = $scope.currentOrder.autoID;
+				var budgetAccountID = $scope.currentOrder.BudgetAccountID;
+				var creditCardID = $scope.currentOrder.CreditCardID;
 				Order.save($scope.currentOrder,
 					function(data) {
                         //Due to order save race condition, BillAddressID was being set to null
                         var billAddressID = $scope.currentOrder.BillAddressID;
 						$scope.currentOrder = data;
                         $scope.currentOrder.BillAddressID = billAddressID;
+						if (budgetAccountID) {
+							$scope.currentOrder.BudgetAccountID = budgetAccountID;
+						}
+						if (creditCardID) {
+							$scope.currentOrder.CreditCardID = creditCardID;
+						}
 						$scope.displayLoadingIndicator = false;
 						if (auto) {
 							$scope.currentOrder.autoID = true;

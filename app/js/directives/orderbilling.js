@@ -4,11 +4,19 @@ four51.app.directive('orderbilling', ['Address', 'AddressList', 'Order', functio
 		templateUrl: 'partials/controls/orderBilling.html',
 		controller: ['$scope', function($scope) {
 			$scope.saveOrderBilling = function() {
+				var billAddressID = $scope.currentOrder.BillAddressID;
+				var budgetAccountID = $scope.currentOrder.BudgetAccountID;
+				var creditCardID = $scope.currentOrder.CreditCardID;
 				Order.save($scope.currentOrder,
 					function(data) {
-						var billAddressID = $scope.currentOrder.BillAddressID;
 						$scope.currentOrder = data;
 						$scope.currentOrder.BillAddressID = billAddressID;
+						if (budgetAccountID) {
+							$scope.currentOrder.BudgetAccountID = budgetAccountID;
+						}
+						if (creditCardID) {
+							$scope.currentOrder.CreditCardID = creditCardID;
+						}
 					},
 					function(ex) {
 						$scope.errorMessage = ex.Message;
