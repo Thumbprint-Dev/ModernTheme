@@ -2319,6 +2319,46 @@ body {
     margin-bottom: 20px;
 }
 
+/* Restyle the legacy .view-form-icon fields on the My Account form (First/Last Name, Phone,
+   Email, Username, Password) - same fix already applied on the PDP/checkout/kit pages. This form
+   uses several different decorative icons (fa-user, fa-phone, fa-envelope-o, fa-lock), not just
+   fa-edit, so hide any icon inside .view-form-icon rather than just one class. */
+.mt-account-page .view-form-icon label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #726D5F;
+    margin-bottom: 6px;
+}
+
+.mt-account-page .view-form-icon label.required:after {
+    content: " *";
+    color: #0F6B63;
+}
+
+.mt-account-page .view-form-icon .form-control {
+    border: 1px solid #E8E4DA;
+    border-radius: 8px;
+    padding: 10px 12px;
+    background: #fff;
+    font-size: 14px;
+    color: #262420;
+    box-shadow: none;
+    height: auto;
+    margin-bottom: 16px;
+}
+
+.mt-account-page .view-form-icon .form-control:focus {
+    border-color: #0F6B63;
+    box-shadow: none;
+}
+
+.mt-account-page .view-form-icon i.fa {
+    display: none;
+}
+
 /* ===== ModernTheme: Search / Messages / Contact (v1) ===== */
 
 .mt-search-results {
