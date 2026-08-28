@@ -4,11 +4,14 @@ four51.app.directive('orderbilling', ['Address', 'AddressList', 'Order', functio
 		templateUrl: 'partials/controls/orderBilling.html',
 		controller: ['$scope', function($scope) {
 			$scope.saveOrderBilling = function() {
-				var billAddressID = $scope.currentOrder.BillAddressID;
-				var budgetAccountID = $scope.currentOrder.BudgetAccountID;
-				var creditCardID = $scope.currentOrder.CreditCardID;
 				Order.save($scope.currentOrder,
 					function(data) {
+						// Read these at response time, not before the request went out - a value
+						// set while this save was in flight would otherwise get clobbered by a
+						// stale pre-request snapshot.
+						var billAddressID = $scope.currentOrder.BillAddressID;
+						var budgetAccountID = $scope.currentOrder.BudgetAccountID;
+						var creditCardID = $scope.currentOrder.CreditCardID;
 						$scope.currentOrder = data;
 						$scope.currentOrder.BillAddressID = billAddressID;
 						if (budgetAccountID) {

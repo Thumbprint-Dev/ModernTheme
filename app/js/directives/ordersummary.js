@@ -6,7 +6,15 @@ four51.app.directive('ordersummary', ['Order', 'Coupon', function(Order, Coupon)
 			var save = function(callback) {
 				Order.save($scope.currentOrder,
 					function(data) {
+						var budgetAccountID = $scope.currentOrder.BudgetAccountID;
+						var creditCardID = $scope.currentOrder.CreditCardID;
 						$scope.currentOrder = data;
+						if (budgetAccountID) {
+							$scope.currentOrder.BudgetAccountID = budgetAccountID;
+						}
+						if (creditCardID) {
+							$scope.currentOrder.CreditCardID = creditCardID;
+						}
 						if (callback) callback($scope.currentOrder);
 					}
 				);

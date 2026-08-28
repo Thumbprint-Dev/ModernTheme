@@ -33,10 +33,13 @@ four51.app.directive('orderdetails', ['Order', function(Order) {
 
             $scope.saveOrderDetails = function() {
                 var auto = $scope.currentOrder.autoID;
-                var budgetAccountID = $scope.currentOrder.BudgetAccountID;
-                var creditCardID = $scope.currentOrder.CreditCardID;
                 Order.save($scope.currentOrder,
                     function(data) {
+                        // Read these at response time, not before the request went out - a value
+                        // set while this save was in flight would otherwise get clobbered by a
+                        // stale pre-request snapshot.
+                        var budgetAccountID = $scope.currentOrder.BudgetAccountID;
+                        var creditCardID = $scope.currentOrder.CreditCardID;
                         $scope.currentOrder = data;
                         if (budgetAccountID) {
                             $scope.currentOrder.BudgetAccountID = budgetAccountID;

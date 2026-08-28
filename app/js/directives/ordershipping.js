@@ -48,12 +48,15 @@ four51.app.directive('ordershipping', ['Order', 'Shipper', 'Address', 'AddressLi
 			var saveChanges = function(callback, error) {
 				$scope.errorMessage = null;
 				var auto = $scope.currentOrder.autoID;
-				var budgetAccountID = $scope.currentOrder.BudgetAccountID;
-				var creditCardID = $scope.currentOrder.CreditCardID;
 				Order.save($scope.currentOrder,
 					function(data) {
-                        //Due to order save race condition, BillAddressID was being set to null
+                        //Due to order save race condition, BillAddressID was being set to null.
+                        //Read these at response time, not before the request went out - otherwise
+                        //a value set while this save was in flight (e.g. spending account derived
+                        //once SpendingAccounts loaded) gets clobbered by a stale pre-request snapshot.
                         var billAddressID = $scope.currentOrder.BillAddressID;
+                        var budgetAccountID = $scope.currentOrder.BudgetAccountID;
+                        var creditCardID = $scope.currentOrder.CreditCardID;
 						$scope.currentOrder = data;
                         $scope.currentOrder.BillAddressID = billAddressID;
 						if (budgetAccountID) {
