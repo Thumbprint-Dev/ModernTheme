@@ -5,6 +5,43 @@ Version: 1.0
 Template: Howdy
 */
 
+/* Stock Four51 theme (bootstrap-451.css) puts a fixed 100px gray margin below every page - with
+   ModernTheme's generously-spaced pages this read as a huge empty gray gap before the footer. */
+body {
+    margin-bottom: 0;
+}
+
+/* ===== ModernTheme: Footer ===== */
+.mt-footer {
+    background: #fff;
+    border-top: 1px solid #E8E4DA;
+    padding: 16px 0;
+}
+
+.mt-footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.mt-footer-line {
+    margin: 0;
+    font-size: 12px;
+    color: #726D5F;
+}
+
+.mt-footer-line a {
+    color: #726D5F;
+}
+
+.mt-footer-link {
+    font-size: 12px;
+    color: #0F6B63;
+    font-weight: 600;
+}
+
 /* ===== ModernTheme: Home page (v1, placeholder pass) ===== */
 /* Scoped to .mt-home so it doesn't affect any other page while we validate the approach. */
 
