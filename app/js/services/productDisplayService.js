@@ -392,11 +392,15 @@ four51.app.factory('ProductDisplayService', ['$sce', '$451', 'Variant', 'Product
 	// Finds an existing cart line item that represents the exact same purchase (same product,
 	// same variant, same custom spec values) as lineItem, so adding again can bump its quantity
 	// instead of creating a visually-identical duplicate row in the cart.
+	//
+	// No product-type exception is needed for VariableText/VBOSS (personalized print) items: a
+	// distinct customization (uploaded design, imprint text) always produces either a different
+	// Variant.InteropID (VBOSS dynamically creates a new variant per design) or a different
+	// CanSetForLineItem spec value (free-text personalization) - both of which already prevent a
+	// match below. Two adds that share the same variant AND the same spec values are, by
+	// definition, the same configuration and should combine.
 	function findMatchingLineItem(currentOrder, lineItem) {
 		if (!currentOrder || !currentOrder.LineItems || !lineItem.Product) return null;
-		// VariableText/VBOSS (personalized print) items are never merged - each add represents a
-		// distinct customization (imprint text, uploaded design, etc.) even when quantity matches.
-		if (lineItem.Product.Type == 'VariableText' || lineItem.Product.IsVBOSS) return null;
 		var variantID = lineItem.Variant ? lineItem.Variant.InteropID : null;
 		var match = null;
 		angular.forEach(currentOrder.LineItems, function(li) {
