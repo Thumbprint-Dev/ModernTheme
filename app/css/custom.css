@@ -1296,10 +1296,15 @@ body {
     .mt-cart-item {
         flex-wrap: wrap;
     }
+    /* flex-basis:100% forces each onto its own full-width line below the photo+info row -
+       without it these stayed flexible enough to share a line with .mt-cart-item-info, which has
+       min-width:0 and no floor, so the browser squeezed the product name/SKU column down to
+       almost nothing instead of stacking qty/price underneath. */
     .mt-cart-item-qty,
     .mt-cart-item-price {
-        flex: 1 1 auto;
+        flex: 1 1 100%;
         text-align: left;
+        margin-top: 12px;
     }
     .mt-cart-layout {
         flex-direction: column;
