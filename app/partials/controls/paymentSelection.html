@@ -17,9 +17,9 @@
         </button>
         <button class="mt-header-btn" type="button"
                 ng-if="user.Permissions.contains('PayByBudgetAccount') && (SpendingAccounts|filter:{ForPurchase:true}).length > 0"
-                ng-class="{active: currentOrder.PaymentMethod == 'BudgetAccount' || currentOrder.BudgetAccountID}"
+                ng-class="{active: currentOrder.PaymentMethod == 'BudgetAccount'}"
                 ng-click="setBudgetAccount((SpendingAccounts|filter:{AccountType.PurchaseCredit:true}).length)">
-            <i ng-show="currentOrder.PaymentMethod == 'BudgetAccount' || currentOrder.BudgetAccountID" class="fa fa-check"></i>
+            <i ng-show="currentOrder.PaymentMethod == 'BudgetAccount'" class="fa fa-check"></i>
             {{'Spending Account' | r | xlat}}
         </button>
         <button class="mt-header-btn" type="button"
