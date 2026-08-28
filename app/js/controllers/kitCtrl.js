@@ -42,6 +42,7 @@ four51.app.controller('KitCtrl', ['$scope', '$location', '$routeParams', 'Kit', 
 	$scope.saveOrder = saveOrder;
 	$scope.saveKitItem = saveItem;
 	$scope.setItemAsCurrent = setCurrent;
+	$scope.showKitParent = showKitParent;
 	$scope.calcVariantLineItems = calcVariantLineItems;
 	$scope.selectVariant = selectVariant;
 	$scope.searchVariants = searchVariants;
@@ -74,6 +75,23 @@ four51.app.controller('KitCtrl', ['$scope', '$location', '$routeParams', 'Kit', 
 		$scope.LineItem.Quantity = item.Quantity;
 		$scope.ActiveKitItem = item;
 		setupProduct(item.LineItem.Product, item.LineItem.Variant);
+	}
+
+	// Guides the shopper back to the kit-parent "Order" panel once every configurable
+	// component is done. Re-derives LineItem from currentOrder rather than a cached
+	// reference, since saveItem() replaces currentOrder (and its pricing) on every save.
+	function showKitParent() {
+		$scope.ActiveKitItem = null;
+		$scope.LineItem = $scope.currentOrder.LineItems[$scope.kitIndex];
+		setupProduct($scope.Kit.KitParent, null);
+	}
+
+	function findNextUnconfiguredItem() {
+		var found = null;
+		angular.forEach($scope.Kit.KitItems, function(item) {
+			if (!found && item.LineItem.IsConfigurable && !item.LineItem.IsConfigured) found = item;
+		});
+		return found;
 	}
 
 	function setupProduct(product, variant, searchTerm, success) {
@@ -157,6 +175,16 @@ four51.app.controller('KitCtrl', ['$scope', '$location', '$routeParams', 'Kit', 
 			$scope.addToOrderIndicator = false;
 			$scope.lineItemErrors = null;
 			Kit.mapKitToOrder($scope.Kit,  order.LineItems[$scope.kitIndex]);
+
+			// Guide the shopper straight to whatever still needs configuring instead of
+			// leaving them to hunt for it in the sidebar; once nothing's left, drop them
+			// back on the kit-parent panel so they can add/update the kit in cart.
+			var next = findNextUnconfiguredItem();
+			if (next) {
+				setCurrent(next);
+			} else {
+				showKitParent();
+			}
 		}
 
 		function error(ex) {
