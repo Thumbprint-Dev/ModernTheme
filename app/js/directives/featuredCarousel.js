@@ -1,5 +1,5 @@
 four51.app.directive('mtFeaturedCarousel', ['$interval', '$timeout', function($interval, $timeout) {
-    var AUTO_PLAY_MS = 2500;
+    var AUTO_PLAY_MS = 4500;
     var SCROLL_DURATION_MS = 250;
 
     return {

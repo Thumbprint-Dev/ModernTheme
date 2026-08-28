@@ -30,6 +30,8 @@ four51.app.controller('KitCtrl', ['$scope', '$location', '$routeParams', 'Kit', 
 						}
 					});
 				}
+			} else if (!$scope.LineItem.Quantity) {
+				$scope.LineItem.Quantity = ($scope.LineItem.PriceSchedule && $scope.LineItem.PriceSchedule.DefaultQuantity) || 1;
 			}
 		});
 	}
