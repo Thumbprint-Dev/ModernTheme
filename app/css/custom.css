@@ -1751,6 +1751,17 @@ body {
     margin-left: auto;
 }
 
+@media (max-width: 767px) {
+    /* margin-left:auto pushes New Address to the right of the payment method buttons on one
+       row at desktop width - on mobile the row wraps instead, which left it floating alone at
+       the far right of its own line with a large empty gap. Drop the auto-margin and force it
+       onto its own full-width line below the payment buttons instead, left-aligned like them. */
+    .mt-checkout-payment-toggle .mt-checkout-shipto-new {
+        margin-left: 0;
+        flex: 1 1 100%;
+    }
+}
+
 .mt-checkout-payment-detail {
     margin-bottom: 16px;
 }
