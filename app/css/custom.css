@@ -84,7 +84,15 @@ body {
 }
 
 .mt-section {
-    padding: 40px 0;
+    /* padding-top/bottom only, deliberately not the padding shorthand: .mt-container and
+       .mt-section are combined on the same element everywhere this is used
+       (<div class="mt-container mt-section">), and since both classes have equal CSS
+       specificity, a `padding: 40px 0` shorthand here would win by source order and zero out
+       .mt-container's own 24px left/right padding - which is exactly what was happening,
+       leaving every section heading (Quick Actions, Shop by Category, etc.) flush against the
+       screen edge on narrow viewports where there's no surrounding whitespace to hide it. */
+    padding-top: 40px;
+    padding-bottom: 40px;
 }
 
 .mt-eyebrow {
@@ -559,7 +567,11 @@ body {
 }
 
 .mt-plp-header {
-    padding: 24px 0 8px;
+    /* top/bottom only - see the identical fix and explanation on .mt-section. This is combined
+       with .mt-container on the same element (categoryView.html's breadcrumb/title row), so a
+       padding shorthand here would zero out .mt-container's own left/right padding. */
+    padding-top: 24px;
+    padding-bottom: 8px;
 }
 
 .mt-breadcrumb {
