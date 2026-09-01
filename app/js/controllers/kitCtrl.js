@@ -19,7 +19,7 @@ four51.app.controller('KitCtrl', ['$scope', '$location', '$routeParams', 'Kit', 
 		$scope.Kit = kit;
 		setupProduct(kit.KitParent, null, null, function(){
 			if ($scope.LineItem.ID) {
-				$scope.addToOrderText = 'Update Kit';
+				updateAddToOrderText();
 				Kit.mapKitToOrder($scope.Kit, $scope.LineItem);
 				var newVariant = store.get("kitItem");
 				if(newVariant){
@@ -100,7 +100,17 @@ four51.app.controller('KitCtrl', ['$scope', '$location', '$routeParams', 'Kit', 
 	function showKitParent() {
 		$scope.ActiveKitItem = null;
 		$scope.LineItem = $scope.currentOrder.LineItems[$scope.kitIndex];
+		updateAddToOrderText();
 		setupProduct($scope.Kit.KitParent, null);
+	}
+
+	// $scope.LineItem is the same object as $scope.currentOrder.LineItems[kitIndex] whenever
+	// the kit-parent panel is showing, so LineItem.KitIsInvalid (computed by orderService's
+	// _extend()) reflects real-time whether anything configurable is still outstanding - not
+	// just whether this kit's type is capable of having configurable items.
+	function updateAddToOrderText() {
+		$scope.addToOrderText = ($scope.Kit.KitHasConfigurableItems && !$scope.LineItem.KitIsInvalid) ?
+			'Save & Add to Cart' : 'Update Kit';
 	}
 
 	function findNextUnconfiguredItem() {
@@ -163,7 +173,14 @@ four51.app.controller('KitCtrl', ['$scope', '$location', '$routeParams', 'Kit', 
 			$scope.user.CurrentOrderID = order.ID;
 			User.save($scope.user, function () {
 				$scope.addToOrderIndicator = false;
-				if (!$scope.Kit.KitHasConfigurableItems){
+				// Go straight to the cart once there's nothing left to configure - either the
+				// kit never had configurable items, or everything that did has since been
+				// completed (this is the "Save & Add to Cart" click after finishing the last
+				// component). KitHasConfigurableItems alone only tells you the kit's TYPE can
+				// have configurable items, not whether any are still outstanding right now -
+				// currentLineItem.KitIsInvalid (fresh off this save) is what actually answers
+				// "is there still something to do."
+				if (!$scope.Kit.KitHasConfigurableItems || !currentLineItem.KitIsInvalid){
 					$location.path('/cart');
 				}
 				else{

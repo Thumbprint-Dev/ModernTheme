@@ -39,6 +39,11 @@ four51.app.factory('Order', ['$resource', '$rootScope', '$451', 'Security', 'Err
 		// just like top-level order.LineItems, not partial/synthetic ones.
 		angular.forEach(order.LineItems, function(li) {
 			if (li.IsKitParent) {
+				// Reset explicitly rather than only ever setting it true - $resource save()
+				// responses can reuse the same object reference across calls, so a stale
+				// true from a previous incomplete state must not linger once everything's
+				// actually configured.
+				li.KitIsInvalid = false;
 				li.KitChildren = [];
 				var current = li.NextKitLineItem;
 				while (current) {
