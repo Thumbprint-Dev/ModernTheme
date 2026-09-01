@@ -122,6 +122,9 @@
 									&middot; {{(LineItem.LineTotal || variantLineItemsOrderTotal) | culturecurrency}}
 								</span>
 							</button>
+							<p class="mt-pdp-meta mt-kit-configure-note" ng-show="LineItem.IsKitParent && !LineItem.ID && Kit.KitHasConfigurableItems">
+								{{'This kit includes' | r | xlat}} {{Kit.KitItems.length}} {{'items. Anything that needs your input will be configured next.' | r | xlat}}
+							</p>
 							<div ng-show="LineItem.IsKitChild">
 								<loadingindicator ng-show="addToOrderIndicator"></loadingindicator>
 								<button class="mt-btn-accent mt-pdp-add-btn" type="button" ng-click="saveKitItem()" ng-disabled="(ActiveKitItem.RequiresVariantSelection && !LineItem.Variant)">
