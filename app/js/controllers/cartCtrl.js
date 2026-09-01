@@ -140,16 +140,17 @@ function ($scope, $routeParams, $location, $451, Order, OrderConfig, User) {
 	$scope.$watch('currentOrder.LineItems', function (newval) {
 		var newTotal = 0;
 		var newQtyTotal = 0;
-		var invalidKitFound = false;
+		var anyKitInvalid = false;
 		if (!$scope.currentOrder) return newTotal;
 		angular.forEach($scope.currentOrder.LineItems, function (item) {
-			if (item.IsKitParent && !invalidKitFound) {
-				$scope.cart.$setValidity('kitValidation', !item.KitIsInvalid);
-				invalidKitFound = true;
+			if (item.IsKitParent && item.KitIsInvalid) {
+				anyKitInvalid = true;
+				return; // still configuring - not yet "in the cart" for totals/counts
 			}
 			newTotal += item.LineTotal;
 			newQtyTotal += (item.Quantity || 0) * (item.Product.QuantityMultiplier || 1);
 		});
+		$scope.cart.$setValidity('kitValidation', !anyKitInvalid);
 		$scope.currentOrder.Subtotal = newTotal;
 		$scope.totalItemQuantity = newQtyTotal;
 	}, true);
