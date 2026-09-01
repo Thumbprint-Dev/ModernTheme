@@ -29,12 +29,29 @@ four51.app.controller('KitCtrl', ['$scope', '$location', '$routeParams', 'Kit', 
 							store.remove("kitItem");
 						}
 					});
+				} else {
+					// Land straight on whatever still needs configuring - whether this is the
+					// first visit right after "Start Configuring", or the shopper came back to
+					// an in-progress kit from the cart - instead of making them click into the
+					// sidebar themselves. A fully-configured kit finds nothing and simply stays
+					// on the kit-parent panel.
+					var next = findNextUnconfiguredItem();
+					if (next) setCurrent(next);
 				}
-			} else if (!$scope.LineItem.Quantity && !($scope.LineItem.PriceSchedule && $scope.LineItem.PriceSchedule.RestrictedQuantity)) {
-				// Skip defaulting for restricted-quantity price schedules (only specific break
-				// quantities allowed via a <select>, not an arbitrary number) - see the matching
-				// fix + full explanation in productCtrl.js's setDefaultQty.
-				$scope.LineItem.Quantity = ($scope.LineItem.PriceSchedule && $scope.LineItem.PriceSchedule.DefaultQuantity) || 1;
+			} else {
+				// The server only knows which components actually need configuring once this
+				// kit exists as a real order line item - that's what this first save creates.
+				// Label it as the first step of the wizard rather than a separate "add to cart"
+				// action when there's more to configure after it.
+				if (kit.KitHasConfigurableItems) {
+					$scope.addToOrderText = 'Start Configuring';
+				}
+				if (!$scope.LineItem.Quantity && !($scope.LineItem.PriceSchedule && $scope.LineItem.PriceSchedule.RestrictedQuantity)) {
+					// Skip defaulting for restricted-quantity price schedules (only specific break
+					// quantities allowed via a <select>, not an arbitrary number) - see the matching
+					// fix + full explanation in productCtrl.js's setDefaultQty.
+					$scope.LineItem.Quantity = ($scope.LineItem.PriceSchedule && $scope.LineItem.PriceSchedule.DefaultQuantity) || 1;
+				}
 			}
 		});
 	}

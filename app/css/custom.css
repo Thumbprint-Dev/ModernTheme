@@ -874,6 +874,10 @@ body {
     margin: 0 0 8px;
 }
 
+.mt-kit-configure-note {
+    margin-top: 10px;
+}
+
 .mt-order-row {
     display: flex;
     align-items: center;
