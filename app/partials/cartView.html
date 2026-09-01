@@ -17,7 +17,7 @@
                     <p class="mt-cart-count">{{totalItemQuantity}} {{'item' + (totalItemQuantity > 1 ? 's' : '') | rl | xlat}} {{'in your' | rl | xlat:(totalItemQuantity)}} {{'cart' | rl | xlat}}</p>
 
                     <div class="mt-cart-list">
-                        <div class="mt-cart-item" ng-repeat="item in currentOrder.LineItems">
+                        <div class="mt-cart-item" ng-class="{'mt-cart-item-pending': item.IsKitParent && item.KitIsInvalid}" ng-repeat="item in currentOrder.LineItems">
                             <img class="mt-cart-item-photo mt-real-photo" ng-show="item.Variant.LargeImageUrl || item.Product.SmallImageUrl" ng-src="{{item.Variant.LargeImageUrl || item.Product.SmallImageUrl}}" />
                             <div class="mt-placeholder-photo mt-cart-item-photo" ng-hide="item.Variant.LargeImageUrl || item.Product.SmallImageUrl">
                                 {{'[product photo]' | r | xlat}}
@@ -98,7 +98,7 @@
                                 </div>
                             </div>
 
-                            <div class="mt-cart-item-qty">
+                            <div class="mt-cart-item-qty" ng-if="!(item.IsKitParent && item.KitIsInvalid)">
                                 <label>{{'Quantity' | r | xlat}}</label>
                                 <div class="mt-cart-qty-row">
                                     <quantityfield required="true" lineitem="item" class="quantity"></quantityfield>
@@ -106,9 +106,15 @@
                                 </div>
                             </div>
 
-                            <div class="mt-cart-item-price" ng-if="!(user.Permissions.contains('HidePricing'))">
+                            <div class="mt-cart-item-price" ng-if="!(item.IsKitParent && item.KitIsInvalid) && !(user.Permissions.contains('HidePricing'))">
                                 <p class="mt-pdp-meta">{{'Unit Price' | r | xlat}} {{item.UnitPrice | culturecurrency}}</p>
                                 <p class="mt-pdp-price">{{item.LineTotal | culturecurrency}}</p>
+                            </div>
+
+                            <div class="mt-cart-item-pending-action" ng-if="item.IsKitParent && item.KitIsInvalid">
+                                <span class="mt-kit-pill mt-kit-pill-warn"><i class="fa fa-warning"></i> {{'Needs configuration' | r | xlat}}</span>
+                                <a class="mt-btn-accent mt-cart-continue-btn" ng-href="{{'kit' + '/' + (item.Product.InteropID) + '/' + (isEditforApproval ? (currentOrder.ID + '/') : '') + ($index)}}">{{'Continue Configuring' | r | xlat}}</a>
+                                <button type="button" class="mt-cart-remove-link" ng-click="removeItem(item)">{{'Remove' | r | xlat}}</button>
                             </div>
                         </div>
                     </div>

@@ -62,6 +62,17 @@ function ($location, $route, $scope, $451, $timeout, User, SpendingAccount) {
     }
 
     $scope.$on('event:orderUpdate', function(event, order) {
-        $scope.cartCount = (order ? ((order.Status == 'Unsubmitted') ? order.LineItems.length : null) : null);
+        if (!order || order.Status != 'Unsubmitted') {
+            $scope.cartCount = null;
+            return;
+        }
+        // A kit that's still mid-configuration is a real LineItem server-side (the platform
+        // requires that to know what needs configuring), but it isn't done yet - don't count it
+        // as "added" until KitIsInvalid clears.
+        var count = 0;
+        angular.forEach(order.LineItems, function(li) {
+            if (!(li.IsKitParent && li.KitIsInvalid)) count++;
+        });
+        $scope.cartCount = count;
     });
 }]);
