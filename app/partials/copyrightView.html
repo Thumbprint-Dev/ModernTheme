@@ -4,8 +4,11 @@
             <a href="https://thumbprint.com" target="_blank">{{'Powered by' | xlat}} Thumbprint</a>
             &middot; {{'Copyright' | xlat}} © {{year}} Thumbprint. {{'All Rights Reserved' | xlat}}.
         </p>
-        <span ng-if="!(user.Permissions.contains('HideTerms'))">
+        <span class="mt-footer-links" ng-if="!(user.Permissions.contains('HideTerms'))">
             <a class="mt-footer-link" href="conditions">{{'Conditions of Use' | xlat}}</a>
+            <a class="mt-footer-link" href="https://thumbprint.com/terms-of-use/" target="_blank" rel="noopener">{{'Terms of Use' | xlat}}</a>
+            <a class="mt-footer-link" href="https://thumbprint.com/privacy/" target="_blank" rel="noopener">{{'Privacy Policy' | xlat}}</a>
+            <a class="mt-footer-link" href="https://thumbprint.com/return-policy-and-limited-warranty/" target="_blank" rel="noopener">{{'Return Policy' | xlat}}</a>
         </span>
     </div>
 </footer>

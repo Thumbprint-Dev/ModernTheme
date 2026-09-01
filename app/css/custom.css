@@ -34,6 +34,13 @@ body {
        in practice, so setting it directly here is the reliable fix. */
     width: 100%;
     min-width: 0;
+    /* Every page-wrapper class (.mt-home, .mt-pdp, .mt-cart, .mt-checkout, etc.) sets this same
+       cream background on itself, but that box is only as tall as its own content - on a short
+       page (e.g. a small kit's PDP) it doesn't reach the bottom of this flex-stretched container,
+       leaving a visible gray gap of unstyled default background between the content and the
+       footer. Setting the same color here as a fallback fill closes that gap on every page
+       instead of chasing it page-by-page. */
+    background: #FAF8F4;
 }
 
 /* ===== ModernTheme: Footer ===== */
@@ -65,6 +72,12 @@ body {
     font-size: 12px;
     color: #0F6B63;
     font-weight: 600;
+}
+
+.mt-footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
 }
 
 /* ===== ModernTheme: Home page (v1, placeholder pass) ===== */
