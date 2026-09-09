@@ -349,6 +349,11 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    /* .mt-eyebrow's own margin-bottom is zeroed out below and replaced by this, so the
+       heading-to-content gap is set once here regardless of whether .mt-carousel-controls
+       renders - it used to live on .mt-carousel-controls instead, which only exists when there
+       are more than 4 featured products, so with 4 or fewer the gap silently disappeared. */
+    margin-bottom: 18px;
 }
 
 .mt-carousel-header .mt-eyebrow {
@@ -358,7 +363,6 @@ body {
 .mt-carousel-controls {
     display: flex;
     gap: 8px;
-    margin-bottom: 18px;
 }
 
 .mt-carousel-controls .mt-header-btn {
