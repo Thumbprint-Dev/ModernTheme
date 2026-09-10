@@ -46,11 +46,21 @@ four51.app.controller('KitCtrl', ['$scope', '$location', '$routeParams', 'Kit', 
 				if (kit.KitHasConfigurableItems) {
 					$scope.addToOrderText = 'Start Configuring';
 				}
-				if (!$scope.LineItem.Quantity && !($scope.LineItem.PriceSchedule && $scope.LineItem.PriceSchedule.RestrictedQuantity)) {
-					// Skip defaulting for restricted-quantity price schedules (only specific break
-					// quantities allowed via a <select>, not an arbitrary number) - see the matching
-					// fix + full explanation in productCtrl.js's setDefaultQty.
-					$scope.LineItem.Quantity = ($scope.LineItem.PriceSchedule && $scope.LineItem.PriceSchedule.DefaultQuantity) || 1;
+				if (!$scope.LineItem.Quantity) {
+					var kitPs = $scope.LineItem.PriceSchedule;
+					if (kitPs && kitPs.RestrictedQuantity) {
+						// Skip defaulting for restricted-quantity price schedules (only specific
+						// break quantities allowed via a <select>, not an arbitrary number) - see
+						// the matching fix + full explanation in productCtrl.js's setDefaultQty.
+						// Exception: with exactly one valid option, selecting it is always safe
+						// (it can't mismatch anything) and saves the shopper a dropdown click for
+						// a "choice" they don't actually have.
+						if (kitPs.PriceBreaks && kitPs.PriceBreaks.length == 1) {
+							$scope.LineItem.Quantity = kitPs.PriceBreaks[0].Quantity;
+						}
+					} else {
+						$scope.LineItem.Quantity = (kitPs && kitPs.DefaultQuantity) || 1;
+					}
 				}
 			}
 		});

@@ -26,11 +26,21 @@ function ($scope, $modalInstance, product, currentOrder, ProductDisplayService, 
 			});
 		}
 
-		if (!$scope.needsFullPdpFallback && !($scope.LineItem.PriceSchedule && $scope.LineItem.PriceSchedule.RestrictedQuantity)) {
-			// Skip defaulting for restricted-quantity price schedules (only specific break
-			// quantities allowed via a <select>, not an arbitrary number) - see the matching fix
-			// + full explanation in productCtrl.js's setDefaultQty.
-			$scope.LineItem.Quantity = ($scope.LineItem.PriceSchedule && $scope.LineItem.PriceSchedule.DefaultQuantity) || 1;
+		if (!$scope.needsFullPdpFallback) {
+			var qaPs = $scope.LineItem.PriceSchedule;
+			if (qaPs && qaPs.RestrictedQuantity) {
+				// Skip defaulting for restricted-quantity price schedules (only specific break
+				// quantities allowed via a <select>, not an arbitrary number) - see the matching
+				// fix + full explanation in productCtrl.js's setDefaultQty. Exception: with
+				// exactly one valid option, selecting it is always safe (it can't mismatch
+				// anything) and saves the shopper a dropdown click for a "choice" they don't
+				// actually have.
+				if (qaPs.PriceBreaks && qaPs.PriceBreaks.length == 1) {
+					$scope.LineItem.Quantity = qaPs.PriceBreaks[0].Quantity;
+				}
+			} else {
+				$scope.LineItem.Quantity = (qaPs && qaPs.DefaultQuantity) || 1;
+			}
 		}
 
 		$scope.modalLoading = false;
