@@ -33,8 +33,15 @@ function ($scope, $routeParams, $route, $location, $451, Product, ProductDisplay
 		// error before the customer had touched the page. Leaving Quantity unset instead lets
 		// the field start genuinely empty, matching what the dropdown shows, with no error until
 		// the customer actually picks a quantity.
-		if (lineitem.PriceSchedule && lineitem.PriceSchedule.RestrictedQuantity)
+		if (lineitem.PriceSchedule && lineitem.PriceSchedule.RestrictedQuantity) {
+			// Exception: with exactly one valid option, selecting it is always safe (it can't
+			// mismatch anything) and saves the shopper a dropdown click for a "choice" they
+			// don't actually have.
+			var breaks = lineitem.PriceSchedule.PriceBreaks;
+			if (breaks && breaks.length == 1)
+				$scope.LineItem.Quantity = breaks[0].Quantity;
 			return;
+		}
 		if (lineitem.PriceSchedule && lineitem.PriceSchedule.DefaultQuantity != 0)
 			$scope.LineItem.Quantity = lineitem.PriceSchedule.DefaultQuantity;
 		else
