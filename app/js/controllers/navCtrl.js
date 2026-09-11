@@ -17,7 +17,7 @@ function ($location, $route, $scope, $451, $timeout, User, SpendingAccount) {
         User.logout($scope.user, function(u){
             if ($scope.isAnon) {
                 $timeout(function () {
-                    $location.path("/catalog");
+                    $location.path("/login");
                     location.reload(true);
                 }, 500);
             }
