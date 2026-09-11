@@ -1,0 +1,23 @@
+<section class="mt-favorites">
+    <loadingindicator ng-show="loading" title="{{'Please wait while we fetch your favorites' | r | xlat}}"></loadingindicator>
+    <accountnavigation></accountnavigation>
+    <div class="mt-container mt-favorites-inner">
+        <div class="mt-checkout-card" ng-if="!loading && productCount == 0">
+            <h2 class="mt-checkout-card-title">{{('Favorite' | r) + ' ' + ('Products' | r) | xlat}}</h2>
+            <p class="mt-orders-empty-message">{{'You have no ' + ('Favorite' | rl) + ' ' + ('Products' | rl) + ' yet!' | xlat}}</p>
+            <button type="button" class="mt-btn-accent" redirect="catalog">{{('Browse' | r) + ' ' + ('Products' | r) | xlat}}</button>
+        </div>
+        <div class="mt-checkout-card" ng-if="!loading && productCount > 0">
+            <h2 class="mt-checkout-card-title">{{('Favorite' | r) + ' ' + ('Products' | r) | xlat}}</h2>
+            <div class="mt-product-grid-wrap">
+                <div class="row">
+                    <div class="col-sm-3 col-xs-6" id="451_lst_favprod" ng-repeat="product in products | paginate:(settings.currentPage-1) * settings.pageSize | limitTo:settings.pageSize" ng-include="'partials/controls/mtProductCard.html'"></div>
+                </div>
+            </div>
+            <div class="mt-pagination" ng-show="productCount > settings.pageSize">
+                <pagination page="settings.currentPage" max-size="10" rotate="false" boundary-links="true" total-items="productCount"
+                            items-per-page="settings.pageSize" direction-links="true" previous-text="{{'Previous' | xlat}}" next-text="{{'Next' | xlat}}" first-text="{{'First' | xlat}}" last-text="{{'Last' | xlat}}"></pagination>
+            </div>
+        </div>
+    </div>
+</section>
