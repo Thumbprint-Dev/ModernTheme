@@ -10,7 +10,7 @@
 
         <div class="mt-orders-type-row">
             <div class="mt-checkout-card mt-orders-type-card" ng-show="hasStandardTypes">
-                <h2 class="mt-checkout-card-title">{{('Standard' | r) + ' ' + ('Orders' | r) | xlat}}</h2>
+                <h2 class="mt-checkout-card-title">{{'Orders' | r | xlat}}</h2>
                 <ul class="mt-orders-type-list">
                     <li ng-repeat="criteria in OrderSearchCriteria | filter:{Type:'Standard'}" ng-show="criteria.Count">
                         <a ng-href="#" ng-click="OrderSearch($event,{{criteria}})">{{criteria.DisplayName | r | xlat}} <span class="mt-orders-type-count">{{criteria.Count}}</span></a>
@@ -114,7 +114,7 @@
                     {{(orderSearchStat.Type) + ' ' + ('Orders' | rl) | xlat}}:
                 </span>
                 {{orderSearchStat.DisplayName | r | xlat}}
-                <span ng-show="!orderSearchStat.Type">
+                <span ng-show="!orderSearchStat.Type && !orderSearchStat.DisplayName">
                     {{'Search' | r | xlat}}
                 </span>
             </h2>
