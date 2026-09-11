@@ -11,7 +11,8 @@ angular.module('OrderCloud-AnonRouter')
 run.$inject = ['$rootScope', '$location', 'User', 'publicRoutes'];
 function run($rootScope, $location, User, publicRoutes) {
     $rootScope.$on('$locationChangeStart', function (event, newUrl, oldUrl) {
-            var route = newUrl.split('/')[newUrl.split('/').length-1].split('?')[0];
+            var segments = newUrl.split('?')[0].replace(/\/+$/, '').split('/');
+            var route = segments[segments.length - 1];
             if (publicRoutes.indexOf(route) == -1) {
                 User.get(function(u) {
                     if (u.Type == 'TempCustomer') $location.path('login');
