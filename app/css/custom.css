@@ -2410,31 +2410,10 @@ body {
     margin-top: 20px;
 }
 
-.mt-account-tabs {
-    display: flex;
-    border-bottom: 1px solid #E8E4DA;
-}
-
-.mt-account-tabs button {
-    border: none;
-    background: transparent;
-    color: #726D5F;
-    font-size: 14px;
-    font-weight: 600;
-    padding: 10px 4px;
-    margin-right: 24px;
-    border-bottom: 2px solid transparent;
-    cursor: pointer;
-}
-
-.mt-account-tabs button:hover,
-.mt-account-tabs button:focus {
-    color: #211F19;
-}
-
-.mt-account-tabs button.active {
-    color: #0F6B63;
-    border-bottom-color: #0F6B63;
+@media (max-width: 767px) {
+    .mt-account-page .row > div + div {
+        margin-top: 20px;
+    }
 }
 
 .mt-addresses {
