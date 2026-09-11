@@ -5,7 +5,7 @@
         <p class="mt-plp-count" ng-if="productCount">{{productCount}} {{'products' | r | xlat}}</p>
         <div class="mt-sort" ng-show="currentCategory.SortOptions.length > 0">
             <label for="mt-sort-select">{{'Sort by' | r | xlat}}</label>
-            <select id="mt-sort-select" ng-options="option.SortValue as (option.Display | xlat) for option in currentCategory.SortOptions" ng-model="sort"><option value=""></option></select>
+            <select id="mt-sort-select" ng-options="option.SortValue as (option.Display | xlat) for option in currentCategory.SortOptions" ng-model="sortSelection.value"><option value="">{{'Default Sort' | r | xlat}}</option></select>
         </div>
     </div>
 

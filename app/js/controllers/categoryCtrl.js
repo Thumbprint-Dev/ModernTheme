@@ -177,7 +177,15 @@ function ($routeParams, $sce, $scope, $451, Category, Product, AppConst, Order, 
 		computeHomeCategoryLists();
 	});
 
-	$scope.$watch('sort', function(s) {
+	// Bound via ng-model to an object property (not a bare "sort" primitive) since the PLP
+	// section renders inside an ng-if (".mt-plp"), which creates its own child scope - a bare
+	// ng-model="sort" would shadow this controller's own $scope.sort on that child scope instead
+	// of updating it, so this $watch would never fire and the sort dropdown would silently do
+	// nothing. Binding through a shared object (sortSelection) sidesteps that, since descendant
+	// scopes read/write the same object via the prototype chain regardless of how many scopes
+	// sit in between.
+	$scope.sortSelection = {};
+	$scope.$watch('sortSelection.value', function(s) {
 		if (!s) return;
 		(s.indexOf('Price') > -1) ?
 			$scope.sorter = 'StandardPriceSchedule.PriceBreaks[0].Price' :
