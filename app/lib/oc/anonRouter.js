@@ -4,20 +4,17 @@ angular.module('OrderCloud-AnonRouter')
 
     .run(run)
     .constant('after', 'checkout')
-    .constant('before', 'checkout')
+    .constant('publicRoutes', ['login', 'admin', 'conditions', 'contactus'])
     .factory('AnonRouter', AnonRouter)
 ;
 
-run.$inject = ['$rootScope', '$location', 'User', 'before'];
-function run($rootScope, $location, User, before) {
+run.$inject = ['$rootScope', '$location', 'User', 'publicRoutes'];
+function run($rootScope, $location, User, publicRoutes) {
     $rootScope.$on('$locationChangeStart', function (event, newUrl, oldUrl) {
-            var route = {
-                'New': newUrl.split('/')[newUrl.split('/').length-1],
-                'Old': oldUrl.split('/')[oldUrl.split('/').length-1]
-            };
-            if (route.New == before) {
+            var route = newUrl.split('/')[newUrl.split('/').length-1].split('?')[0];
+            if (publicRoutes.indexOf(route) == -1) {
                 User.get(function(u) {
-                    $location.path(u.Type == 'TempCustomer' ? 'admin' : route.New);
+                    if (u.Type == 'TempCustomer') $location.path('login');
                 });
             }
         }
