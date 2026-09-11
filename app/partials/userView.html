@@ -10,8 +10,14 @@
         </div>
         <loadingindicator title="{{'Please wait while we save your changes' | r | xlat}}" ng-show="displayLoadingIndicator"></loadingindicator>
         <identifyusermessage ng-show="user.Type == 'TempCustomer'"></identifyusermessage>
-        <form ng-show="user.Permissions.contains('ViewSelfAdmin')" name="login_existing" ng-submit="loginExisting()" ng-if="user.Type == 'TempCustomer'">
-            <div class="mt-checkout-card" id="user_form">
+
+        <div class="mt-account-tabs" ng-if="user.Type == 'TempCustomer'" ng-show="user.Permissions.contains('ViewSelfAdmin')">
+            <button type="button" ng-class="{active: accountTab != 'create'}" ng-click="accountTab = 'signin'">{{'Sign In' | r | xlat}}</button>
+            <button type="button" ng-class="{active: accountTab == 'create'}" ng-click="accountTab = 'create'">{{'Create Account' | r | xlat}}</button>
+        </div>
+
+        <form ng-show="user.Permissions.contains('ViewSelfAdmin') && accountTab != 'create'" name="login_existing" ng-submit="loginExisting()" ng-if="user.Type == 'TempCustomer'">
+            <div class="mt-checkout-card">
                 <h2 class="mt-checkout-card-title">{{('Logon' | r) + ' ' + ('as existing user' | r) | xlat}}</h2>
                 <div class="row">
                     <div class="col-md-6 col-md-offset-3">
@@ -32,11 +38,11 @@
             </div>
         </form>
 
-        <div ng-show="user.Permissions.contains('ViewSelfAdmin')" ng-if="user.Type == 'TempCustomer'">
+        <div ng-show="user.Permissions.contains('ViewSelfAdmin') && accountTab != 'create'" ng-if="user.Type == 'TempCustomer'">
             <form name="login_help" ng-submit="getToken()">
                 <div ng-show="!enterResetToken" class="mt-checkout-card">
                     <loadingindicator ng-show="emailResetLoadingIndicator" title="{{'Please wait while we email your verification code' | r | xlat}}"></loadingindicator>
-                    <h2 class="mt-checkout-card-title">{{'Lost login information' | r | xlat}}</h2>
+                    <h2 class="mt-checkout-card-title">{{'Reset Password' | r | xlat}}</h2>
                     <div class="mt-field">
                         <label>{{'Email' | r | xlat}}</label>
                         <input name="username" required class="form-control" type="text" ng-model="loginasuser.Email" autocomplete="off" placeholder="{{'Email' | r | xlat}}" />
@@ -51,7 +57,7 @@
             <form name="resetbytoken" ng-submit="resetWithToken()" >
                 <div class="mt-checkout-card" ng-show="enterResetToken">
                     <loadingindicator ng-show="emailResetLoadingIndicator" title="{{'Please wait while we reset your password' | r | xlat}}"></loadingindicator>
-                    <h2 class="mt-checkout-card-title">{{'Lost login information' | r | xlat}}</h2>
+                    <h2 class="mt-checkout-card-title">{{'Reset Password' | r | xlat}}</h2>
                     <p class="mt-account-alert">{{'If that email address exists in our system, we will send you an email to reset your password.' | r | xlat}}</p>
                     <div class="mt-field">
                         <label>{{'Username' | r | xlat}}</label>
@@ -78,7 +84,7 @@
             </form>
         </div>
 
-        <form ng-show="user.Permissions.contains('ViewSelfAdmin')" name="user_form" ng-submit="save()">
+        <form ng-show="user.Permissions.contains('ViewSelfAdmin') && (user.Type != 'TempCustomer' || accountTab == 'create')" name="user_form" ng-submit="save()">
             <div class="mt-checkout-card" id="user_form">
                 <h2 class="mt-checkout-card-title">{{(user.Type == 'TempCustomer' ? 'Create' : 'My') + ' ' + ('Account' | r) | xlat}}</h2>
                 <div class="row">
