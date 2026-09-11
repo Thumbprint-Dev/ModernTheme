@@ -9,6 +9,19 @@
         </div>
     </div>
 
+    <div class="mt-container mt-section" ng-if="shopByCategories.length">
+        <h2 class="mt-eyebrow">{{'Shop by category' | r | xlat}}</h2>
+        <div class="row">
+            <div class="col-sm-3" ng-repeat="dept in shopByCategories">
+                <a ng-href="catalog/{{dept.InteropID}}" class="mt-dept-tile">
+                    <img ng-if="dept.Image.URL" ng-src="{{dept.Image.URL}}" class="mt-placeholder-photo mt-real-photo" alt="" />
+                    <div ng-if="!dept.Image.URL" class="mt-placeholder-photo">{{'[lifestyle photo]' | r | xlat}}</div>
+                    <p class="mt-dept-name" ng-bind-html="dept.Name"></p>
+                </a>
+            </div>
+        </div>
+    </div>
+
     <div class="mt-container mt-section">
         <h2 class="mt-eyebrow">{{'Quick actions' | r | xlat}}</h2>
         <div class="row mt-quick-actions">
@@ -20,8 +33,8 @@
             </div>
             <div ng-class="allProductsCategory ? 'col-sm-4' : 'col-sm-6'">
                 <a href="favoriteorders" class="mt-tile">
-                    <p class="mt-tile-title">{{'Saved carts' | r | xlat}}</p>
-                    <p class="mt-tile-sub">{{'Load a cart you saved earlier' | r | xlat}}</p>
+                    <p class="mt-tile-title">{{'Favorite Orders' | r | xlat}}</p>
+                    <p class="mt-tile-sub">{{'Find an order you saved earlier' | r | xlat}}</p>
                 </a>
             </div>
             <!-- Only appears when a top-level category with InteropID exactly
@@ -32,19 +45,6 @@
                 <a ng-href="catalog/{{allProductsCategory.InteropID}}" class="mt-tile">
                     <p class="mt-tile-title">{{'Browse full catalog' | r | xlat}}</p>
                     <p class="mt-tile-sub">{{'Your team\'s approved products' | r | xlat}}</p>
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <div class="mt-container mt-section" ng-if="shopByCategories.length">
-        <h2 class="mt-eyebrow">{{'Shop by category' | r | xlat}}</h2>
-        <div class="row">
-            <div class="col-sm-3" ng-repeat="dept in shopByCategories">
-                <a ng-href="catalog/{{dept.InteropID}}" class="mt-dept-tile">
-                    <img ng-if="dept.Image.URL" ng-src="{{dept.Image.URL}}" class="mt-placeholder-photo mt-real-photo" alt="" />
-                    <div ng-if="!dept.Image.URL" class="mt-placeholder-photo">{{'[lifestyle photo]' | r | xlat}}</div>
-                    <p class="mt-dept-name" ng-bind-html="dept.Name"></p>
                 </a>
             </div>
         </div>
