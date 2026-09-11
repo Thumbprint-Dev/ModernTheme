@@ -3252,6 +3252,15 @@ body {
     margin-bottom: 20px;
 }
 
+/* The legacy .fa-search icon here sits directly inside .input-group (one level shallower than
+   the "> div > i.fa" shape .mt-checkout-card's own icon-hiding rule targets), so it was never
+   actually hidden - it rendered on top of the input's own placeholder text instead. Same
+   "hide the decorative legacy icon" convention as every other .view-form-icon field, just
+   matching this markup's actual shape. */
+.mt-favorites-search .input-group > i.fa {
+    display: none;
+}
+
 .mt-favorites-table {
     width: 100%;
     border-collapse: collapse;
