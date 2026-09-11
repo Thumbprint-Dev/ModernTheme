@@ -14,15 +14,17 @@ function ($location, $route, $scope, $451, $timeout, User, SpendingAccount) {
     };
 
     $scope.Logout = function(){
-        User.logout($scope.user, function(u){
+        function redirectAnon() {
             if ($scope.isAnon) {
                 $timeout(function () {
                     $location.path("/login");
                     location.reload(true);
                 }, 500);
             }
-        }, function(ex){
+        }
+        User.logout($scope.user, redirectAnon, function(ex){
             console.log(ex.Message);
+            redirectAnon();
         });
     };
 

@@ -125,9 +125,9 @@ four51.app.factory('User', ['$q', '$rootScope', '$resource', '$451', 'Security',
 
 	var _logout = function(credentials, success, error) {
 		store.clear();
+		Security.logout();
 		$resource($451.api('logout/user')).save(credentials).$promise.then(
 			function(u) {
-				Security.logout();
 				_then(success, u);
 			},
 			function(ex) {
