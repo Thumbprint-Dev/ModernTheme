@@ -12,6 +12,7 @@ four51.app.controller('UserEditCtrl', ['$scope', '$location', '$sce', '$injector
             $scope.loginasuser = {};
             $scope.actionMessage = null;
             $scope.securityWarning = false;
+            $scope.accountTab = 'signin';
 
             if ($scope.user.Type != 'TempCustomer')
                 $scope.user.TempUsername = $scope.user.Username;
