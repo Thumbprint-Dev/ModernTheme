@@ -848,11 +848,8 @@ body {
 
 .mt-order-panel {
     border-top: 1px solid #E8E4DA;
-    /* Order panel (quantity/options + Add to Cart) sized down ~25% from the original
-       20px/16px/14px/12px scale per request - shared with the kit builder's equivalent
-       panel/button classes, so this also tightens that area consistently. */
-    padding-top: 15px;
-    margin-bottom: 15px;
+    padding-top: 20px;
+    margin-bottom: 20px;
 }
 
 .mt-pdp-alert {
@@ -890,7 +887,7 @@ body {
 }
 
 .mt-order-actions {
-    margin-top: 12px;
+    margin-top: 16px;
 }
 
 .mt-pdp-meta {
@@ -906,8 +903,8 @@ body {
 .mt-order-row {
     display: flex;
     align-items: center;
-    gap: 9px;
-    margin-top: 6px;
+    gap: 12px;
+    margin-top: 8px;
 }
 
 .mt-order-row label {
@@ -932,9 +929,9 @@ body {
     display: block;
     width: 100%;
     text-align: center;
-    font-size: 11px;
-    padding: 11px 18px;
-    margin-top: 12px;
+    font-size: 15px;
+    padding: 14px 24px;
+    margin-top: 16px;
 }
 
 .mt-pdp-description {
