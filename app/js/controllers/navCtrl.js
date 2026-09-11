@@ -57,16 +57,17 @@ function ($location, $route, $scope, $451, $timeout, User, SpendingAccount) {
         return result;
     };
 
-    // Keeps a top-nav category's subcategory dropdown open (not just on hover) while the
-    // shopper is browsing it or one of its subcategories, so e.g. Apparel > Mens shows Mens
-    // and Womens already expanded under Apparel instead of only appearing on mouse-over.
-    $scope.isCategoryOpen = function(cat) {
+    // Marks a top-nav category as active while the shopper is browsing it or one of its
+    // subcategories (e.g. Apparel stays highlighted while on Apparel > Mens), independent of
+    // the dropdown itself, which only ever opens on hover/focus - it doesn't stay expanded
+    // after navigating to a subcategory.
+    $scope.isCategoryActive = function(cat) {
         if ($scope.isInPath(cat.InteropID)) return true;
-        var open = false;
+        var active = false;
         angular.forEach(cat.SubCategories, function(sub) {
-            if ($scope.isInPath(sub.InteropID)) open = true;
+            if ($scope.isInPath(sub.InteropID)) active = true;
         });
-        return open;
+        return active;
     };
 
     $scope.Clear = function() {

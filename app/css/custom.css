@@ -590,8 +590,7 @@ body {
 }
 
 .mt-cat-nav-item.has-children:hover .mt-cat-dropdown,
-.mt-cat-nav-item.has-children:focus-within .mt-cat-dropdown,
-.mt-cat-nav-item.has-children.open .mt-cat-dropdown {
+.mt-cat-nav-item.has-children:focus-within .mt-cat-dropdown {
     display: flex;
 }
 
