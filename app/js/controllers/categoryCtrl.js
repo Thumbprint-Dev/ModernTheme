@@ -1,5 +1,5 @@
-four51.app.controller('CategoryCtrl', ['$routeParams', '$sce', '$scope', '$451', 'Category', 'Product', 'Nav', 'AppConst', 'Order', 'User', '$modal', 'ProductDisplayService',
-function ($routeParams, $sce, $scope, $451, Category, Product, Nav, AppConst, Order, User, $modal, ProductDisplayService) {
+four51.app.controller('CategoryCtrl', ['$routeParams', '$sce', '$scope', '$451', 'Category', 'Product', 'AppConst', 'Order', 'User', '$modal', 'ProductDisplayService',
+function ($routeParams, $sce, $scope, $451, Category, Product, AppConst, Order, User, $modal, ProductDisplayService) {
 	$scope.isHome = !$routeParams.categoryInteropID;
 
 	// Computes the home page's "Shop by category" tiles and the "Browse full catalog" tile's
@@ -177,9 +177,6 @@ function ($routeParams, $sce, $scope, $451, Category, Product, Nav, AppConst, Or
 		computeHomeCategoryLists();
 	});
 
-    // panel-nav
-    $scope.navStatus = Nav.status;
-    $scope.toggleNav = Nav.toggle;
 	$scope.$watch('sort', function(s) {
 		if (!s) return;
 		(s.indexOf('Price') > -1) ?

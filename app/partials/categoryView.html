@@ -70,35 +70,13 @@
 <section ng-if="!isHome" class="mt-plp">
     <div class="mt-container mt-plp-header">
         <p class="mt-breadcrumb"><a href="catalog">{{'Home' | r | xlat}}</a> / <span ng-bind-html="currentCategory.Name || ('Categories' | r | xlat)"></span></p>
-        <div class="mt-plp-title-row">
-            <h1 id="451_lbl_curcat" ng-bind-html="currentCategory.Name || ('Categories' | r | xlat)"></h1>
-            <button type="button" class="mt-header-btn" ng-click="toggleNav()">
-                <span ng-if="navStatus.visible">{{'Hide categories' | r | xlat}}</span>
-                <span ng-if="!navStatus.visible">{{'Show categories' | r | xlat}}</span>
-            </button>
-        </div>
+        <h1 id="451_lbl_curcat" ng-bind-html="currentCategory.Name || ('Categories' | r | xlat)"></h1>
     </div>
     <div class="mt-container">
-        <div class="row">
-            <aside class="col-md-3 visible-md visible-lg" ng-if="navStatus.visible">
-                <div class="mt-sidebar">
-                    <h2 class="mt-eyebrow">{{'Category List' | r | xlat}}</h2>
-                    <nav class="451qa_sidenav mt-sidebar-tree">
-                        <ul>
-                            <categorytree tree='tree' current='currentCategory' />
-                        </ul>
-                    </nav>
-                </div>
-            </aside>
-            <div ng-class="{ 'col-md-9': navStatus.visible, 'col-md-12': !navStatus.visible }" >
+        <categorylistview></categorylistview>
 
-                <categorylistview></categorylistview>
+        <loadingindicator ng-show="productLoadingIndicator" title="{{'Please wait while we fetch all products' | r | xlat}}"/>
 
-                <loadingindicator ng-show="productLoadingIndicator" title="{{'Please wait while we fetch all products' | r | xlat}}"/>
-
-                <productlistview></productlistview>
-
-            </div>
-        </div>
+        <productlistview></productlistview>
     </div>
 </section>
