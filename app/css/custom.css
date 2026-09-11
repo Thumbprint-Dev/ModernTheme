@@ -542,7 +542,11 @@ body {
 .mt-cat-nav-row {
     display: flex;
     gap: 24px;
-    overflow-x: auto;
+    /* overflow-x:auto lives in the mobile media query below, not here: setting only one axis
+       to a non-'visible' value forces the browser to compute the OTHER axis as 'auto' too (per
+       spec, explicitly setting overflow-y:visible alongside it gets silently overridden back to
+       'auto') - so unconditional overflow-x:auto here was clipping .mt-cat-dropdown's vertical
+       overflow on every viewport, not just the narrow ones that actually need horizontal scroll. */
 }
 
 .mt-cat-nav a {
@@ -627,6 +631,7 @@ body {
     }
     .mt-cat-nav-row {
         padding: 0 16px;
+        overflow-x: auto;
     }
 }
 
