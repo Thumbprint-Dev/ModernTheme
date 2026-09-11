@@ -436,6 +436,31 @@ back in `SortOptions`), so the hand-authored placeholder `<option value="">` mea
 sort selected" had no text and rendered as a blank line in the dropdown. Give it real text
 (`{{'Default Sort' | r | xlat}}`) rather than leaving it empty.
 
+## Self-registration already exists natively at `/admin` - don't assume it needs to be built
+
+Went looking for a "create your own account" flow and initially concluded there wasn't one - no
+`register`/`signup`/`createaccount` naming anywhere in the codebase, and the Four51 admin's "Custom
+Logon Page" (`Buyers/LogonConfig`) and "Auto Profile Logon" (`Buyers/AutoProfileLogon`) features
+turned out to be unrelated (the former is just a bare, unbranded fallback login form; the latter is
+an SSO template-cloning auto-login mechanism for enterprise integrations, not self-service signup).
+**That conclusion was wrong** - the real mechanism was hiding in plain sight under a name that
+doesn't say "register" anywhere: `app/partials/userView.html`, routed at `/admin`
+(`app/js/routing.js`), is the *same* form used for "My Account" - it branches on `user.Type ==
+'TempCustomer'` (the auto-provisioned anonymous session every unauthenticated visitor already has)
+to show "Logon as existing user" + "Lost login information" + a genuine "Create Account" panel
+(First/Last Name, Username, Password, Email, submitting via the same `save()`/`User.save()` call
+"My Account" edits use for a real customer) instead of the account-edit view. It's fully native,
+already styled with the same `.mt-checkout-card`/`.mt-btn-accent` classes as the rest of the theme,
+and requires zero backend work - it already works.
+
+**Lesson: before concluding a capability doesn't exist, check pages a logged-out/temp session would
+actually see, not just what a grep for the obvious feature name turns up** - the searches that led
+to the wrong conclusion here were all correct on their own terms (there truly is no `register`-named
+anything), the flow just lives under an unrelated-sounding template name because it reuses an
+existing form rather than having a dedicated one. `app/partials/controls/login.html` (the standalone
+`/login` route) had no link to this at all - fixed by adding a plain "Need an account? Click here"
+link to `/admin`, styled like the existing "Need help logging on?" link already on that page.
+
 ## Workflow
 
 - One focused branch + PR per change, branched fresh off `origin/master` each time (never off
