@@ -24,11 +24,14 @@ four51.app.factory('FavoriteProducts', ['$resource', '$q', 'User', '$451', funct
     // Products/:interopID returns inactive products with full, valid data - no Active/
     // IsActive/Status field is sent at all - so the detail endpoint can't tell us whether a
     // product is still active. The catalog search endpoint DOES respect activation and
-    // catalog visibility, so "does this SKU come back from a catalog search" is the
-    // activation test. Resolves false on error, so a failed check hides the product rather
-    // than surfacing a dead one.
-    function _isInCatalog(sku) {
-        return $resource($451.api('Products')).get({ SearchTerms: sku, Page: 1, PageSize: 100 }).$promise.then(
+    // catalog visibility, so "does this product come back from a catalog search" is the
+    // activation test. Searching by the InteropID itself doesn't work here - InteropIDs on
+    // this catalog are platform-generated GUIDs that never appear in a product's own search
+    // terms (unlike a human-readable SKU-style InteropID), so search by the product's Name
+    // instead and confirm the exact InteropID is among the results. Resolves false on error,
+    // so a failed check hides the product rather than surfacing a dead one.
+    function _isInCatalog(name, sku) {
+        return $resource($451.api('Products')).get({ SearchTerms: name, Page: 1, PageSize: 100 }).$promise.then(
             function(result) {
                 var list = (result && result.List) || [];
                 return list.some(function(p) { return p && p.InteropID === sku; });
@@ -49,13 +52,14 @@ four51.app.factory('FavoriteProducts', ['$resource', '$q', 'User', '$451', funct
                 return;
             }
             var lookups = skus.map(function(sku) {
-                var detail = $resource($451.api('Products/:interopID'), { interopID: '@ID' }).get({ interopID: sku }).$promise.then(
+                return $resource($451.api('Products/:interopID'), { interopID: '@ID' }).get({ interopID: sku }).$promise.then(
                     function(product) { return product; },
                     function() { return null; }
-                );
-                return $q.all([detail, _isInCatalog(sku)]).then(function(result) {
-                    var product = result[0], isActive = result[1];
-                    return (product && product.InteropID && isActive) ? product : null;
+                ).then(function(product) {
+                    if (!product || !product.InteropID) return null;
+                    return _isInCatalog(product.Name, sku).then(function(isActive) {
+                        return isActive ? product : null;
+                    });
                 });
             });
             // $q.all preserves order, so the list mirrors the saved favorite order
