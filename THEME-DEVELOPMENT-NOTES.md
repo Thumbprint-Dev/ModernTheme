@@ -391,11 +391,15 @@ product grid). It's invisible today only because `currentCategory.SortOptions` -
 tenant. **This is set in the Four51 admin per-category, not in theme code.** Any `SortValue` string
 becomes a literal client-side `orderBy` field path against the `Product` object (with one special
 case: a value containing `"Price"` maps to `StandardPriceSchedule.PriceBreaks[0].Price`); append
-`" DESC"` to reverse it. A "Best Selling" option would work the exact same way *if* the `Product`
-object actually carries a real sales-volume field for the admin to reference - unconfirmed in this
-build (no such field referenced anywhere in this codebase or in the public
-`Four51/Four51Storefront` reference repo); check the admin's category Sort Options screen to see
-whether a sales/popularity field is offered there before assuming it needs custom backend work.
+`" DESC"` to reverse it.
+
+**"Best Selling" - confirmed NOT available.** The admin's per-category Sort Options screen
+(Buyers > [Company] > Groups > Admin > categories tab > edit a category > Sort Options table) is a
+**fixed list of exactly 7 built-in options**: Default Sort, Product Name A-Z/Z-A, Product ID
+A-Z/Z-A, and Price Lowest-to-Highest/Highest-to-Lowest - there is no free-form field picker and no
+sales-volume/popularity option anywhere in it. A "Best Selling" sort is not something the platform
+exposes at all here; it would need real custom backend work (aggregating order history yourself),
+not a config change.
 
 **Useful technique discovered doing this research:** this theme is a fork of the public
 `Four51/Four51Storefront` GitHub repo (also present locally as the `upstream` git remote). When
@@ -404,6 +408,33 @@ build, `gh search code "<term>" repo:Four51/Four51Storefront` (or `gh api
 repos/Four51/Four51Storefront/contents/<path>`) is a fast way to check the reference implementation
 without needing to clone it - this is exactly how the sorting mechanism above was confirmed to be
 the platform's own intended pattern, not a leftover fragment of this theme's own restyle.
+
+### The sort dropdown's `ng-model="sort"` silently did nothing once actually turned on
+
+Enabling Price sort options in the admin (above) surfaced a real, previously-latent bug: selecting
+an option in the `<select>` visibly updated the dropdown but never reordered the product grid.
+Root cause, confirmed by walking the live scope chain (`angular.element(el).scope()`, then
+`.$parent` repeatedly, checking `hasOwnProperty('sort')` at each level): `productListView.html`
+renders inside `categoryView.html`'s `ng-if="!isHome"` section, and **`ng-if` creates its own child
+scope** (unlike `ng-show`/`ng-hide`, which don't). `ng-model="sort"` is a bare, undotted primitive
+reference - assigning to it from inside that child scope creates a **new, shadowing property on
+the child scope** rather than updating `CategoryCtrl`'s own `$scope.sort` that its `$watch('sort',
+...)` was actually observing. The watch's callback (which computes `sorter`/`direction` for the
+`orderBy` filter) simply never fired again after the first read. This is the classic Angular 1.x
+"dot rule" pitfall - **any `ng-model` that might render underneath an `ng-if` (or another
+directive/element that creates a child scope) should bind to a property on an object
+(`ng-model="thing.value"`), never a bare top-level name** - object property lookups resolve through
+the prototype chain to the correct shared object regardless of how many scopes sit in between,
+where a bare name gets shadowed the moment any descendant scope writes to it. Fixed by introducing
+`$scope.sortSelection = {}` on the controller and binding/watching `sortSelection.value` instead.
+Worth auditing for the same pattern anywhere else a bare (non-dotted) `ng-model` sits inside an
+`ng-if`.
+
+Separately: the platform's Sort Options API doesn't return a "Default Sort" entry at all (only the
+options an admin has explicitly checked Active and that aren't the built-in "no sort" default come
+back in `SortOptions`), so the hand-authored placeholder `<option value="">` meant to represent "no
+sort selected" had no text and rendered as a blank line in the dropdown. Give it real text
+(`{{'Default Sort' | r | xlat}}`) rather than leaving it empty.
 
 ## Workflow
 
