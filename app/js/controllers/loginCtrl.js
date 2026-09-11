@@ -1,5 +1,5 @@
-four51.app.controller('LoginCtrl', ['$scope', '$sce', '$route', '$location', 'User',
-function ($scope, $sce, $route, $location, User) {
+four51.app.controller('LoginCtrl', ['$scope', '$sce', '$route', '$location', 'User', 'AnonRouter',
+function ($scope, $sce, $route, $location, User, AnonRouter) {
 	$scope.PasswordReset = $location.search().token != null;
 	var codes = ['PasswordSecurityException'];
 
@@ -44,6 +44,9 @@ function ($scope, $sce, $route, $location, User) {
 					$scope.credentials.Email = null;
 					$scope.credentials.Username = null;
 					$scope.credentials.Password = null;
+				}
+				else {
+					AnonRouter.route();
 				}
 				delete $scope.credentials;
 			},
