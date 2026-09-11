@@ -1,5 +1,18 @@
-four51.app.controller('NavCtrl', ['$location', '$route', '$scope', '$451', '$timeout', 'User', 'SpendingAccount',
-function ($location, $route, $scope, $451, $timeout, User, SpendingAccount) {
+four51.app.controller('NavCtrl', ['$location', '$route', '$scope', '$451', '$timeout', 'User', 'SpendingAccount', 'AppConst',
+function ($location, $route, $scope, $451, $timeout, User, SpendingAccount, AppConst) {
+    // Four51 InteropIDs are unique platform-wide, so Featured/All Products may carry a uniqueness
+    // suffix (e.g. "featured-gp") - match by prefix, not exact equality. Mirrors the same
+    // exclusion categoryCtrl.js already applies to the home page's "Shop by category" tiles.
+    function startsWithInteropID(fullID, prefix) {
+        return !!fullID && !!prefix && fullID.toLowerCase().indexOf(prefix.toLowerCase()) === 0;
+    }
+
+    // Featured and All Products are utility categories, not real departments - never show them
+    // as top-level items in the main nav.
+    $scope.isNavCategory = function(cat) {
+        return !startsWithInteropID(cat.InteropID, AppConst.featuredCategoryInteropID) && !startsWithInteropID(cat.InteropID, AppConst.allProductsCategoryInteropID);
+    };
+
     $scope.$watch('user', function(user) {
         if (user && user.Type == 'Customer' && user.Permissions.contains('PayByBudgetAccount')) {
             SpendingAccount.query(function(accounts) {
