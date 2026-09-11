@@ -7,6 +7,16 @@ four51.app.controller('UserEditCtrl', ['$scope', '$location', '$sce', '$injector
         }
         catch(ex){}
 
+        // SSO-provisioned accounts (username prefixed "sso") authenticate through their
+        // identity provider, not a stored password - hide the password fields on My Account
+        // so they can't attempt to set one here. Defined up front (not inside User.get's
+        // callback) so it's always a real function for the template to call, even before
+        // the user has loaded.
+        $scope.isSsoUser = function () {
+            var uname = ($scope.user && ($scope.user.Username || $scope.user.TempUsername)) || '';
+            return uname.toLowerCase().indexOf('sso') === 0;
+        };
+
         User.get(function(user) {
             $scope.user = user;
             $scope.loginasuser = {};
@@ -15,6 +25,7 @@ four51.app.controller('UserEditCtrl', ['$scope', '$location', '$sce', '$injector
 
             if ($scope.user.Type != 'TempCustomer')
                 $scope.user.TempUsername = $scope.user.Username;
+
             $scope.getToken = function () {
                 $scope.loginasuser.SendVerificationCodeByEmail = true;
                 $scope.emailResetLoadingIndicator = true;

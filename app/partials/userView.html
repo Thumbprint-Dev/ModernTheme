@@ -108,12 +108,12 @@
                                 <i class="fa fa-user"></i>
                             </div>
                             <!--TODO username input shouldn't default to temporary usernames, if the user is temp, make the placeholder show instead !-->
-                            <div>
+                            <div ng-if="!isSsoUser()">
                                 <label ng-show="user.Password">{{'Password' | r | xlat}}</label>
                                 <input name="password" class="form-control" ng-required="user.Type == 'TempCustomer'" type="password" ng-model="user.Password" placeholder="{{'Password' | r | xlat}}" autocomplete="off" />
                                 <i class="fa fa-lock"></i>
                             </div>
-                            <div>
+                            <div ng-if="!isSsoUser()">
                                 <label ng-show="user.ConfirmPassword">{{('Confirm' | r) + ' ' + ('Password' | r) | xlat}}</label>
                                 <input name="confirm_password" ng-match="user.Password" ng-required="user.Type == 'TempCustomer' || user.Password" class="form-control" type="password" ng-model="user.ConfirmPassword" placeholder="{{('Confirm' | r) + ' ' + ('Password' | r) | xlat}}" autocomplete="off" />
                                 <i class="fa fa-lock"></i>
