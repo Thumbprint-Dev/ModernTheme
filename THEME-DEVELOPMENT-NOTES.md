@@ -358,6 +358,19 @@ variant per design) or a different spec value — both already block a false mat
 We shipped the type-based exception once, and it broke merging for the common real case (the
 exact same already-configured decorated-apparel variant added twice).
 
+### `overflow-x: auto` on one axis silently clips the other axis too
+
+Setting only `overflow-x: auto` (no `overflow-y` declared) on a flex row that also contains an
+absolutely-positioned dropdown child (`.mt-cat-nav-row` containing `.mt-cat-dropdown`) clipped the
+dropdown's vertical overflow completely, even though nothing about the rule looks Y-axis-related.
+**Per the CSS spec, if one overflow axis is set to anything other than `visible`, the browser
+computes the *other* axis as `auto` too** - you can't have a truly `visible` axis paired with a
+non-`visible` one; explicitly writing `overflow-y: visible` next to `overflow-x: auto` doesn't
+prevent this, the browser silently resolves your `visible` back to `auto` anyway. If a container
+needs horizontal scroll on narrow viewports but must let an absolutely-positioned child (a
+dropdown, tooltip, popover) overflow vertically elsewhere, scope the `overflow-x: auto` to a media
+query for just the viewport width that actually needs it, rather than applying it unconditionally.
+
 ### Order save field-preservation race
 
 When a form field's value needs to be "preserved" across an async `Order.save()` (billing
@@ -366,6 +379,31 @@ preserve inside the save's success callback, at response time** — not before t
 sent. Capturing it before the request means a *second*, concurrent save (e.g. an automatic
 autosave firing from a different section of the checkout page) can overwrite that field with a
 stale value while the first save is still in flight, and your "preserved" value is now wrong.
+
+## Category product sorting already exists end-to-end - it's an admin config gap, not a theme gap
+
+Before building a "sort by price / best-selling" feature, check `app/partials/productListView.html`
+and `app/js/controllers/categoryCtrl.js` first - **the mechanism is already fully wired and
+styled** (a `.mt-sort` `<select>` bound to `currentCategory.SortOptions`, feeding a `sort` scope var
+that a `$watch` turns into `sorter`/`direction` inputs for Angular's own `orderBy` filter on the
+product grid). It's invisible today only because `currentCategory.SortOptions` - an array of
+`{SortValue, Display}` pairs returned by `Category.get(...)` - is empty for every category in this
+tenant. **This is set in the Four51 admin per-category, not in theme code.** Any `SortValue` string
+becomes a literal client-side `orderBy` field path against the `Product` object (with one special
+case: a value containing `"Price"` maps to `StandardPriceSchedule.PriceBreaks[0].Price`); append
+`" DESC"` to reverse it. A "Best Selling" option would work the exact same way *if* the `Product`
+object actually carries a real sales-volume field for the admin to reference - unconfirmed in this
+build (no such field referenced anywhere in this codebase or in the public
+`Four51/Four51Storefront` reference repo); check the admin's category Sort Options screen to see
+whether a sales/popularity field is offered there before assuming it needs custom backend work.
+
+**Useful technique discovered doing this research:** this theme is a fork of the public
+`Four51/Four51Storefront` GitHub repo (also present locally as the `upstream` git remote). When
+something looks like it might be a platform-level convention rather than something specific to this
+build, `gh search code "<term>" repo:Four51/Four51Storefront` (or `gh api
+repos/Four51/Four51Storefront/contents/<path>`) is a fast way to check the reference implementation
+without needing to clone it - this is exactly how the sorting mechanism above was confirmed to be
+the platform's own intended pattern, not a leftover fragment of this theme's own restyle.
 
 ## Workflow
 
@@ -396,6 +434,22 @@ stale value while the first save is still in flight, and your "preserved" value 
   never will — several of the bugs above were only found by actually looking at a rendered page
   at a real mobile width and noticing something was visually wrong, then tracing back to the
   cause.
+- **`git fetch`/`git push` over HTTPS can hang indefinitely** in this environment (confirmed via
+  `GIT_TRACE`/`GIT_CURL_VERBOSE`: the connection completes the initial header exchange fine, then
+  stalls specifically on the pack-protocol POST body - unrelated to credentials, reproduced across
+  plain HTTP/1.1, forced protocol v0, and a larger `http.postBuffer`, so don't bother re-trying
+  those tweaks first). **`gh` CLI commands (`gh api`, `gh pr create`, `gh pr merge`, `gh search
+  code`) all still work fine when this happens** - they go over plain REST, not git's smart-HTTP
+  pack protocol. When `git push` is stuck, ship changes by building the commit directly through
+  GitHub's Git Data API instead: create a blob per changed file (`gh api .../git/blobs`, base64
+  content), a tree from the branch's current tree plus those blobs (`sha: null` for a deleted
+  path), a commit from that tree, then move the branch ref to it
+  (`gh api .../git/refs/heads/<branch> -X PATCH -f sha=...`) - then `gh pr create`/`gh pr merge` as
+  normal. A reusable script for this exists in scratchpad from when this was worked out
+  (`gh_commit.sh` - recreate it the same way if it's not there in a future session: blobs → tree →
+  commit → ref-update, one function per step). Worth a quick retry of plain `git fetch` first each
+  session in case the underlying issue has resolved - this was environment-specific, not a design
+  limitation of git itself.
 
 ## Open items / things to revisit
 
