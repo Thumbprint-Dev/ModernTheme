@@ -302,6 +302,9 @@ body {
 }
 
 .mt-fav-btn {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
     position: absolute;
     top: 10px;
     right: 10px;
@@ -311,7 +314,11 @@ body {
     align-items: center;
     justify-content: center;
     width: 30px;
+    min-width: 30px;
+    max-width: 30px;
     height: 30px;
+    min-height: 30px;
+    max-height: 30px;
     flex: 0 0 30px;
     margin: 0;
     padding: 0;
@@ -843,7 +850,11 @@ body {
     top: 16px;
     right: 16px;
     width: 40px;
+    min-width: 40px;
+    max-width: 40px;
     height: 40px;
+    min-height: 40px;
+    max-height: 40px;
     flex-basis: 40px;
     line-height: 1;
     font-size: 18px;
