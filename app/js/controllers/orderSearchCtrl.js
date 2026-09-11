@@ -10,6 +10,13 @@ four51.app.controller('OrderSearchCtrl', ['$scope', '$location', 'OrderSearchCri
 			$scope.hasStandardTypes = _hasType(data, 'Standard');
 			$scope.hasReplenishmentTypes = _hasType(data, 'Replenishment');
 			$scope.hasPriceRequestTypes = _hasType(data, 'PriceRequest');
+
+			// Show the full order list (any status) right away instead of requiring the
+			// shopper to click a specific status first - the status is already visible per
+			// row via the status pill, so there's nothing gained by starting empty.
+			if ($scope.hasStandardTypes || $scope.hasReplenishmentTypes || $scope.hasPriceRequestTypes) {
+				$scope.OrderSearch(null, { DisplayName: 'All Orders' });
+			}
 		});
 
 		$scope.$watch('settings.currentPage', function() {
@@ -17,7 +24,7 @@ four51.app.controller('OrderSearchCtrl', ['$scope', '$location', 'OrderSearchCri
 		});
 
 		$scope.OrderSearch = function($event, criteria) {
-			$event.preventDefault();
+			if ($event) $event.preventDefault();
 			$scope.currentCriteria = criteria;
 			Query(criteria);
 		};
