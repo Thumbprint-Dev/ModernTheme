@@ -17,10 +17,26 @@ function ($routeParams, $sce, $scope, $451, Category, Product, AppConst, Order, 
 		return !!a && !!b && a.toLowerCase() === b.toLowerCase();
 	}
 
+	// Four51 InteropIDs must be unique across the ENTIRE platform, not just this tenant - an admin
+	// can't always use the literal "featured"/"all-products" string if another site already
+	// claimed it, so Four51 appends a uniqueness suffix instead (the same pattern already visible
+	// on every other category in this tenant, e.g. "apparel-gabe", "kits-gabe"). Match these two
+	// special categories by PREFIX, not exact equality, so e.g. "all-products-gabe" still matches
+	// the intended "all-products" category. The curated shopByCategoryInteropIDs list below still
+	// uses exact matching (sameInteropID) - those are specific department names an admin
+	// configures precisely, not a platform-reserved name subject to this collision.
+	function startsWithInteropID(fullID, prefix) {
+		return !!fullID && !!prefix && fullID.toLowerCase().indexOf(prefix.toLowerCase()) === 0;
+	}
+
 	function computeHomeCategoryLists() {
 		if (!$scope.tree) return;
+
+		$scope.featuredCategory = $scope.tree.filter(function(cat) { return startsWithInteropID(cat.InteropID, AppConst.featuredCategoryInteropID); })[0];
+		$scope.allProductsCategory = $scope.tree.filter(function(cat) { return startsWithInteropID(cat.InteropID, AppConst.allProductsCategoryInteropID); })[0];
+
 		var eligible = $scope.tree.filter(function(cat) {
-			return !sameInteropID(cat.InteropID, AppConst.featuredCategoryInteropID) && !sameInteropID(cat.InteropID, AppConst.allProductsCategoryInteropID);
+			return !startsWithInteropID(cat.InteropID, AppConst.featuredCategoryInteropID) && !startsWithInteropID(cat.InteropID, AppConst.allProductsCategoryInteropID);
 		});
 
 		if (AppConst.shopByCategoryInteropIDs && AppConst.shopByCategoryInteropIDs.length) {
@@ -30,18 +46,18 @@ function ($routeParams, $sce, $scope, $451, Category, Product, AppConst, Order, 
 		}
 		$scope.shopByCategories = eligible;
 
-		var allProductsMatches = $scope.tree.filter(function(cat) { return sameInteropID(cat.InteropID, AppConst.allProductsCategoryInteropID); });
-		$scope.allProductsCategory = allProductsMatches[0];
+		// Deferred until the real featured category (with its actual, possibly-suffixed
+		// InteropID) is resolved above, rather than searching on the bare config prefix directly -
+		// guarded so this only ever fires once even though computeHomeCategoryLists() re-runs
+		// whenever the tree reloads.
+		if ($scope.isHome && $scope.featuredCategory && !$scope.featuredProductsFetched) {
+			$scope.featuredProductsFetched = true;
+			Product.search($scope.featuredCategory.InteropID, null, null, function (products) {
+				$scope.featuredProducts = products;
+			}, 1, 20);
+		}
 	}
 	computeHomeCategoryLists();
-
-	if ($scope.isHome) {
-		// "Featured for your team" pulls from a dedicated real category (see AppConst.featuredCategoryInteropID)
-		// rather than a platform-wide "all products" query, which Product.search doesn't support unscoped.
-		Product.search(AppConst.featuredCategoryInteropID, null, null, function (products) {
-			$scope.featuredProducts = products;
-		}, 1, 20);
-	}
 
 	// Quick add-to-cart from a product card (home featured carousel and PLP grid). Product.search()
 	// list results don't reliably carry VariantCount/Specs the way the full product detail fetch
