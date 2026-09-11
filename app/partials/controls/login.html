@@ -1,5 +1,9 @@
 <div class="mt-login">
     <div class="mt-login-card">
+        <div class="mt-login-brand">
+            <img ng-if="user.Company.LogoUrl" ng-src="{{user.Company.LogoUrl}}" alt="{{user.Company.Name || 'Storefront'}}" />
+            <span ng-if="!user.Company.LogoUrl">{{user.Company.Name || 'Storefront'}}</span>
+        </div>
         <h1 class="mt-login-title">{{'Sign in' | r}}</h1>
         <p id="451qa_msg_login" ng-show="loginMessage" ng-bind-html="loginMessage" class="mt-login-alert"></p>
 

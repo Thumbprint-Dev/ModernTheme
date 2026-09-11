@@ -1028,6 +1028,23 @@ body {
     padding: 40px 32px;
 }
 
+.mt-login-brand {
+    text-align: center;
+    margin: 0 0 20px;
+}
+
+.mt-login-brand img {
+    max-height: 40px;
+    max-width: 100%;
+}
+
+.mt-login-brand span {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #262420;
+}
+
 .mt-login-title {
     font-size: 24px;
     font-weight: 400;
