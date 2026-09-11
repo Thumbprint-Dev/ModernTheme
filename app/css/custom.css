@@ -306,16 +306,21 @@ body {
     top: 10px;
     right: 10px;
     z-index: 2;
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     width: 30px;
     height: 30px;
+    flex: 0 0 30px;
+    margin: 0;
     padding: 0;
     border: none;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.9);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
     font-size: 14px;
-    line-height: 30px;
-    text-align: center;
+    line-height: 1;
     transition: transform 0.2s ease;
 }
 
@@ -839,7 +844,8 @@ body {
     right: 16px;
     width: 40px;
     height: 40px;
-    line-height: 40px;
+    flex-basis: 40px;
+    line-height: 1;
     font-size: 18px;
 }
 
