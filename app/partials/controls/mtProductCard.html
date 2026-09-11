@@ -1,4 +1,9 @@
 <div class="mt-product-card">
+    <button type="button" class="mt-fav-btn" ng-if="user.Type == 'Customer'"
+            title="{{($root.isFavorite(product.InteropID) ? 'Remove Favorite' : 'Add Favorite') | r | xlat}}"
+            ng-click="$root.isFavorite(product.InteropID) ? $root.removeFavorite(product.InteropID) : $root.addFavorite(product.InteropID)">
+        <i class="fa" ng-class="{'fa-heart text-danger': $root.isFavorite(product.InteropID), 'fa-heart-o': !$root.isFavorite(product.InteropID)}"></i>
+    </button>
     <a href="{{product.Type == 'Kit' ? 'kit' : 'product'}}/{{product.InteropID}}" class="mt-product-card-link">
         <img ng-if="product.SmallImageUrl" ng-src="{{product.SmallImageUrl}}" class="mt-placeholder-photo mt-real-photo" alt="" />
         <div ng-if="!product.SmallImageUrl" class="mt-placeholder-photo">{{'[product photo]' | r | xlat}}</div>

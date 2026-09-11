@@ -22,7 +22,7 @@
                 {{'Cart' | r | xlat}}
                 <span class="mt-cart-badge" ng-if="cartCount">{{cartCount}}</span>
             </a>
-            <div class="dropdown mt-account" ng-class="{'active': isActive(['admin', 'addresses', 'address', 'messages', 'message', 'favoriteorders'])}">
+            <div class="dropdown mt-account" ng-class="{'active': isActive(['admin', 'addresses', 'address', 'messages', 'message', 'favoriteorders', 'favoriteproducts'])}">
                 <a id="451qa_acct_link2" class="mt-header-btn dropdown-toggle" data-toggle="dropdown" aria-label="{{'Account' | r | xlat}}">
                     <span ng-if="user.FirstName">{{user.FirstName}} {{(user.LastName || '')[0]}}</span><span ng-if="!user.FirstName">{{'Account' | r | xlat}}</span>
                     <b class="caret"></b>
@@ -39,6 +39,9 @@
                     </li>
                     <li class="favorites" ng-show="user.Type == 'Customer'">
                         <a id="451qa_fave_link" href="favoriteorders">{{'Favorite Orders' | r | xlat}}</a>
+                    </li>
+                    <li class="favorites" ng-show="user.Type == 'Customer'">
+                        <a href="favoriteproducts">{{'Favorite Products' | r | xlat}}</a>
                     </li>
                     <li ng-show="user.Type == 'Customer' && user.Permissions.contains('AdvancedReporting')">
                         <a id="451qa_reports_link" href="reports">{{'Reports' | r | xlat}}</a>

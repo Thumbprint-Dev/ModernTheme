@@ -28,6 +28,7 @@ four51.app.config(['$routeProvider', '$locationProvider', function($routeProvide
         when('/order/:id', { templateUrl: 'partials/Reporting/orderHistoryView.html', controller: 'OrderViewCtrl' }).
         when('/order/new/:id', { templateUrl: 'partials/Reporting/orderHistoryView.html', controller: 'OrderViewCtrl' }).
         when('/favoriteorders', { templateUrl: 'partials/favoriteOrderListView.html', controller: 'FavoriteOrderCtrl' }).
+        when('/favoriteproducts', { templateUrl: 'partials/favoriteProductsView.html', controller: 'FavoriteProductsCtrl' }).
         when('/order/:orderid/:lineitemindex/', { templateUrl: 'partials/Reporting/lineItemHistoryView.html', controller: 'LineItemViewCtrl' }).
         when('/message', { templateUrl: 'partials/messageListView.html', controller: 'MessageListCtrl' }).
         when('/message/:id', { templateUrl: 'partials/messageView.html', controller: 'MessageViewCtrl' }).

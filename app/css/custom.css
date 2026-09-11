@@ -288,6 +288,7 @@ body {
 }
 
 .mt-product-card {
+    position: relative;
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -298,6 +299,30 @@ body {
     padding: 14px;
     margin-bottom: 32px;
     overflow: hidden;
+}
+
+.mt-fav-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 2;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    font-size: 14px;
+    line-height: 30px;
+    text-align: center;
+    transition: transform 0.2s ease;
+}
+
+.mt-fav-btn:hover,
+.mt-fav-btn:focus {
+    transform: scale(1.08);
+    background: #fff;
 }
 
 .mt-product-card-link {
@@ -805,7 +830,17 @@ body {
 }
 
 .mt-pdp-image-wrap {
+    position: relative;
     margin-bottom: 16px;
+}
+
+.mt-pdp-fav-btn {
+    top: 16px;
+    right: 16px;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    font-size: 18px;
 }
 
 .mt-pdp-image {

@@ -1,5 +1,5 @@
-four51.app.controller('Four51Ctrl', ['$scope', '$route', '$rootScope', '$timeout', '$document', '$window', '$location', '$451', 'User', 'Order', 'Security', 'OrderConfig', 'Category', 'AppConst','XLATService', 'GoogleAnalytics',
-function ($scope, $route, $rootScope, $timeout, $document, $window, $location, $451, User, Order, Security, OrderConfig, Category, AppConst, XLATService, GoogleAnalytics) {
+four51.app.controller('Four51Ctrl', ['$scope', '$route', '$rootScope', '$timeout', '$document', '$window', '$location', '$451', 'User', 'Order', 'Security', 'OrderConfig', 'Category', 'AppConst','XLATService', 'GoogleAnalytics', 'FavoriteProducts',
+function ($scope, $route, $rootScope, $timeout, $document, $window, $location, $451, User, Order, Security, OrderConfig, Category, AppConst, XLATService, GoogleAnalytics, FavoriteProducts) {
 	$scope.AppConst = AppConst;
 	$scope.scroll = 0;
 	$scope.isAnon = $451.isAnon; //need to know this before we have access to the user object
@@ -58,6 +58,28 @@ function ($scope, $route, $rootScope, $timeout, $document, $window, $location, $
 				$scope.tree = data;
 				$scope.$broadcast("treeComplete", data);
 			});
+
+			// Favoriting helpers live on $scope.$root, not $scope: directives like the
+			// mtProductCard partial's ng-include create child scopes that would shadow a
+			// plain $scope property, so every template that renders a heart button reads
+			// through $root instead.
+			$scope.$root.favoriteProducts = $scope.$root.favoriteProducts || [];
+			FavoriteProducts.getAll(function (skus) {
+				$scope.$root.favoriteProducts = skus;
+			});
+			$scope.$root.addFavorite = function (sku) {
+				FavoriteProducts.add(sku, function (skus) {
+					$scope.$root.favoriteProducts = skus;
+				});
+			};
+			$scope.$root.removeFavorite = function (sku) {
+				FavoriteProducts.remove(sku, function (skus) {
+					$scope.$root.favoriteProducts = skus;
+				});
+			};
+			$scope.$root.isFavorite = function (sku) {
+				return $scope.$root.favoriteProducts.indexOf(sku) > -1;
+			};
 		}
 	}
 
@@ -93,15 +115,17 @@ function ($scope, $route, $rootScope, $timeout, $document, $window, $location, $
 		});
 
 	function LogoutByTimer(){
-		User.logout($scope.user, function(u){
+		function redirectAnon() {
 			if ($scope.isAnon) {
 				$timeout(function () {
-					$location.path("/catalog");
+					$location.path("/login");
 					location.reload(true);
 				}, 500);
 			}
-		}, function(ex){
+		}
+		User.logout($scope.user, redirectAnon, function(ex){
 			console.log(ex.Message);
+			redirectAnon();
 		});
 	}
 
