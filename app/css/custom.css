@@ -222,7 +222,7 @@ body {
 .mt-dept-tile {
     position: relative;
     display: block;
-    aspect-ratio: 3 / 4;
+    aspect-ratio: 1 / 1;
     /* 14px (matching the radius used elsewhere, e.g. .mt-checkout-card) was genuinely clipping
        correctly (verified with elementFromPoint at the literal corner pixel) but was too subtle
        to read as "rounded" rather than "square" at this tile's actual rendered size - confirmed
