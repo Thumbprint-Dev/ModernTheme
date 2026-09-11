@@ -98,9 +98,9 @@
                             </div>
                             <div>
                                 <label class="required">{{'Email' | r | xlat}}</label>
-                                <input name="email" class="form-control" type="email" ng-model="user.Email" required placeholder="{{'Email' | r | xlat}}" autocomplete="off" />
+                                <input name="email" class="form-control" type="email" ng-model="user.Email" required placeholder="{{'Email' | r | xlat}}" autocomplete="off" ng-blur="emailVisited = true" />
                                 <i class="fa fa-envelope-o"></i>
-                                <inlineerror ng-show="user_form.email.$invalid" title="{{'Please enter a valid' + ' ' +  ('Email' | rl) + ' ' + ('Address' | rl) | xlat}}"></inlineerror>
+                                <inlineerror ng-show="emailVisited && user_form.email.$invalid" title="{{'Please enter a valid' + ' ' +  ('Email' | rl) + ' ' + ('Address' | rl) | xlat}}"></inlineerror>
                             </div>
                             <div>
                                 <label class="required">{{'Username' | r | xlat}}</label>
