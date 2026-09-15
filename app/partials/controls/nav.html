@@ -5,12 +5,18 @@
             <span ng-if="!user.Company.LogoUrl">{{user.Company.Name || 'Storefront'}}</span>
         </a>
 
-        <form class="mt-search hidden-xs" ng-submit="doSearch()" role="search">
+        <form class="mt-search" ng-class="{'mt-search-open': mobileSearchOpen}" ng-submit="doSearch(); mobileSearchOpen = false" role="search">
             <label for="mt-store-search" class="sr-only">{{'Search' | r | xlat}}</label>
             <input id="mt-store-search" type="search" ng-model="searchTerm" placeholder="{{'Search products, SKUs, categories' | r | xlat}}&hellip;" />
+            <button type="submit" class="mt-search-submit" aria-label="{{'Search' | r | xlat}}">
+                <i class="fa fa-search"></i>
+            </button>
         </form>
 
         <div class="mt-header-actions">
+            <button type="button" class="mt-search-toggle" ng-click="mobileSearchOpen = !mobileSearchOpen" aria-label="{{'Search' | r | xlat}}" aria-expanded="{{!!mobileSearchOpen}}">
+                <i class="fa fa-search"></i>
+            </button>
             <div class="mt-budget hidden-xs" ng-if="primarySpendingAccount">
                 <span class="mt-budget-label">{{primarySpendingAccount.Label}}</span>
                 <span class="mt-budget-value">{{primarySpendingAccount.Balance | culturecurrency}} {{'available' | r | xlat}}</span>

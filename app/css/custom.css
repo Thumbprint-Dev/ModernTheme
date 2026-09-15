@@ -488,6 +488,7 @@ body {
 }
 
 .mt-search {
+    position: relative;
     flex: 1;
     max-width: 480px;
     margin: 0;
@@ -495,11 +496,43 @@ body {
 
 .mt-search input {
     width: 100%;
-    padding: 10px 14px;
+    padding: 10px 40px 10px 14px;
     border: 1px solid #E8E4DA;
     border-radius: 8px;
     background: #FAF8F4;
     font-size: 14px;
+}
+
+.mt-search-submit {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 40px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    padding: 0;
+    color: #8A8378;
+    cursor: pointer;
+}
+
+.mt-search-submit:hover,
+.mt-search-submit:focus {
+    color: #262420;
+}
+
+.mt-search-toggle {
+    display: none;
+    border: none;
+    background: transparent;
+    padding: 8px;
+    font-size: 16px;
+    line-height: 1;
+    color: #262420;
+    cursor: pointer;
 }
 
 .mt-header-actions {
@@ -668,6 +701,27 @@ body {
     .mt-cat-nav-row {
         padding: 0 16px;
         overflow-x: auto;
+    }
+    .mt-search-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .mt-search {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        max-width: none;
+        margin: 0;
+        padding: 10px 16px;
+        background: #fff;
+        border-bottom: 1px solid #E8E4DA;
+        z-index: 999;
+    }
+    .mt-search.mt-search-open {
+        display: block;
     }
 }
 
