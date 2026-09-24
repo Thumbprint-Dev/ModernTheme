@@ -4831,6 +4831,92 @@ input[datepicker-popup] {
     }
 }
 
+/* ===== ModernTheme: header dropdown + mobile search transitions ===== */
+/* The mini-cart, the account menu and the mobile search panel all toggled display:none/block
+   (bootstrap's .open > .dropdown-menu, and .mt-search-open), which can't be transitioned -
+   they snapped open and shut. They now stay display:block but hidden (visibility + opacity,
+   pointer-events off), and fade/slide in on the same class, so the ui-bootstrap 0.10 dropdown
+   toggle and the search button's ng-class drive them unchanged.
+
+   visibility waits out the fade on close (the 0s step delayed to the end) and flips at once
+   on open, so a hidden panel is never clickable or focusable, and the closing fade still plays. */
+.mt-header .dropdown-menu {
+    display: block;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+    transform-origin: top right;
+    pointer-events: none;
+    box-shadow: 0 1px 2px rgba(33, 31, 25, 0.06), 0 12px 28px rgba(33, 31, 25, 0.14);
+    transition: opacity 0.14s ease-in, transform 0.14s ease-in, visibility 0s linear 0.14s;
+}
+
+.mt-header .open > .dropdown-menu {
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+    transition: opacity 0.2s ease-out, transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1.2), visibility 0s;
+}
+
+/* The toggles themselves respond too, so the click reads before the panel lands. */
+.mt-header .mt-header-btn,
+.mt-header .mt-search-toggle {
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+
+.mt-header .mt-header-btn:active,
+.mt-header .mt-search-toggle:active {
+    transform: scale(0.96);
+}
+
+.mt-header .open > .dropdown-toggle {
+    border-color: var(--mt-color-muted);
+    background: var(--mt-color-bg);
+}
+
+.mt-header .dropdown-toggle .caret {
+    transition: transform 0.2s ease;
+}
+
+.mt-header .open > .dropdown-toggle .caret {
+    transform: rotate(180deg);
+}
+
+@media (max-width: 767px) {
+    .mt-header .mt-search {
+        display: flex;
+        visibility: hidden;
+        opacity: 0;
+        transform: translateY(-8px);
+        pointer-events: none;
+        transition: opacity 0.14s ease-in, transform 0.14s ease-in, visibility 0s linear 0.14s;
+    }
+    .mt-header .mt-search.mt-search-open {
+        visibility: visible;
+        opacity: 1;
+        transform: none;
+        pointer-events: auto;
+        transition: opacity 0.2s ease-out, transform 0.2s ease-out, visibility 0s;
+    }
+    /* Spans the header row now, so it grows from the top edge rather than the right corner. */
+    .mt-header .mt-minicart-panel {
+        transform-origin: top center;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mt-header .dropdown-menu,
+    .mt-header .open > .dropdown-menu,
+    .mt-header .mt-search,
+    .mt-header .mt-search.mt-search-open,
+    .mt-header .mt-header-btn:active,
+    .mt-header .mt-search-toggle:active,
+    .mt-header .open > .dropdown-toggle .caret {
+        transform: none;
+    }
+}
+
 .mt-minicart-empty {
     margin: 0;
     padding: 12px 4px;
