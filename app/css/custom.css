@@ -2100,26 +2100,180 @@ body {
     border-top: 1px solid var(--mt-color-border);
 }
 
-@media (max-width: 767px) {
-    .mt-cart-item {
-        flex-wrap: wrap;
-    }
-    /* flex-basis:100% forces each onto its own full-width line below the photo+info row -
-       without it these stayed flexible enough to share a line with .mt-cart-item-info, which has
-       min-width:0 and no floor, so the browser squeezed the product name/SKU column down to
-       almost nothing instead of stacking qty/price underneath. */
-    .mt-cart-item-qty,
-    .mt-cart-item-price {
-        flex: 1 1 100%;
-        text-align: left;
-        margin-top: 12px;
-    }
+/* Tablet and phone: one column. Beside a 320px summary the list only had ~350px at tablet
+   width, which wrapped product names a word per line and slid the price column under the
+   summary card. Stacked, the list gets the full width and each item keeps its one-row
+   desktop layout down to 768px.
+
+   The summary sticks to the bottom of the screen instead of waiting after the whole list,
+   so Subtotal and Checkout stay in reach while scrolling. It's the same element, sticky
+   within .mt-cart-layout: it rides the bottom edge while the list is on screen and settles
+   into its normal place at the end, so there's never a second copy of the button. */
+@media (max-width: 991px) {
     .mt-cart-layout {
         flex-direction: column;
+        align-items: stretch;
+        gap: 0;
     }
     .mt-cart-side {
-        position: static;
-        width: 100%;
+        position: sticky;
+        top: auto;
+        bottom: 0;
+        z-index: 5;
+        flex: 0 0 auto;
+        width: auto;
+        /* Out to the screen edges through .mt-container's 24px side padding. */
+        margin: 0 -24px;
+        padding: 12px 24px calc(12px + env(safe-area-inset-bottom));
+        background: var(--mt-color-bg);
+        box-shadow: 0 -1px 0 var(--mt-color-border), 0 -8px 20px rgba(33, 31, 25, 0.06);
+    }
+    .mt-cart-summary-card {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 4px 20px;
+        padding: 14px 18px;
+    }
+    .mt-cart-summary-title {
+        display: none;
+    }
+    .mt-cart-summary-card .mt-cart-summary-row {
+        flex: 1 1 auto;
+        gap: 12px;
+        justify-content: flex-start;
+        align-items: baseline;
+        margin: 0;
+        font-size: 16px;
+    }
+    .mt-cart-summary-card > .mt-pdp-meta {
+        order: 3;
+        flex: 1 1 100%;
+        margin: 0;
+        font-size: 12px;
+    }
+    .mt-cart-checkout-btn {
+        flex: 0 0 auto;
+        width: auto;
+        min-width: 220px;
+        margin-top: 0;
+    }
+    .mt-cart-neworder-btn {
+        order: 4;
+        flex: 1 1 100%;
+        margin-top: 6px;
+    }
+}
+
+/* Phone: each item becomes a compact card - photo on the left, name/SKU beside it, and
+   quantity + price sharing one row under the name - instead of photo, quantity and price
+   each on their own full-width line (346px per item before; about half that now). */
+@media (max-width: 767px) {
+    .mt-cart-inner {
+        padding-top: 24px;
+    }
+    .mt-cart-header .mt-pdp-title {
+        font-size: 26px;
+    }
+    .mt-cart-count {
+        margin-bottom: 12px;
+    }
+    .mt-cart-item {
+        display: grid;
+        grid-template-columns: 72px minmax(0, 1fr) auto;
+        grid-template-areas:
+            "photo info  info"
+            "photo qty   price";
+        column-gap: 14px;
+        row-gap: 10px;
+        align-items: start;
+        padding: 16px 0;
+    }
+    .mt-cart-item-photo {
+        grid-area: photo;
+        width: 72px;
+        height: 72px;
+        border-radius: 8px;
+    }
+    .mt-cart-item-info {
+        grid-area: info;
+        padding-right: 0;
+    }
+    .mt-cart-item-info .mt-pdt-sku {
+        display: block;
+        margin: 0;
+        font-size: 12px;
+        overflow-wrap: anywhere;
+    }
+    .mt-cart-item-fields {
+        margin-top: 10px;
+        gap: 10px;
+    }
+    .mt-cart-item-fields .mt-field {
+        max-width: none;
+        flex: 1 1 100%;
+    }
+    .mt-cart-item-qty {
+        grid-area: qty;
+        align-self: end;
+    }
+    /* On the narrowest phones (~320px) the quantity column is only a little wider than the
+       input, and Remove ran into the line total; it drops under the input there instead. */
+    .mt-cart-qty-row {
+        flex-wrap: wrap;
+        row-gap: 6px;
+    }
+    /* The input and Remove explain themselves; the label only cost a row. Still there for
+       screen readers. */
+    .mt-cart-item-qty label {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+    }
+    .mt-cart-item-price {
+        grid-area: price;
+        align-self: end;
+        text-align: right;
+    }
+    .mt-cart-item-price .mt-pdp-price {
+        font-size: 18px;
+        margin: 0;
+    }
+    .mt-cart-item-price .mt-pdp-meta {
+        font-size: 12px;
+        margin: 0 0 2px;
+        white-space: nowrap;
+    }
+    /* A kit still being configured has no qty/price - its actions take that row instead. */
+    .mt-cart-item-pending {
+        padding: 16px;
+    }
+    .mt-cart-item-pending-action {
+        grid-column: 2 / -1;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    .mt-cart-secondary-actions .mt-header-btn {
+        flex: 1 1 0;
+        justify-content: center;
+    }
+    /* Summary bar: subtotal over a full-width button. */
+    .mt-cart-summary-card {
+        padding: 12px 14px;
+    }
+    .mt-cart-summary-card .mt-cart-summary-row {
+        flex: 1 1 100%;
+        justify-content: space-between;
+    }
+    .mt-cart-checkout-btn {
+        flex: 1 1 100%;
+        min-width: 0;
+        order: 2;
+        margin-top: 8px;
     }
 }
 
