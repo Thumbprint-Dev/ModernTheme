@@ -3179,15 +3179,6 @@ body {
     padding-top: 24px;
 }
 
-.mt-account-mobile-nav {
-    margin-bottom: 16px;
-}
-
-.mt-account-mobile-nav .account-navigation,
-.mt-addresses .account-navigation {
-    margin: 0;
-}
-
 .mt-account-page .mt-checkout-card-title,
 .mt-addresses .mt-checkout-card-title {
     margin-bottom: 20px;

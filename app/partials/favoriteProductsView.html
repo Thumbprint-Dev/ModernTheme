@@ -1,6 +1,5 @@
 <section class="mt-favorites">
     <loadingindicator ng-show="loading" title="{{'Please wait while we fetch your favorites' | r | xlat}}"></loadingindicator>
-    <accountnavigation></accountnavigation>
     <div class="mt-container mt-favorites-inner">
         <div class="mt-checkout-card" ng-if="!loading && productCount == 0">
             <h2 class="mt-checkout-card-title">{{('Favorite' | r) + ' ' + ('Products' | r) | xlat}}</h2>

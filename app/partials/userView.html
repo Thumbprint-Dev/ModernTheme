@@ -1,13 +1,5 @@
 <section class="mt-account-page">
     <div class="mt-container mt-account-inner">
-        <div class="hidden-md hidden-lg mt-account-mobile-nav" ng-class="{'panel panel-default':!user.Permissions.contains('ViewSelfAdmin')}">
-            <div class="panel-heading" ng-show="!user.Permissions.contains('ViewSelfAdmin')">
-                <h3 class="panel-title">{{'My Account' | r | xlat}}</h3>
-            </div>
-            <div ng-class="{'panel-body':!user.Permissions.contains('ViewSelfAdmin')}">
-                <accountnavigation></accountnavigation>
-            </div>
-        </div>
         <loadingindicator title="{{'Please wait while we save your changes' | r | xlat}}" ng-show="displayLoadingIndicator"></loadingindicator>
         <identifyusermessage ng-show="user.Type == 'TempCustomer'"></identifyusermessage>
 
