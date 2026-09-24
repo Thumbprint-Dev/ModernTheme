@@ -55,6 +55,7 @@
             </div>
             <div class="view-error-message alert-danger text-center" ng-show="errorMessage">
                 <p>{{errorMessage | r | xlat}}</p>
+                <p class="mt-error-modal-technical" ng-if="errorMessage | technicalError">{{errorMessage | technicalError}}</p>
             </div>
         </form>
     </div>

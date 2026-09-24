@@ -4641,6 +4641,31 @@ input[datepicker-popup] {
     }
 }
 
+/* The raw server error printed under a friendly fallback message (services/errorService.js,
+   the technicalError filter and mt-error-modal-list directive) - small and muted, there for a
+   screenshot when the error is reported, not for the shopper to read. Also used under the
+   inline product-card and quick-add errors. */
+.mt-error-modal-technical {
+    margin: 10px 0 0;
+    padding-top: 8px;
+    border-top: 1px dashed var(--mt-color-border);
+    font-family: Menlo, Consolas, 'Liberation Mono', monospace;
+    font-size: 11px;
+    line-height: 1.45;
+    color: var(--mt-color-muted);
+    overflow-wrap: anywhere;
+    text-align: left;
+}
+
+.mt-product-card-error + .mt-error-modal-technical {
+    margin-top: 4px;
+    padding-top: 4px;
+}
+
+.mt-error-modal-list li .mt-error-modal-technical {
+    display: block;
+}
+
 /* ===== ModernTheme: confirmation modal (js/services/confirmModal.js) ===== */
 /* Replaces window.confirm() for removing a cart item, a mini-cart item and clearing the cart.
    Reuses the error modal's shell; only the product thumbnail, the red confirm button and the

@@ -27,4 +27,5 @@
     </a>
     <p class="mt-product-card-note" ng-show="quickAddNeedsOptions[product.InteropID]">{{'This item has options to choose before adding to your cart.' | r | xlat}}</p>
     <p class="mt-product-card-note mt-product-card-error" ng-show="quickAddError[product.InteropID]">{{quickAddError[product.InteropID] | xlat}}</p>
+    <p class="mt-error-modal-technical" ng-if="quickAddError[product.InteropID] | technicalError">{{quickAddError[product.InteropID] | technicalError}}</p>
 </div>

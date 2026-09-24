@@ -19,6 +19,32 @@
 // Closing writes null/false back to the bound expression, so the page's own "clear the
 // error before the next request" handling keeps working, and the same message arriving
 // again on a retry reopens the modal rather than being swallowed as an unchanged value.
+// Add-to-cart error lists (<ul class="mt-error-modal-list"> of lineItemErrors): prints the raw
+// server error behind any friendly fallback in the list, in small type under it. A class
+// directive rather than markup in each template because the product page's list lives in the
+// platform's product template (productview.hcf, set up in the Four51 admin), which this repo
+// can't edit - Angular still compiles it, so the class alone brings it in. The kit pages'
+// lists get it the same way.
+four51.app.directive('mtErrorModalList', ['Error', function(Error) {
+	return {
+		restrict: 'C',
+		link: function(scope, element) {
+			var line = angular.element('<p class="mt-error-modal-technical"></p>');
+			element.after(line);
+			scope.$watchCollection('lineItemErrors', function(errors) {
+				var raw = [];
+				angular.forEach(errors, function(e) {
+					var t = Error.technicalFor(e);
+					if (t && raw.indexOf(t) < 0) raw.push(t);
+				});
+				line.text(raw.join(' | '));
+				line.css('display', raw.length ? '' : 'none');
+			});
+			scope.$on('$destroy', function() { line.remove(); });
+		}
+	};
+}]);
+
 four51.app.directive('mtErrorModal', ['$document', '$timeout', function($document, $timeout) {
 	return {
 		restrict: 'E',
@@ -44,6 +70,9 @@ four51.app.directive('mtErrorModal', ['$document', '$timeout', function($documen
 						// ng-bind-html because some platform messages carry markup (checkout already
 						// rendered them this way); ngSanitize strips anything executable.
 						'<p class="mt-error-modal-message" ng-if="message" ng-bind-html="message | r | xlat"></p>' +
+						// The raw server error behind a friendly fallback, in small type, so a
+						// reported screenshot still shows what actually failed.
+						'<p class="mt-error-modal-technical" ng-if="message && (message | technicalError)">{{message | technicalError}}</p>' +
 						'<div ng-transclude></div>' +
 					'</div>' +
 					'<div class="mt-error-modal-actions">' +

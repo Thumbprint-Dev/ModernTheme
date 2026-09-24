@@ -64,7 +64,9 @@ function ($location, $route, $scope, $451, $timeout, $window, User, Order, Spend
                     User.save($scope.user);
                 }
             }, function(ex){
-                alert(ex.Message);
+                // Shown by the <mt-error-modal> in nav.html; ex.Message is already the friendly
+                // fallback when the server sent a raw exception (services/errorService.js).
+                $scope.minicartError = ex.Message;
             });
         }, angular.noop);
     };

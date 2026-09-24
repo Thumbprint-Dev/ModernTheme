@@ -18,10 +18,11 @@
         </div>
 
         <ul class="mt-checkout-payment-warning" ng-show="addAttempted && lineItemErrors.length">
-            <li ng-repeat="e in lineItemErrors">{{e | xlat}}</li>
+            <li ng-repeat="e in lineItemErrors">{{e | xlat}}<span class="mt-error-modal-technical" ng-if="e | technicalError">{{e | technicalError}}</span></li>
         </ul>
 
         <p class="mt-product-card-note" ng-show="errorMessage">{{errorMessage}}</p>
+        <p class="mt-error-modal-technical" ng-if="errorMessage | technicalError">{{errorMessage | technicalError}}</p>
     </div>
 
     <div ng-show="!modalLoading && needsFullPdpFallback">
