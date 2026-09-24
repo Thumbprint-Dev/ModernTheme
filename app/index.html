@@ -57,6 +57,7 @@
         <section class="container-view">
             <ng-view autoscroll />
         </section>
+        <mt-cart-toast class="hidden-print"></mt-cart-toast>
         <section class="hidden-print">
             <copyright ng-if="!user.Permissions.contains('UnBrandedSite')" />
         </section>
@@ -210,6 +211,7 @@
     <script src="js/directives/loadingindicator.js" data-group="source"></script>
     <script src="js/directives/alertShow.js" data-group="source"></script>
     <script src="js/directives/errorModal.js" data-group="source"></script>
+    <script src="js/directives/cartToast.js" data-group="source"></script>
     <script src="js/directives/giftcard.js" data-group="source"></script>
     <script src="js/directives/copyright.js" data-group="source"></script>
     <script src="js/directives/ordersummary.js" data-group="source"></script>

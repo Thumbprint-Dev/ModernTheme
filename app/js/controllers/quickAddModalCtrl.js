@@ -1,5 +1,5 @@
-four51.app.controller('QuickAddModalCtrl', ['$scope', '$modalInstance', 'product', 'currentOrder', 'ProductDisplayService', 'Order', 'User',
-function ($scope, $modalInstance, product, currentOrder, ProductDisplayService, Order, User) {
+four51.app.controller('QuickAddModalCtrl', ['$scope', '$rootScope', '$modalInstance', 'product', 'currentOrder', 'ProductDisplayService', 'Order', 'User',
+function ($scope, $rootScope, $modalInstance, product, currentOrder, ProductDisplayService, Order, User) {
 	// currentOrder is resolved in explicitly; the real, shared currentOrder is kept in sync by
 	// Four51Ctrl's event:orderUpdate listener once Order.save below broadcasts. This scope is a
 	// child of the opening CategoryCtrl scope (categoryCtrl.js passes scope: $scope), which is
@@ -68,6 +68,7 @@ function ($scope, $modalInstance, product, currentOrder, ProductDisplayService, 
 				$scope.user.CurrentOrderID = o.ID;
 				User.save($scope.user, function () {
 					$modalInstance.close(o);
+					$rootScope.$broadcast('event:addedToCart', { product: $scope.LineItem.Product, variant: $scope.LineItem.Variant, quantity: $scope.LineItem.Quantity });
 				});
 			},
 			function (ex) {

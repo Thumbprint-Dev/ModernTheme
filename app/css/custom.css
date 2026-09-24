@@ -4351,6 +4351,152 @@ input[datepicker-popup] {
     }
 }
 
+/* ===== ModernTheme: "Added to cart" toast (js/directives/cartToast.js) ===== */
+/* Top right, just below the sticky header - the directive sets top from the header's
+   measured bottom edge. Hidden by opacity/visibility rather than display, so the fade out
+   can play and the aria-live region stays in the page to announce the next add. */
+
+.mt-cart-toast {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 1990;
+    width: 340px;
+    max-width: calc(100vw - 32px);
+    background: var(--mt-color-white);
+    border: 1px solid var(--mt-color-border);
+    border-radius: 12px;
+    box-shadow: 0 1px 2px rgba(33, 31, 25, 0.06), 0 12px 32px rgba(33, 31, 25, 0.16);
+    font-family: var(--mt-font-body);
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    pointer-events: none;
+    transition: opacity 0.4s ease, transform 0.4s ease, visibility 0s linear 0.4s;
+}
+
+.mt-cart-toast.mt-cart-toast-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    pointer-events: auto;
+    transition: opacity 0.25s ease-out, transform 0.25s ease-out, visibility 0s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mt-cart-toast,
+    .mt-cart-toast.mt-cart-toast-visible {
+        transform: none;
+    }
+}
+
+.mt-cart-toast-body {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 44px 14px 14px;
+    position: relative;
+}
+
+.mt-cart-toast-photo {
+    flex: 0 0 52px;
+    width: 52px;
+    height: 52px;
+    border-radius: 8px;
+    border: 1px solid var(--mt-color-divider);
+    object-fit: contain;
+    background: var(--mt-color-bg);
+}
+
+.mt-cart-toast-info {
+    min-width: 0;
+}
+
+.mt-cart-toast-title {
+    margin: 0 0 2px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--mt-color-accent);
+}
+
+.mt-cart-toast-title .fa {
+    margin-right: 2px;
+}
+
+.mt-cart-toast-name {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--mt-color-text-strong);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mt-cart-toast-meta {
+    margin: 2px 0 0;
+    font-size: 12px;
+    color: var(--mt-color-muted);
+}
+
+.mt-cart-toast-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--mt-color-muted);
+    cursor: pointer;
+}
+
+.mt-cart-toast-close:hover {
+    background: var(--mt-color-divider);
+    color: var(--mt-color-text-strong);
+}
+
+.mt-cart-toast-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 14px;
+    border-top: 1px solid var(--mt-color-divider);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--mt-color-accent);
+    text-decoration: none;
+}
+
+.mt-cart-toast-link:hover,
+.mt-cart-toast-link:focus {
+    background: var(--mt-color-bg);
+    color: var(--mt-color-accent-dark);
+    text-decoration: none;
+}
+
+.mt-cart-toast-close:focus-visible,
+.mt-cart-toast-link:focus-visible {
+    outline: 2px solid var(--mt-color-accent);
+    outline-offset: -2px;
+}
+
+@media (max-width: 480px) {
+    .mt-cart-toast {
+        right: 16px;
+        left: 16px;
+        width: auto;
+        max-width: none;
+    }
+}
+
 /* ===== ModernTheme: inline field errors (quantityfield, login, account forms) ===== */
 /* bootstrap-451.css's .view-inline-error is an absolutely-positioned popover with a shadow and
    a pointer arrow - stacked over whatever sits below the field (e.g. the Add to Cart button),

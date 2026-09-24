@@ -57,25 +57,6 @@ function ($location, $route, $scope, $451, $timeout, $window, User, Order, Spend
         });
     };
 
-    // Confirmation for staying on the page after Add to Cart (see productCtrl.js's
-    // addToOrder()) - pop the mini-cart open briefly instead of jumping to /cart. The dropdown
-    // (ui-bootstrap 0.10's dropdownToggle directive) has no is-open binding - it's a pure
-    // click-driven closure with no scope API at all - so opening/closing it programmatically
-    // means dispatching the same click events a shopper's own click would produce, rather than
-    // via a binding it doesn't support.
-    var minicartCloseTimer;
-    $scope.$on('event:addedToCart', function(){
-        var toggle = document.getElementById('451qa_cart_link');
-        if (!toggle) return;
-        if (!angular.element(toggle.parentElement).hasClass('open'))
-            toggle.click();
-        $timeout.cancel(minicartCloseTimer);
-        minicartCloseTimer = $timeout(function(){
-            if (angular.element(toggle.parentElement).hasClass('open'))
-                document.dispatchEvent(new MouseEvent('click', {bubbles: true}));
-        }, 4000);
-    });
-
     $scope.Logout = function(){
         // Dropping the token on its own just re-renders the login form under
         // whatever URL the user was on -- /catalog, a product page -- which is

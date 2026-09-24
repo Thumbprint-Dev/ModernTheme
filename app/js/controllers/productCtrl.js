@@ -131,6 +131,19 @@ function ($scope, $rootScope, $routeParams, $route, $location, $451, Product, Pr
 		);
 	}
 
+	// What the "Added to cart" toast shows. The variant-list flow can add several variants at
+	// once, so it reports the product with their combined quantity rather than one variant's.
+	function addedToCartDetails() {
+		if ($scope.allowAddFromVariantList) {
+			var quantity = 0;
+			angular.forEach($scope.variantLineItems, function(item) {
+				if (item.Quantity > 0) quantity += Number(item.Quantity);
+			});
+			return { product: $scope.LineItem.Product, quantity: quantity };
+		}
+		return { product: $scope.LineItem.Product, variant: $scope.LineItem.Variant, quantity: $scope.LineItem.Quantity };
+	}
+
 	// Uses a local "order" variable rather than reading/writing $scope.currentOrder throughout,
 	// on purpose - this controller (productCtrl.js, via ng-view) is a real descendant of
 	// Four51Ctrl's scope, so the old "if (!$scope.currentOrder) $scope.currentOrder = {}"
@@ -172,12 +185,12 @@ function ($scope, $rootScope, $routeParams, $route, $location, $451, Product, Pr
 						// Editing a line item on an order already under approval is a "make the
 						// change and go back to reviewing it" flow, not exploratory shopping -
 						// keep sending that case to the order. A normal add-to-cart stays on the
-						// page and lets the shopper keep browsing; the mini-cart pops open as
-						// confirmation instead of forcing a jump to /cart.
+						// page and lets the shopper keep browsing; the "Added to cart" toast
+						// (directives/cartToast.js) confirms it instead of forcing a jump to /cart.
 						if ($scope.isEditforApproval) {
 							$location.path('/cart/' + o.ID);
 						} else {
-							$rootScope.$broadcast('event:addedToCart');
+							$rootScope.$broadcast('event:addedToCart', addedToCartDetails());
 						}
 					});
 				},

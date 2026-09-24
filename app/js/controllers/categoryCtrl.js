@@ -1,5 +1,5 @@
-four51.app.controller('CategoryCtrl', ['$routeParams', '$sce', '$scope', '$451', 'Category', 'Product', 'AppConst', 'Order', 'User', '$modal', 'ProductDisplayService',
-function ($routeParams, $sce, $scope, $451, Category, Product, AppConst, Order, User, $modal, ProductDisplayService) {
+four51.app.controller('CategoryCtrl', ['$routeParams', '$sce', '$scope', '$rootScope', '$451', 'Category', 'Product', 'AppConst', 'Order', 'User', '$modal', 'ProductDisplayService',
+function ($routeParams, $sce, $scope, $rootScope, $451, Category, Product, AppConst, Order, User, $modal, ProductDisplayService) {
 	$scope.isHome = !$routeParams.categoryInteropID;
 
 	// Computes the home page's "Shop by category" tiles and the "Browse full catalog" tile's
@@ -136,6 +136,7 @@ function ($routeParams, $sce, $scope, $451, Category, Product, AppConst, Order, 
 			function(o) {
 				$scope.quickAddIndicator[product.InteropID] = false;
 				$scope.user.CurrentOrderID = o.ID;
+				$rootScope.$broadcast('event:addedToCart', { product: product, quantity: lineItem.Quantity });
 				// Merges the server's response into the EXISTING user object instead of
 				// replacing $scope.user with it - the same shadowing bug as currentOrder above,
 				// just one property over: "$scope.user = u" creates an own property on this
