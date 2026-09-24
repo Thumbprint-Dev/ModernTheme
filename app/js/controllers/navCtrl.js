@@ -58,6 +58,7 @@ function ($location, $route, $scope, $451, $timeout, $window, User, Order, Spend
             danger: true
         }).then(function() {
             Order.deletelineitem(orderID, item.ID, function(order){
+                $scope.$root.$broadcast('event:removedFromCart', { product: item.Product, variant: item.Variant });
                 if (!order) {
                     $scope.user.CurrentOrderID = null;
                     User.save($scope.user);

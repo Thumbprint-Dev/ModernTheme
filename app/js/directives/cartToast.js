@@ -4,6 +4,10 @@
 // link can still be reached. One instance, in index.html; callers only broadcast:
 //
 //     $rootScope.$broadcast('event:addedToCart', { product: p, variant: v, quantity: 2 });
+//     $rootScope.$broadcast('event:removedFromCart', { product: p, variant: v });
+//
+// The removed version (cart page Remove, mini-cart X) replaced the cart page's bottom-bar
+// "Your Changes Have Been Saved"; the mini-cart confirmed a removal with nothing at all.
 //
 // This replaced popping the header mini-cart open for a few seconds, which sat in the same
 // corner and needed simulated clicks to drive (ui-bootstrap 0.10's dropdown has no API).
@@ -20,7 +24,8 @@ four51.app.directive('mtCartToast', ['$rootScope', '$timeout', '$document', func
 					'<img class="mt-cart-toast-photo" ng-if="item.image" ng-src="{{item.image}}" alt="" />' +
 					'<div class="mt-placeholder-photo mt-cart-toast-photo" ng-if="!item.image"></div>' +
 					'<div class="mt-cart-toast-info">' +
-						'<p class="mt-cart-toast-title"><i class="fa fa-check-circle" aria-hidden="true"></i> {{\'Added to cart\' | r | xlat}}</p>' +
+						'<p class="mt-cart-toast-title" ng-if="!item.removed"><i class="fa fa-check-circle" aria-hidden="true"></i> {{\'Added to cart\' | r | xlat}}</p>' +
+						'<p class="mt-cart-toast-title mt-cart-toast-title-removed" ng-if="item.removed"><i class="fa fa-trash-o" aria-hidden="true"></i> {{\'Removed from cart\' | r | xlat}}</p>' +
 						'<p class="mt-cart-toast-name">{{item.name}}</p>' +
 						'<p class="mt-cart-toast-meta" ng-if="item.quantity">{{\'Qty\' | r | xlat}}: {{item.quantity}}</p>' +
 					'</div>' +
@@ -56,14 +61,15 @@ four51.app.directive('mtCartToast', ['$rootScope', '$timeout', '$document', func
 				setVisible(false);
 			};
 
-			var off = $rootScope.$on('event:addedToCart', function(event, added) {
-				added = added || {};
-				var product = added.product || {};
-				var variant = added.variant || {};
+			function show(details, removed) {
+				details = details || {};
+				var product = details.product || {};
+				var variant = details.variant || {};
 				scope.item = {
+					removed: removed,
 					name: product.Name || variant.Description || '',
 					image: variant.LargeImageUrl || product.SmallImageUrl || product.LargeImageUrl || '',
-					quantity: added.quantity
+					quantity: removed ? null : details.quantity
 				};
 				positionBelowHeader();
 				// Restart the entrance even if a previous toast is still showing, so a
@@ -72,7 +78,10 @@ four51.app.directive('mtCartToast', ['$rootScope', '$timeout', '$document', func
 				void toast.offsetWidth;
 				setVisible(true);
 				scheduleHide();
-			});
+			}
+
+			var offAdded = $rootScope.$on('event:addedToCart', function(event, details) { show(details, false); });
+			var offRemoved = $rootScope.$on('event:removedFromCart', function(event, details) { show(details, true); });
 
 			function hold() { $timeout.cancel(hideTimer); }
 			function release() {
@@ -85,7 +94,8 @@ four51.app.directive('mtCartToast', ['$rootScope', '$timeout', '$document', func
 			toast.addEventListener('focusout', function() { $timeout(release); });
 
 			scope.$on('$destroy', function() {
-				off();
+				offAdded();
+				offRemoved();
 				$timeout.cancel(hideTimer);
 			});
 		}

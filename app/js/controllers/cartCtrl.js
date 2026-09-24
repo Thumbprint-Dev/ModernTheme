@@ -1,5 +1,5 @@
-four51.app.controller('CartViewCtrl', ['$scope', '$routeParams', '$location', '$451', '$timeout', 'Order', 'OrderConfig', 'User', 'ConfirmModal',
-function ($scope, $routeParams, $location, $451, $timeout, Order, OrderConfig, User, ConfirmModal) {
+four51.app.controller('CartViewCtrl', ['$scope', '$rootScope', '$routeParams', '$location', '$451', '$timeout', 'Order', 'OrderConfig', 'User', 'ConfirmModal',
+function ($scope, $rootScope, $routeParams, $location, $451, $timeout, Order, OrderConfig, User, ConfirmModal) {
 	$scope.isEditforApproval = $routeParams.id != null && $scope.user.Permissions.contains('EditApprovalOrder');
 	if ($scope.isEditforApproval) {
 		Order.get($routeParams.id, function(order) {
@@ -93,7 +93,9 @@ function ($scope, $routeParams, $location, $451, $timeout, Order, OrderConfig, U
 		if (callback) callback();
 	}
 
-	$scope.saveChanges = function(callback) {
+	// options.quiet skips the bottom-bar "Your Changes Have Been Saved" - removeItem() confirms
+	// with the "Removed from cart" toast instead, and both at once read as two messages.
+	$scope.saveChanges = function(callback, options) {
 		$scope.actionMessage = null;
 		$scope.errorMessage = null;
 		if($scope.currentOrder.LineItems.length == $451.filter($scope.currentOrder.LineItems, {Property:'Selected', Value: true}).length) {
@@ -108,7 +110,7 @@ function ($scope, $routeParams, $location, $451, $timeout, Order, OrderConfig, U
 						$scope.currentOrder = data;
 						$scope.displayLoadingIndicator = false;
 						if (callback) callback();
-						$scope.actionMessage = 'Your Changes Have Been Saved';
+						if (!(options && options.quiet)) $scope.actionMessage = 'Your Changes Have Been Saved';
 					},
 					function (ex) {
 						$scope.errorMessage = ex.Message;
@@ -141,6 +143,9 @@ function ($scope, $routeParams, $location, $451, $timeout, Order, OrderConfig, U
 		}).then(function() {
 			Order.deletelineitem($scope.currentOrder.ID, item.ID,
 				function(order) {
+					// The toast lives outside ng-view (index.html), so it still shows when
+					// removing the last item sends the shopper on to the catalog.
+					$rootScope.$broadcast('event:removedFromCart', { product: item.Product, variant: item.Variant });
 					if (!order) {
 						$scope.user.CurrentOrderID = null;
 						User.save($scope.user, function(){
@@ -154,8 +159,7 @@ function ($scope, $routeParams, $location, $451, $timeout, Order, OrderConfig, U
 						}
 						$scope.saveChanges(function(){
 							$scope.displayLoadingIndicator = false;
-							$scope.actionMessage = 'Your Changes Have Been Saved';
-						})
+						}, { quiet: true });
 					}
 				},
 				function (ex) {

@@ -4787,6 +4787,10 @@ input[datepicker-popup] {
     margin-right: 2px;
 }
 
+.mt-cart-toast-title.mt-cart-toast-title-removed {
+    color: var(--mt-color-text-soft);
+}
+
 .mt-cart-toast-name {
     margin: 0;
     font-size: 14px;
