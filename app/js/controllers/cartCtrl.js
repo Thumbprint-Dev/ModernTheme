@@ -42,6 +42,15 @@ function ($scope, $rootScope, $routeParams, $location, $451, $timeout, Order, Or
 			$scope.currentOrder = order;
 	});
 
+	// Drives the empty-cart message in cartView.html. Only true once it's known: with a
+	// CurrentOrderID the order is still being fetched on page load (Four51Ctrl's init), so a
+	// bare !currentOrder check flashed "Your cart is empty" before a full cart appeared.
+	$scope.cartIsEmpty = function() {
+		if ($scope.isEditforApproval || !$scope.user) return false;
+		if (!$scope.user.CurrentOrderID) return true;
+		return !!$scope.currentOrder && !($scope.currentOrder.LineItems || []).length;
+	};
+
 	$scope.currentDate = new Date();
 	$scope.errorMessage = null;
 	$scope.continueShopping = function() {

@@ -2103,6 +2103,109 @@ body {
     border-top: 1px solid var(--mt-color-border);
 }
 
+/* Empty cart (cartView.html, CartViewCtrl's cartIsEmpty). Centered both ways in the space
+   between the header and the footer at every width. That space is .container-view, which
+   #content already stretches to push the footer down - so rather than guessing the header
+   and footer heights (the footer wraps to two lines on phones), the chain down to the empty
+   state becomes a flex column and the empty state fills it. .mt-cart's -20px pull-up under
+   the header is why the top padding is 20px more than the bottom. Browsers without :has()
+   get the min-height fallback: centered across, a little high. */
+.container-view:has(.mt-cart-empty),
+.container-view:has(.mt-cart-empty) > ng-view {
+    display: flex;
+    flex-direction: column;
+}
+
+.container-view:has(.mt-cart-empty) > ng-view,
+.mt-cart:has(> .mt-cart-empty) {
+    flex: 1 0 auto;
+}
+
+.mt-cart:has(> .mt-cart-empty) {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 0;
+}
+
+.mt-cart-empty {
+    flex: 1 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    padding-top: 60px;
+    padding-bottom: 40px;
+}
+
+.mt-cart-empty-inner {
+    width: 100%;
+    max-width: 440px;
+    text-align: center;
+}
+
+.mt-cart-empty-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 88px;
+    height: 88px;
+    margin-bottom: 20px;
+    border-radius: 50%;
+    /* --mt-color-accent tinted onto the page background. */
+    background: rgba(15, 107, 99, 0.08);
+    color: var(--mt-color-accent);
+    font-size: 36px;
+}
+
+.mt-cart-empty-title {
+    margin: 0 0 10px;
+    font-size: 28px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    color: var(--mt-color-text-strong);
+}
+
+.mt-cart-empty-text {
+    margin: 0 auto 28px;
+    max-width: 360px;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--mt-color-text-soft);
+}
+
+.mt-cart-empty-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.mt-cart-empty-actions .mt-header-btn {
+    padding: 12px 20px;
+    font-size: 14px;
+}
+
+@media (max-width: 480px) {
+    .mt-cart-empty-icon {
+        width: 72px;
+        height: 72px;
+        font-size: 30px;
+    }
+    .mt-cart-empty-title {
+        font-size: 24px;
+    }
+    .mt-cart-empty-actions {
+        flex-direction: column;
+    }
+    .mt-cart-empty-actions .mt-btn-accent,
+    .mt-cart-empty-actions .mt-header-btn {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+    }
+}
+
 /* Tablet and phone: one column. Beside a 320px summary the list only had ~350px at tablet
    width, which wrapped product names a word per line and slid the price column under the
    summary card. Stacked, the list gets the full width and each item keeps its one-row

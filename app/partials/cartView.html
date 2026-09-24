@@ -1,5 +1,18 @@
 <section class="mt-cart">
-    <div ng-show="currentOrder" class="hidden-print">
+    <!-- Empty cart: no current order, or one with no line items (CartViewCtrl's cartIsEmpty). -->
+    <div class="mt-container mt-cart-empty" ng-if="cartIsEmpty()">
+        <div class="mt-cart-empty-inner">
+            <span class="mt-cart-empty-icon" aria-hidden="true"><i class="fa fa-shopping-cart"></i></span>
+            <h1 class="mt-cart-empty-title">{{'Your cart is empty' | r | xlat}}</h1>
+            <p class="mt-cart-empty-text">{{'Looks like you haven\'t added anything yet. Browse the catalog to find what you need.' | r | xlat}}</p>
+            <div class="mt-cart-empty-actions">
+                <a href="catalog" class="mt-btn-accent">{{'Start shopping' | r | xlat}}</a>
+                <a href="order" class="mt-header-btn" ng-if="user.Type == 'Customer'">{{'View past orders' | r | xlat}}</a>
+            </div>
+        </div>
+    </div>
+
+    <div ng-show="currentOrder && !cartIsEmpty()" class="hidden-print">
         <form ng-submit="saveChanges()" name="cart" novalidate="" class="mt-container mt-cart-inner">
             <div class="mt-cart-header">
                 <h1 class="mt-pdp-title">{{'Your cart' | r | xlat}}</h1>
