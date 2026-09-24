@@ -48,7 +48,7 @@
         <login />
     </section>
     <section ng-if="Four51User.isAuthenticated()" id="content">
-        <section class="hidden-print mt-header-sticky-wrap" ng-if="user.Type != 'TempCustomer'">
+        <section class="hidden-print mt-header-sticky-wrap" ng-if="user.Type != 'TempCustomer'" mt-header-height>
             <navigation />
         </section>
         <section class="hidden-print" ng-if="user.Type != 'TempCustomer'">
@@ -212,6 +212,7 @@
     <script src="js/directives/alertShow.js" data-group="source"></script>
     <script src="js/directives/errorModal.js" data-group="source"></script>
     <script src="js/directives/cartToast.js" data-group="source"></script>
+    <script src="js/directives/headerHeight.js" data-group="source"></script>
     <script src="js/directives/giftcard.js" data-group="source"></script>
     <script src="js/directives/copyright.js" data-group="source"></script>
     <script src="js/directives/ordersummary.js" data-group="source"></script>

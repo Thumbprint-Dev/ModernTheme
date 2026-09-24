@@ -2051,10 +2051,11 @@ body {
     min-width: 0;
 }
 
+/* Same header offset as .mt-checkout-side - see there. */
 .mt-cart-side {
     flex: 0 0 320px;
     position: sticky;
-    top: 76px;
+    top: calc(var(--mt-header-height, 123px) + 24px);
 }
 
 .mt-cart-summary-card {
@@ -2316,10 +2317,17 @@ body {
     min-width: 0;
 }
 
+/* Sticks 24px below the header, whose height js/directives/headerHeight.js measures into
+   --mt-header-height; a fixed top:76px left it 47px under the 123px desktop header. The
+   fallback is that desktop height, for the moment before the directive has run.
+   max-height keeps Submit Order reachable when the summary is taller than the space left
+   under the header (a coupon plus a spending account, on a short laptop screen). */
 .mt-checkout-side {
     flex: 0 0 340px;
     position: sticky;
-    top: 76px;
+    top: calc(var(--mt-header-height, 123px) + 24px);
+    max-height: calc(100vh - var(--mt-header-height, 123px) - 48px);
+    overflow-y: auto;
 }
 
 .mt-checkout-summary-line {
@@ -2432,6 +2440,8 @@ body {
         position: static;
         flex: 0 0 auto;
         width: 100%;
+        max-height: none;
+        overflow: visible;
     }
 }
 
