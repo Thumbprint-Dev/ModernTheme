@@ -1,5 +1,5 @@
-four51.app.controller('NavCtrl', ['$location', '$route', '$scope', '$451', '$timeout', '$window', 'User', 'Order', 'SpendingAccount', 'AppConst',
-function ($location, $route, $scope, $451, $timeout, $window, User, Order, SpendingAccount, AppConst) {
+four51.app.controller('NavCtrl', ['$location', '$route', '$scope', '$451', '$timeout', '$window', 'User', 'Order', 'SpendingAccount', 'AppConst', 'ConfirmModal',
+function ($location, $route, $scope, $451, $timeout, $window, User, Order, SpendingAccount, AppConst, ConfirmModal) {
     // Four51 InteropIDs are unique platform-wide, so Featured/All Products may carry a uniqueness
     // suffix (e.g. "featured-gp") - match by prefix, not exact equality. Mirrors the same
     // exclusion categoryCtrl.js already applies to the home page's "Shop by category" tiles.
@@ -44,17 +44,28 @@ function ($location, $route, $scope, $451, $timeout, $window, User, Order, Spend
     // to an instance of an object" exception. Order.deletelineitem already broadcasts
     // event:orderUpdate on every call; Four51Ctrl.js listens for it and updates the one
     // currentOrder every page actually inherits from - this just needs to trigger that.
+    //
+    // The confirmation is ConfirmModal (services/confirmModal.js), not window.confirm(). Its
+    // backdrop click is a document click, so ui-bootstrap closes the mini-cart behind it.
     $scope.removeMinicartItem = function(item){
-        if (!$scope.currentOrder || !confirm('Are you sure you wish to remove this item from your cart?'))
-            return;
-        Order.deletelineitem($scope.currentOrder.ID, item.ID, function(order){
-            if (!order) {
-                $scope.user.CurrentOrderID = null;
-                User.save($scope.user);
-            }
-        }, function(ex){
-            alert(ex.Message);
-        });
+        if (!$scope.currentOrder) return;
+        var orderID = $scope.currentOrder.ID;
+        ConfirmModal.open({
+            title: 'Remove item?',
+            message: item.Product.Name + ' will be removed from your cart.',
+            image: (item.Variant && item.Variant.LargeImageUrl) || item.Product.SmallImageUrl,
+            confirmText: 'Remove',
+            danger: true
+        }).then(function() {
+            Order.deletelineitem(orderID, item.ID, function(order){
+                if (!order) {
+                    $scope.user.CurrentOrderID = null;
+                    User.save($scope.user);
+                }
+            }, function(ex){
+                alert(ex.Message);
+            });
+        }, angular.noop);
     };
 
     $scope.Logout = function(){

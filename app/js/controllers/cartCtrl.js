@@ -1,5 +1,5 @@
-four51.app.controller('CartViewCtrl', ['$scope', '$routeParams', '$location', '$451', '$timeout', 'Order', 'OrderConfig', 'User',
-function ($scope, $routeParams, $location, $451, $timeout, Order, OrderConfig, User) {
+four51.app.controller('CartViewCtrl', ['$scope', '$routeParams', '$location', '$451', '$timeout', 'Order', 'OrderConfig', 'User', 'ConfirmModal',
+function ($scope, $routeParams, $location, $451, $timeout, Order, OrderConfig, User, ConfirmModal) {
 	$scope.isEditforApproval = $routeParams.id != null && $scope.user.Permissions.contains('EditApprovalOrder');
 	if ($scope.isEditforApproval) {
 		Order.get($routeParams.id, function(order) {
@@ -53,8 +53,16 @@ function ($scope, $routeParams, $location, $451, $timeout, Order, OrderConfig, U
 			$location.path('catalog');
 	};
 
+	// Both confirmations below go through ConfirmModal (services/confirmModal.js) rather than
+	// window.confirm(), whose unstyled browser dialog was titled with the site's address.
 	$scope.cancelOrder = function() {
-		if (confirm('Are you sure you wish to clear your cart?') == true) {
+		ConfirmModal.open({
+			title: 'Clear your cart?',
+			message: 'All items will be removed from your cart.',
+			confirmText: 'Clear Cart',
+			cancelText: 'Keep Items',
+			danger: true
+		}).then(function() {
 			$scope.displayLoadingIndicator = true;
 			$scope.actionMessage = null;
 			Order.delete($scope.currentOrder,
@@ -72,7 +80,7 @@ function ($scope, $routeParams, $location, $451, $timeout, Order, OrderConfig, U
 					$scope.displayLoadingIndicator = false;
 				}
 			);
-		}
+		}, angular.noop);
 	};
 
 	var cleanDate = function(callback){
@@ -124,7 +132,13 @@ function ($scope, $routeParams, $location, $451, $timeout, Order, OrderConfig, U
 	};
 
 	$scope.removeItem = function(item) {
-		if (confirm('Are you sure you wish to remove this item from your cart?') == true) {
+		ConfirmModal.open({
+			title: 'Remove item?',
+			message: item.Product.Name + ' will be removed from your cart.',
+			image: (item.Variant && item.Variant.LargeImageUrl) || item.Product.SmallImageUrl,
+			confirmText: 'Remove',
+			danger: true
+		}).then(function() {
 			Order.deletelineitem($scope.currentOrder.ID, item.ID,
 				function(order) {
 					if (!order) {
@@ -149,7 +163,7 @@ function ($scope, $routeParams, $location, $451, $timeout, Order, OrderConfig, U
 					$scope.displayLoadingIndicator = false;
 				}
 			);
-		}
+		}, angular.noop);
 	}
 
 	$scope.checkOut = function() {
