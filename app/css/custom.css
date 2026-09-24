@@ -4351,6 +4351,126 @@ input[datepicker-popup] {
     }
 }
 
+/* ===== ModernTheme: address verification choice (partials/controls/addressInput.html) ===== */
+/* Reuses the error modal's shell; only the icon tint, the two selectable address cards and
+   the two-button footer are its own. */
+
+.mt-verify-modal {
+    max-width: 520px;
+}
+
+.mt-verify-icon {
+    /* --mt-color-accent tinted onto white - this is a question, not an error. */
+    background: rgba(15, 107, 99, 0.1);
+    color: var(--mt-color-accent);
+}
+
+.mt-verify-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+/* Two classes: each card is a <label>, and the checkout's own form-label rules
+   (uppercase, bold, tracked, small) sit on higher-specificity selectors like
+   .mt-checkout-card label. */
+.mt-verify-modal .mt-verify-option {
+    position: relative;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin: 0;
+    padding: 14px;
+    border: 1px solid var(--mt-color-border);
+    border-radius: 10px;
+    background: var(--mt-color-white);
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: normal;
+    text-transform: none;
+    color: var(--mt-color-text-strong);
+    cursor: pointer;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.mt-verify-modal .mt-verify-option:hover {
+    border-color: var(--mt-color-muted);
+}
+
+.mt-verify-modal .mt-verify-option.mt-verify-option-selected {
+    border-color: var(--mt-color-accent);
+    background: rgba(15, 107, 99, 0.04);
+    box-shadow: 0 0 0 1px var(--mt-color-accent);
+}
+
+.mt-verify-option input[type="radio"] {
+    flex: 0 0 auto;
+    margin: 3px 0 0;
+    accent-color: var(--mt-color-accent);
+}
+
+.mt-verify-option-body {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.mt-verify-option-label {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--mt-color-muted);
+}
+
+.mt-verify-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 1px 7px;
+    border-radius: 999px;
+    background: rgba(15, 107, 99, 0.1);
+    color: var(--mt-color-accent);
+    font-size: 11px;
+    letter-spacing: 0.02em;
+    text-transform: none;
+}
+
+.mt-verify-option-lines {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--mt-color-text-strong);
+    overflow-wrap: break-word;
+}
+
+.mt-verify-actions {
+    gap: 10px;
+}
+
+.mt-verify-actions .mt-header-btn {
+    padding: 10px 18px;
+    font-size: 14px;
+}
+
+@media (max-width: 480px) {
+    .mt-verify-options {
+        grid-template-columns: 1fr;
+    }
+    .mt-verify-actions {
+        flex-direction: column-reverse;
+    }
+    .mt-verify-actions .mt-header-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
 /* ===== ModernTheme: "Added to cart" toast (js/directives/cartToast.js) ===== */
 /* Top right, just below the sticky header - the directive sets top from the header's
    measured bottom edge. Hidden by opacity/visibility rather than display, so the fade out

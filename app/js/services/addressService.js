@@ -38,9 +38,25 @@ four51.app.factory('Address', ['$resource', '$451', 'Error', function($resource,
         });
     }
 
+    // Four51's address verification endpoint (CustomSolutions "Address Verification"). Checks a
+    // US address against USPS data without saving anything; a match comes back as
+    // { address: { streetAddress, secondaryAddress, city, state, ZIPCode, ZIPPlus4 } }, no
+    // match as a response with no address. Sites without the endpoint enabled get an error.
+    var _validate = function(address, success, error) {
+        return $resource($451.api('address/validate')).save(address).$promise.then(
+            function(result) {
+                _then(success, result);
+            },
+            function(ex) {
+                error(Error.format(ex));
+            }
+        );
+    }
+
     return {
         get: _get,
         save: _save,
-        delete: _delete
+        delete: _delete,
+        validate: _validate
     };
 }]);

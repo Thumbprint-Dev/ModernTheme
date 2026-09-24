@@ -23,10 +23,84 @@ function ($scope, $rootScope, $location, User, Address, Resources) {
     // half-typed street line could be written to the address book, and each save
     // broadcast event:AddressSaved, which reassigns the order's Ship/BillAddressID and
     // closes the form underneath the shopper. Saving happens on submit only.
-    $scope.save = function() {
+    function saveAndReturn() {
         persistAddress(function() {
             $location.path($scope.return);
         });
+    }
+
+    // Address verification (Four51 CustomSolutions "Address Verification"): Save first checks
+    // a US address against USPS via Address.validate, and only then saves.
+    //  - A match identical to what was typed saves straight away - nothing to choose between.
+    //  - A different match, or no match at all, opens the choice modal (addressInput.html):
+    //    the suggested address beside the entered one, and the shopper picks which to save.
+    //  - Non-US addresses, and any error from the endpoint itself (e.g. a site that doesn't
+    //    have it enabled), save as entered, so verification can never block saving.
+    $scope.verification = null;
+
+    function lines(a) {
+        return [a.Street1, a.Street2, a.City, a.State, a.Zip].map(function(part) {
+            return (part || '').toString().trim().toUpperCase().replace(/\s+/g, ' ');
+        }).join('|');
+    }
+
+    // Only a response carrying a ZIP+4 is a real USPS match. For an address it can't find, the
+    // endpoint doesn't return "no address" - it echoes the input back uppercased with an empty
+    // ZIPPlus4 (seen live: "99999 Nowhere Imaginary Rd" came back as-is). The CustomSolutions
+    // code offered that echo as a "verified" suggestion; here it counts as unverified.
+    function suggestionFrom(result, entered) {
+        var match = result && result.address;
+        if (!match || !match.streetAddress || !match.ZIPPlus4) return null;
+        return {
+            Street1: match.streetAddress,
+            Street2: match.secondaryAddress || '',
+            City: match.city,
+            State: match.state,
+            Zip: match.ZIPCode + '-' + match.ZIPPlus4,
+            Country: entered.Country
+        };
+    }
+
+    $scope.save = function() {
+        if (!$scope.address || $scope.address.Country != 'US') {
+            saveAndReturn();
+            return;
+        }
+        $scope.verifying = true;
+        Address.validate($scope.address,
+            function(result) {
+                $scope.verifying = false;
+                var suggested = suggestionFrom(result, $scope.address);
+                // A plain ZIP matching the first five digits of a ZIP+4 is the same address.
+                if (suggested && lines(suggested).replace(/-\d{4}$/, '') == lines($scope.address).replace(/-\d{4}$/, '')) {
+                    saveAndReturn();
+                    return;
+                }
+                $scope.verification = {
+                    suggested: suggested,
+                    entered: angular.copy($scope.address),
+                    choice: suggested ? 'suggested' : 'entered'
+                };
+            },
+            function() {
+                $scope.verifying = false;
+                saveAndReturn();
+            }
+        );
+    };
+
+    // Copies the chosen lines onto the bound address rather than replacing the object, so the
+    // checkout/addresses page that passed it in keeps the same reference.
+    $scope.useVerifiedAddress = function() {
+        var v = $scope.verification;
+        if (v.choice == 'suggested' && v.suggested)
+            angular.extend($scope.address, v.suggested);
+        $scope.verification = null;
+        saveAndReturn();
+    };
+
+    $scope.cancelVerification = function() {
+        $scope.verification = null;
     };
 
     $scope.delete = function() {

@@ -87,9 +87,56 @@
                 <button ng-if="(user.Permissions.contains('CreateShipToAddress') || user.Permissions.contains('CreateBillToAddress')) && address.IsCustEditable" class="mt-header-btn" ng-click="delete()" type="button">{{'Delete' | r | xlat}}</button>
                 <button class="mt-header-btn" type="button" ng-click="cancel()">{{'Cancel' | r | xlat}}</button>
             </span>
-            <button ng-if="(user.Permissions.contains('CreateShipToAddress') || user.Permissions.contains('CreateBillToAddress')) && address.IsCustEditable != false" class="mt-btn-accent" type="submit" ng-disabled="addressEdit.$invalid">
-                {{'Save' | r | xlat}}
+            <button ng-if="(user.Permissions.contains('CreateShipToAddress') || user.Permissions.contains('CreateBillToAddress')) && address.IsCustEditable != false" class="mt-btn-accent" type="submit" ng-disabled="addressEdit.$invalid || verifying">
+                <span ng-if="!verifying">{{'Save' | r | xlat}}</span>
+                <span ng-if="verifying"><i class="fa fa-spinner fa-spin" aria-hidden="true"></i> {{'Checking address' | r | xlat}}&hellip;</span>
             </button>
         </div>
     </form>
+
+    <!-- Address verification choice (AddressInputCtrl's save()). Shown when USPS suggests a
+         different address, or can't match the one entered; the shopper picks which one to save. -->
+    <div class="mt-error-modal-backdrop" ng-show="verification" ng-click="cancelVerification()">
+        <div class="mt-error-modal mt-verify-modal" role="dialog" aria-modal="true" aria-labelledby="mt-verify-title-{{$id}}" ng-click="$event.stopPropagation()">
+            <button type="button" class="mt-error-modal-close" ng-click="cancelVerification()" aria-label="{{'Close' | r | xlat}}">
+                <i class="fa fa-times"></i>
+            </button>
+            <div class="mt-error-modal-head">
+                <span class="mt-error-modal-icon mt-verify-icon" aria-hidden="true"><i class="fa fa-map-marker"></i></span>
+                <h2 class="mt-error-modal-title" id="mt-verify-title-{{$id}}">{{'Confirm your address' | r | xlat}}</h2>
+            </div>
+            <p class="mt-error-modal-message" ng-if="verification.suggested">{{'We found a close verified match to the address you entered. Choose the one to use.' | r | xlat}}</p>
+            <p class="mt-error-modal-message" ng-if="!verification.suggested">{{'We couldn\'t verify this address. Check it before saving, or go back and edit it.' | r | xlat}}</p>
+
+            <div class="mt-verify-options" role="radiogroup">
+                <label class="mt-verify-option" ng-if="verification.suggested" ng-class="{'mt-verify-option-selected': verification.choice == 'suggested'}">
+                    <input type="radio" name="mtVerifyChoice{{$id}}" value="suggested" ng-model="verification.choice" />
+                    <span class="mt-verify-option-body">
+                        <span class="mt-verify-option-label">{{'Suggested' | r | xlat}} <span class="mt-verify-badge"><i class="fa fa-check" aria-hidden="true"></i> {{'Verified' | r | xlat}}</span></span>
+                        <span class="mt-verify-option-lines">
+                            {{verification.suggested.Street1}}<br />
+                            <span ng-if="verification.suggested.Street2">{{verification.suggested.Street2}}<br /></span>
+                            {{verification.suggested.City}}<span ng-if="verification.suggested.City && verification.suggested.State">,</span> {{verification.suggested.State}} {{verification.suggested.Zip}}
+                        </span>
+                    </span>
+                </label>
+                <label class="mt-verify-option" ng-class="{'mt-verify-option-selected': verification.choice == 'entered'}">
+                    <input type="radio" name="mtVerifyChoice{{$id}}" value="entered" ng-model="verification.choice" />
+                    <span class="mt-verify-option-body">
+                        <span class="mt-verify-option-label">{{'As entered' | r | xlat}}</span>
+                        <span class="mt-verify-option-lines">
+                            {{verification.entered.Street1}}<br />
+                            <span ng-if="verification.entered.Street2">{{verification.entered.Street2}}<br /></span>
+                            {{verification.entered.City}}<span ng-if="verification.entered.City && verification.entered.State">,</span> {{verification.entered.State}} {{verification.entered.Zip}}
+                        </span>
+                    </span>
+                </label>
+            </div>
+
+            <div class="mt-error-modal-actions mt-verify-actions">
+                <button type="button" class="mt-header-btn" ng-click="cancelVerification()">{{'Edit address' | r | xlat}}</button>
+                <button type="button" class="mt-btn-accent" ng-click="useVerifiedAddress()">{{'Use this address' | r | xlat}}</button>
+            </div>
+        </div>
+    </div>
 </div>
