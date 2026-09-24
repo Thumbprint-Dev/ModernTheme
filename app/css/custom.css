@@ -4670,7 +4670,8 @@ input[datepicker-popup] {
 /* ===== ModernTheme: "Added to cart" toast (js/directives/cartToast.js) ===== */
 /* Top right, just below the sticky header - the directive sets top from the header's
    measured bottom edge. Hidden by opacity/visibility rather than display, so the fade out
-   can play and the aria-live region stays in the page to announce the next add. */
+   can play and the aria-live region stays in the page to announce the next add. The
+   visibility step is 1ms, not 0s - see the header dropdown transitions below for why. */
 
 .mt-cart-toast {
     position: fixed;
@@ -4689,7 +4690,7 @@ input[datepicker-popup] {
     visibility: hidden;
     transform: translateY(-8px);
     pointer-events: none;
-    transition: opacity 0.4s ease, transform 0.4s ease, visibility 0s linear 0.4s;
+    transition: opacity 0.4s ease, transform 0.4s ease, visibility 1ms linear 0.4s;
 }
 
 .mt-cart-toast.mt-cart-toast-visible {
@@ -4697,7 +4698,7 @@ input[datepicker-popup] {
     visibility: visible;
     transform: none;
     pointer-events: auto;
-    transition: opacity 0.25s ease-out, transform 0.25s ease-out, visibility 0s;
+    transition: opacity 0.25s ease-out, transform 0.25s ease-out, visibility 1ms;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -4880,8 +4881,13 @@ input[datepicker-popup] {
    pointer-events off), and fade/slide in on the same class, so the ui-bootstrap 0.10 dropdown
    toggle and the search button's ng-class drive them unchanged.
 
-   visibility waits out the fade on close (the 0s step delayed to the end) and flips at once
-   on open, so a hidden panel is never clickable or focusable, and the closing fade still plays. */
+   visibility waits out the fade on close (a 1ms step delayed to the end) and flips at once
+   on open, so a hidden panel is never clickable or focusable, and the closing fade still plays.
+
+   1ms, never 0s: the platform's CSS bundler (css/<site>.source.css on the live site) minifies
+   "0s" to a unitless "0", which is invalid in a transition, so the browser drops the whole
+   transition declaration - live, these panels snapped again while the unminified local
+   custom.css animated. Any zero time in a transition or animation here has the same problem. */
 .mt-header .dropdown-menu {
     display: block;
     visibility: hidden;
@@ -4890,7 +4896,7 @@ input[datepicker-popup] {
     transform-origin: top right;
     pointer-events: none;
     box-shadow: 0 1px 2px rgba(33, 31, 25, 0.06), 0 12px 28px rgba(33, 31, 25, 0.14);
-    transition: opacity 0.14s ease-in, transform 0.14s ease-in, visibility 0s linear 0.14s;
+    transition: opacity 0.14s ease-in, transform 0.14s ease-in, visibility 1ms linear 0.14s;
 }
 
 .mt-header .open > .dropdown-menu {
@@ -4898,7 +4904,7 @@ input[datepicker-popup] {
     opacity: 1;
     transform: none;
     pointer-events: auto;
-    transition: opacity 0.2s ease-out, transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1.2), visibility 0s;
+    transition: opacity 0.2s ease-out, transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1.2), visibility 1ms;
 }
 
 /* The toggles themselves respond too, so the click reads before the panel lands. */
@@ -4932,14 +4938,14 @@ input[datepicker-popup] {
         opacity: 0;
         transform: translateY(-8px);
         pointer-events: none;
-        transition: opacity 0.14s ease-in, transform 0.14s ease-in, visibility 0s linear 0.14s;
+        transition: opacity 0.14s ease-in, transform 0.14s ease-in, visibility 1ms linear 0.14s;
     }
     .mt-header .mt-search.mt-search-open {
         visibility: visible;
         opacity: 1;
         transform: none;
         pointer-events: auto;
-        transition: opacity 0.2s ease-out, transform 0.2s ease-out, visibility 0s;
+        transition: opacity 0.2s ease-out, transform 0.2s ease-out, visibility 1ms;
     }
     /* Spans the header row now, so it grows from the top edge rather than the right corner. */
     .mt-header .mt-minicart-panel {
