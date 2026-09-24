@@ -79,11 +79,9 @@
                 <div class="view-response-message alert-success text-center" alert-show="actionMessage">
                     <p>{{actionMessage | r | xlat}}</p>
                 </div>
-                <div class="view-response-message alert-danger text-center" alert-show="errorMessage">
-                    <p>{{errorMessage | r | xlat}}</p>
-                </div>
             </div>
         </div>
     </div>
+    <mt-error-modal message="errorMessage"></mt-error-modal>
     <orderprint class="visible-print"></orderprint>
 </section>

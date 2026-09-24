@@ -4175,8 +4175,10 @@ input[datepicker-popup] {
     }
 }
 
-/* ===== ModernTheme: Add-to-cart error modal (PDT, kitView, kitVariantView) ===== */
-/* Replaces the platform's fixed-bottom-bar error list, which was easy to miss/lose. */
+/* ===== ModernTheme: error modal (checkout, cart, order history, kitView, kitVariantView) ===== */
+/* Replaces the platform's fixed-bottom-bar errors, which faded out on their own and were easy
+   to miss. <mt-error-modal> (js/directives/errorModal.js) renders a single server message;
+   kitView/kitVariantView render the same markup around a list of line item errors. */
 
 .mt-error-modal-backdrop {
     position: fixed;
@@ -4184,28 +4186,51 @@ input[datepicker-popup] {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    /* --mt-color-text-strong at 45% - a warm scrim that matches the page, not flat black. */
+    background: rgba(33, 31, 25, 0.45);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 16px;
     z-index: 2000;
+    /* No animation on the backdrop itself: it is the element ng-if/ng-show toggle, and
+       ngAnimate 1.2 reads its computed animation and waits for an animationend that has
+       already fired - leaving the modal stuck on screen in .ng-leave after it is closed.
+       The entrance plays on the inner .mt-error-modal instead, which ngAnimate ignores. */
 }
 
 .mt-error-modal {
     position: relative;
     width: 100%;
-    max-width: 420px;
+    max-width: 440px;
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
     background: var(--mt-color-white);
+    border: 1px solid var(--mt-color-border);
     border-radius: 12px;
-    padding: 32px 28px 28px;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+    padding: 24px;
+    box-shadow: 0 1px 2px rgba(33, 31, 25, 0.06), 0 16px 40px rgba(33, 31, 25, 0.18);
+    font-family: var(--mt-font-body);
+    animation: mt-error-modal-rise 0.2s ease-out;
+}
+
+@keyframes mt-error-modal-rise {
+    from { opacity: 0; transform: translateY(8px) scale(0.98); }
+    to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mt-error-modal {
+        animation: none;
+    }
 }
 
 .mt-error-modal-close {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 14px;
+    right: 14px;
     width: 32px;
     height: 32px;
     display: flex;
@@ -4213,39 +4238,117 @@ input[datepicker-popup] {
     justify-content: center;
     background: none;
     border: none;
-    font-size: 16px;
+    border-radius: 8px;
+    font-size: 15px;
     color: var(--mt-color-muted);
     cursor: pointer;
 }
 
-.mt-error-modal-close:hover,
-.mt-error-modal-close:focus {
-    color: var(--mt-color-text);
+.mt-error-modal-close:hover {
+    background: var(--mt-color-divider);
+    color: var(--mt-color-text-strong);
+}
+
+.mt-error-modal-close:focus-visible {
+    outline: 2px solid var(--mt-color-accent);
+    outline-offset: 2px;
+}
+
+/* Icon and title on one row, clear of the close button. */
+.mt-error-modal-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-right: 36px;
+    margin-bottom: 12px;
 }
 
 .mt-error-modal-icon {
-    text-align: center;
-    font-size: 32px;
+    flex: 0 0 40px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    /* --mt-color-danger tinted onto white. */
+    background: rgba(179, 38, 30, 0.1);
     color: var(--mt-color-danger);
-    margin-bottom: 12px;
+    font-size: 18px;
+}
+
+.mt-error-modal-title {
+    margin: 0;
+    font-family: inherit;
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    color: var(--mt-color-text-strong);
+}
+
+.mt-error-modal-message,
+.mt-error-modal-list {
+    margin: 0;
+    color: var(--mt-color-text-soft);
+    font-size: 14px;
+    line-height: 1.55;
+    overflow-wrap: break-word;
 }
 
 .mt-error-modal-list {
     list-style: none;
-    margin: 0;
     padding: 0;
-    text-align: center;
-    color: var(--mt-color-text);
-    font-size: 14px;
-    line-height: 1.5;
+}
+
+.mt-error-modal-intro {
+    margin-bottom: 10px;
 }
 
 .mt-error-modal-list li {
+    position: relative;
+    padding-left: 14px;
     margin-bottom: 6px;
+}
+
+.mt-error-modal-list li:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.62em;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--mt-color-danger);
 }
 
 .mt-error-modal-list li:last-child {
     margin-bottom: 0;
+}
+
+.mt-error-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 24px;
+}
+
+.mt-error-modal-actions .mt-btn-accent {
+    padding: 10px 22px;
+    cursor: pointer;
+}
+
+.mt-error-modal-actions .mt-btn-accent:focus-visible {
+    outline: 2px solid var(--mt-color-accent);
+    outline-offset: 2px;
+}
+
+@media (max-width: 480px) {
+    .mt-error-modal {
+        padding: 20px;
+    }
+    .mt-error-modal-actions .mt-btn-accent {
+        width: 100%;
+    }
 }
 
 /* ===== ModernTheme: inline field errors (quantityfield, login, account forms) ===== */

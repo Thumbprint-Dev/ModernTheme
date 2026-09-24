@@ -160,10 +160,6 @@
                 <div class="view-response-message alert-success text-center" alert-show="actionMessage">
                     <p>{{actionMessage | r | xlat}}</p>
                 </div>
-                <div class="view-response-message alert-success text-center" alert-show="errorMessage">
-                    <p>{{errorMessage | r | xlat}}</p>
-                </div>
-                <div class="view-response-message alert-danger text-center" alert-show="gcMessage">{{gcMessage}}</div>
                 <div class="view-error-message" ng-show="cart.$error.required.length > 0">
                     <ul class="alert-warning">
                         <li class="text-center">
@@ -191,5 +187,7 @@
             </div>
         </form>
     </div>
+    <mt-error-modal message="errorMessage"></mt-error-modal>
+    <mt-error-modal message="gcMessage" heading="Gift card not applied"></mt-error-modal>
     <cartprint class="visible-print"></cartprint>
 </section>

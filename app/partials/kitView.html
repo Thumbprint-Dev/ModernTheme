@@ -149,14 +149,20 @@
 
 	<!-- ERROR MESSAGING: modal instead of a fixed bottom bar, so errors don't get lost off-screen. -->
 	<div class="mt-error-modal-backdrop" ng-show="showAddToCartErrors && lineItemErrors.length > 0" ng-click="showAddToCartErrors = false">
-		<div class="mt-error-modal" ng-click="$event.stopPropagation()">
+		<div class="mt-error-modal" role="alertdialog" aria-modal="true" aria-labelledby="mt-kit-error-title" ng-click="$event.stopPropagation()">
 			<button type="button" class="mt-error-modal-close" ng-click="showAddToCartErrors = false" aria-label="{{'Close' | r | xlat}}">
 				<i class="fa fa-times"></i>
 			</button>
-			<div class="mt-error-modal-icon"><i class="fa fa-exclamation-circle"></i></div>
+			<div class="mt-error-modal-head">
+				<span class="mt-error-modal-icon" aria-hidden="true"><i class="fa fa-exclamation"></i></span>
+				<h2 class="mt-error-modal-title" id="mt-kit-error-title">{{'Couldn\'t add to cart' | r | xlat}}</h2>
+			</div>
 			<ul class="mt-error-modal-list">
 				<li ng-repeat="e in lineItemErrors">{{e | xlat}}</li>
 			</ul>
+			<div class="mt-error-modal-actions">
+				<button type="button" class="mt-btn-accent" ng-click="showAddToCartErrors = false">{{'OK' | r | xlat}}</button>
+			</div>
 		</div>
 	</div>
 </section>
