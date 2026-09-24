@@ -1,5 +1,9 @@
-four51.app.controller('AddressInputCtrl', ['$scope', '$rootScope', '$location', 'User', 'Address', 'Resources',
-function ($scope, $rootScope, $location, User, Address, Resources) {
+four51.app.controller('AddressInputCtrl', ['$scope', '$rootScope', '$location', 'User', 'Address', 'Resources', 'SiteConfig',
+function ($scope, $rootScope, $location, User, Address, Resources, SiteConfig) {
+    // The addressinput directive has an isolate scope, so the `site` object Four51Ctrl puts on
+    // every other page's scope doesn't reach this template - it needs its own reference.
+    $scope.site = SiteConfig.settings;
+
     var persistAddress = function(success) {
 	    $scope.objectExists = false;
         if(!$scope.address.State){

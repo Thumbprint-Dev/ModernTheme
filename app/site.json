@@ -6,6 +6,10 @@
 		"url": "",
 		"alt": ""
 	},
+	"address": {
+		"_help_showQuickAddress": "showQuickAddress: true or false, without quotes. false hides the Quick Address field on checkout's New Address form and the Addresses page. Leave it out and the field shows. It needs a Google Maps key that allows this site's domain.",
+		"showQuickAddress": true
+	},
 	"login": {
 		"_help_createAccountUrl": "createAccountUrl: where 'Need an account?' goes. Blank uses the built-in signup page at /admin, which needs the site to give anonymous visitors a temp session; otherwise paste the site's Four51 AutoLogon link.",
 		"createAccountUrl": ""

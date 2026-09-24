@@ -1,5 +1,7 @@
 <div id="address_edit">
-    <div class="mt-field" ng-hide="address.IsCustEditable == false">
+    <!-- ng-hide, not ng-if: ng-if's child scope would catch ng-autocomplete's addressobj
+         binding, and AddressInputCtrl's watch on it (which fills the fields) would never fire. -->
+    <div class="mt-field" ng-hide="address.IsCustEditable == false || !site.address.showQuickAddress">
         <label for="Autocomplete">{{'Quick Address' | r | xlat}}</label>
         <input type="text" id="Autocomplete" class="form-control" details="addressobj" placeholder="{{'Enter a location' | r | xlat}}" ng-autocomplete ng-model="addressresult" />
     </div>

@@ -740,6 +740,13 @@ Four51 without forking the theme.
   in the file, so turning it back on is a one-word edit. Only a real JSON
   boolean is accepted -- a quoted `"false"` is ignored with a console warning,
   since as a non-empty string it would otherwise read as on.
+- **Quick Address**: `address.showQuickAddress` (default `true`) shows or hides
+  the Google Places "Quick Address" field on every address form -- checkout's
+  New Address and the Addresses page. Turn it off for a site whose Google Maps
+  key doesn't allow its domain, where the field only shows "Oops! Something
+  went wrong." Same true/false rules as `showButton`. `addressinput` has an
+  isolate scope, so `AddressInputCtrl` puts `SiteConfig.settings` on its own
+  `$scope.site` -- the inherited one from `Four51Ctrl` doesn't reach it.
 
 - `js/services/siteConfigService.js` holds the same keys as hard-coded fallbacks
   and merges the file over them, **ignoring blanks**. A site only fills in what it

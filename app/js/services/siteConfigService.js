@@ -28,6 +28,12 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 			buttonText: 'Shop the collection',
 			buttonHref: 'catalog'
 		},
+		address: {
+			// false hides the Quick Address (Google Places) field on every address form -
+			// checkout's New Address and the Addresses page. It needs a Google Maps key that
+			// allows the site's domain; without one it shows "Oops! Something went wrong."
+			showQuickAddress: true
+		},
 		login: {
 			// Where "Need an account?" goes. Blank uses the native self-service
 			// signup at /admin (partials/userView.html in its TempCustomer branch),
