@@ -26,6 +26,7 @@ Template: Howdy
    - ModernTheme: Account / Addresses (v1)                                  (line 2639)
    - ModernTheme: Search / Messages / Contact (v1)                          (line 2925)
    - ModernTheme: Legal pages (Security / Conditions) (v1)                  (line 3070)
+   - ModernTheme: FAQ page (v1)                                             (line 3546)
    - ModernTheme: Order History / Favorites (v1)                            (line 3188)
    - ModernTheme: Reports (v1)                                              (line 3526)
 */
@@ -1700,10 +1701,8 @@ body {
     padding-bottom: 60px;
 }
 
-/* Same spacing as .mt-checkout-inner: .mt-cart's -20px top margin leaves a 40px gap under the
-   header here, 28px on phones. */
 .mt-cart-inner {
-    padding-top: 60px;
+    padding-top: 40px;
 }
 
 .mt-cart-header {
@@ -2051,11 +2050,10 @@ body {
     min-width: 0;
 }
 
-/* Same header offset as .mt-checkout-side - see there. */
 .mt-cart-side {
     flex: 0 0 320px;
     position: sticky;
-    top: calc(var(--mt-header-height, 123px) + 24px);
+    top: 76px;
 }
 
 .mt-cart-summary-card {
@@ -2103,285 +2101,26 @@ body {
     border-top: 1px solid var(--mt-color-border);
 }
 
-/* Empty cart (cartView.html, CartViewCtrl's cartIsEmpty). Centered both ways in the space
-   between the header and the footer at every width. That space is .container-view, which
-   #content already stretches to push the footer down - so rather than guessing the header
-   and footer heights (the footer wraps to two lines on phones), the chain down to the empty
-   state becomes a flex column and the empty state fills it. .mt-cart's -20px pull-up under
-   the header is why the top padding is 20px more than the bottom. Browsers without :has()
-   get the min-height fallback: centered across, a little high. */
-.container-view:has(.mt-cart-empty),
-.container-view:has(.mt-cart-empty) > ng-view {
-    display: flex;
-    flex-direction: column;
-}
-
-.container-view:has(.mt-cart-empty) > ng-view,
-.mt-cart:has(> .mt-cart-empty) {
-    flex: 1 0 auto;
-}
-
-.mt-cart:has(> .mt-cart-empty) {
-    display: flex;
-    flex-direction: column;
-    padding-bottom: 0;
-}
-
-.mt-cart-empty {
-    flex: 1 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 60vh;
-    padding-top: 60px;
-    padding-bottom: 40px;
-}
-
-.mt-cart-empty-inner {
-    width: 100%;
-    max-width: 440px;
-    text-align: center;
-}
-
-.mt-cart-empty-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 88px;
-    height: 88px;
-    margin-bottom: 20px;
-    border-radius: 50%;
-    /* --mt-color-accent tinted onto the page background. */
-    background: rgba(15, 107, 99, 0.08);
-    color: var(--mt-color-accent);
-    font-size: 36px;
-}
-
-.mt-cart-empty-title {
-    margin: 0 0 10px;
-    font-size: 28px;
-    font-weight: 500;
-    letter-spacing: -0.02em;
-    line-height: 1.2;
-    color: var(--mt-color-text-strong);
-}
-
-.mt-cart-empty-text {
-    margin: 0 auto 28px;
-    max-width: 360px;
-    font-size: 15px;
-    line-height: 1.55;
-    color: var(--mt-color-text-soft);
-}
-
-.mt-cart-empty-actions {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-}
-
-.mt-cart-empty-actions .mt-header-btn {
-    padding: 12px 20px;
-    font-size: 14px;
-}
-
-@media (max-width: 480px) {
-    .mt-cart-empty-icon {
-        width: 72px;
-        height: 72px;
-        font-size: 30px;
+@media (max-width: 767px) {
+    .mt-cart-item {
+        flex-wrap: wrap;
     }
-    .mt-cart-empty-title {
-        font-size: 24px;
+    /* flex-basis:100% forces each onto its own full-width line below the photo+info row -
+       without it these stayed flexible enough to share a line with .mt-cart-item-info, which has
+       min-width:0 and no floor, so the browser squeezed the product name/SKU column down to
+       almost nothing instead of stacking qty/price underneath. */
+    .mt-cart-item-qty,
+    .mt-cart-item-price {
+        flex: 1 1 100%;
+        text-align: left;
+        margin-top: 12px;
     }
-    .mt-cart-empty-actions {
-        flex-direction: column;
-    }
-    .mt-cart-empty-actions .mt-btn-accent,
-    .mt-cart-empty-actions .mt-header-btn {
-        width: 100%;
-        justify-content: center;
-        text-align: center;
-    }
-}
-
-/* Tablet and phone: one column. Beside a 320px summary the list only had ~350px at tablet
-   width, which wrapped product names a word per line and slid the price column under the
-   summary card. Stacked, the list gets the full width and each item keeps its one-row
-   desktop layout down to 768px.
-
-   The summary sticks to the bottom of the screen instead of waiting after the whole list,
-   so Subtotal and Checkout stay in reach while scrolling. Scoped to .mt-cart-side: checkout's
-   order summary (orderSummary.html) reuses these same .mt-cart-summary-* classes, and got
-   squeezed into this one-line bar too before the rules were scoped. It's the same element, sticky
-   within .mt-cart-layout: it rides the bottom edge while the list is on screen and settles
-   into its normal place at the end, so there's never a second copy of the button. */
-@media (max-width: 991px) {
     .mt-cart-layout {
         flex-direction: column;
-        align-items: stretch;
-        gap: 0;
     }
     .mt-cart-side {
-        position: sticky;
-        top: auto;
-        bottom: 0;
-        z-index: 5;
-        flex: 0 0 auto;
-        width: auto;
-        /* Out to the screen edges through .mt-container's 24px side padding. */
-        margin: 0 -24px;
-        padding: 12px 24px calc(12px + env(safe-area-inset-bottom));
-        background: var(--mt-color-bg);
-        box-shadow: 0 -1px 0 var(--mt-color-border), 0 -8px 20px rgba(33, 31, 25, 0.06);
-    }
-    .mt-cart-side .mt-cart-summary-card {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 4px 20px;
-        padding: 14px 18px;
-    }
-    .mt-cart-side .mt-cart-summary-title {
-        display: none;
-    }
-    .mt-cart-side .mt-cart-summary-row {
-        flex: 1 1 auto;
-        gap: 12px;
-        justify-content: flex-start;
-        align-items: baseline;
-        margin: 0;
-        font-size: 16px;
-    }
-    .mt-cart-side .mt-cart-summary-card > .mt-pdp-meta {
-        order: 3;
-        flex: 1 1 100%;
-        margin: 0;
-        font-size: 12px;
-    }
-    .mt-cart-side .mt-cart-checkout-btn {
-        flex: 0 0 auto;
-        width: auto;
-        min-width: 220px;
-        margin-top: 0;
-    }
-    .mt-cart-side .mt-cart-neworder-btn {
-        order: 4;
-        flex: 1 1 100%;
-        margin-top: 6px;
-    }
-}
-
-/* Phone: each item becomes a compact card - photo on the left, name/SKU beside it, and
-   quantity + price sharing one row under the name - instead of photo, quantity and price
-   each on their own full-width line (346px per item before; about half that now). */
-@media (max-width: 767px) {
-    .mt-cart-inner {
-        padding-top: 48px;
-    }
-    .mt-cart-header .mt-pdp-title {
-        font-size: 26px;
-    }
-    .mt-cart-count {
-        margin-bottom: 12px;
-    }
-    .mt-cart-item {
-        display: grid;
-        grid-template-columns: 72px minmax(0, 1fr) auto;
-        grid-template-areas:
-            "photo info  info"
-            "photo qty   price";
-        column-gap: 14px;
-        row-gap: 10px;
-        align-items: start;
-        padding: 16px 0;
-    }
-    .mt-cart-item-photo {
-        grid-area: photo;
-        width: 72px;
-        height: 72px;
-        border-radius: 8px;
-    }
-    .mt-cart-item-info {
-        grid-area: info;
-        padding-right: 0;
-    }
-    .mt-cart-item-info .mt-pdt-sku {
-        display: block;
-        margin: 0;
-        font-size: 12px;
-        overflow-wrap: anywhere;
-    }
-    .mt-cart-item-fields {
-        margin-top: 10px;
-        gap: 10px;
-    }
-    .mt-cart-item-fields .mt-field {
-        max-width: none;
-        flex: 1 1 100%;
-    }
-    .mt-cart-item-qty {
-        grid-area: qty;
-        align-self: end;
-    }
-    /* On the narrowest phones (~320px) the quantity column is only a little wider than the
-       input, and Remove ran into the line total; it drops under the input there instead. */
-    .mt-cart-qty-row {
-        flex-wrap: wrap;
-        row-gap: 6px;
-    }
-    /* The input and Remove explain themselves; the label only cost a row. Still there for
-       screen readers. */
-    .mt-cart-item-qty label {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        overflow: hidden;
-        clip: rect(0 0 0 0);
-        white-space: nowrap;
-    }
-    .mt-cart-item-price {
-        grid-area: price;
-        align-self: end;
-        text-align: right;
-    }
-    .mt-cart-item-price .mt-pdp-price {
-        font-size: 18px;
-        margin: 0;
-    }
-    .mt-cart-item-price .mt-pdp-meta {
-        font-size: 12px;
-        margin: 0 0 2px;
-        white-space: nowrap;
-    }
-    /* A kit still being configured has no qty/price - its actions take that row instead. */
-    .mt-cart-item-pending {
-        padding: 16px;
-    }
-    .mt-cart-item-pending-action {
-        grid-column: 2 / -1;
-        flex-direction: row;
-        flex-wrap: wrap;
-        align-items: center;
-    }
-    .mt-cart-secondary-actions .mt-header-btn {
-        flex: 1 1 0;
-        justify-content: center;
-    }
-    /* Summary bar: subtotal over a full-width button. */
-    .mt-cart-side .mt-cart-summary-card {
-        padding: 12px 14px;
-    }
-    .mt-cart-side .mt-cart-summary-row {
-        flex: 1 1 100%;
-        justify-content: space-between;
-    }
-    .mt-cart-side .mt-cart-checkout-btn {
-        flex: 1 1 100%;
-        min-width: 0;
-        order: 2;
-        margin-top: 8px;
+        position: static;
+        width: 100%;
     }
 }
 
@@ -2398,11 +2137,8 @@ body {
     padding-bottom: 60px;
 }
 
-/* .mt-checkout pulls itself up 20px (margin-top: -20px), so the visible gap under the header
-   is this minus 20: 40px here, 28px on phones (see the 767px block below). At 40px padding it
-   was only 20px - and 4px on phones - which crowded the heading against the header. */
 .mt-checkout-inner {
-    padding-top: 60px;
+    padding-top: 40px;
 }
 
 .mt-checkout-inner > .mt-pdp-title {
@@ -2420,17 +2156,10 @@ body {
     min-width: 0;
 }
 
-/* Sticks 24px below the header, whose height js/directives/headerHeight.js measures into
-   --mt-header-height; a fixed top:76px left it 47px under the 123px desktop header. The
-   fallback is that desktop height, for the moment before the directive has run.
-   max-height keeps Submit Order reachable when the summary is taller than the space left
-   under the header (a coupon plus a spending account, on a short laptop screen). */
 .mt-checkout-side {
     flex: 0 0 340px;
     position: sticky;
-    top: calc(var(--mt-header-height, 123px) + 24px);
-    max-height: calc(100vh - var(--mt-header-height, 123px) - 48px);
-    overflow-y: auto;
+    top: 76px;
 }
 
 .mt-checkout-summary-line {
@@ -2529,40 +2258,13 @@ body {
     outline: none;
 }
 
-/* One column below 992px, matching the cart. Side by side at tablet width the form got
-   ~333px next to the 340px summary - narrower than the summary it sits beside - which
-   truncated the Shipping Address and Shipping Method dropdowns to a few characters. The
-   summary follows the form, where Submit Order belongs once the details are filled in. */
-@media (max-width: 991px) {
+@media (max-width: 767px) {
     .mt-checkout-layout {
         flex-direction: column;
-        align-items: stretch;
-        gap: 0;
     }
     .mt-checkout-side {
         position: static;
-        flex: 0 0 auto;
         width: 100%;
-        max-height: none;
-        overflow: visible;
-    }
-}
-
-@media (max-width: 767px) {
-    .mt-checkout-inner {
-        padding-top: 48px;
-    }
-    .mt-checkout-inner > .mt-pdp-title {
-        font-size: 26px;
-        margin-bottom: 16px;
-    }
-    /* iOS Safari zooms the whole page in when a field under 16px takes focus, and doesn't
-       zoom back out - every checkout and cart field here was 14px, card number included.
-       Two classes plus :is() so this matches the (0,2,1) field rules it overrides
-       (.mt-checkout .mt-field input, .mt-cart .mt-field-row input) and wins by coming later. */
-    .mt-checkout .mt-checkout-inner :is(input, select, textarea),
-    .mt-cart .mt-cart-inner :is(input, select, textarea) {
-        font-size: 16px;
     }
 }
 
@@ -3282,6 +2984,15 @@ body {
     padding-top: 24px;
 }
 
+.mt-account-mobile-nav {
+    margin-bottom: 16px;
+}
+
+.mt-account-mobile-nav .account-navigation,
+.mt-addresses .account-navigation {
+    margin: 0;
+}
+
 .mt-account-page .mt-checkout-card-title,
 .mt-addresses .mt-checkout-card-title {
     margin-bottom: 20px;
@@ -3830,6 +3541,154 @@ body {
 @media (max-width: 600px) {
     .mt-legal-body {
         padding: 32px 20px;
+    }
+}
+
+/* ===== ModernTheme: FAQ page (v1) ===== */
+/* Same shell as the legal pages (bg band + centered white card), with each question a native
+   <details>/<summary> accordion. The browser's own disclosure triangle is swapped for a
+   CSS-drawn chevron that rotates when open. */
+
+.mt-faq {
+    font-family: var(--mt-font-body);
+    color: var(--mt-color-text);
+    background: var(--mt-color-bg);
+    margin: -20px -5px 0;
+    padding-bottom: 60px;
+}
+
+.mt-faq-inner {
+    padding-top: 40px;
+}
+
+.mt-faq-body {
+    max-width: 760px;
+    margin: 0 auto;
+    background: var(--mt-color-white);
+    border: 1px solid var(--mt-color-border);
+    border-radius: 12px;
+    padding: 48px 56px;
+}
+
+.mt-faq-body .mt-eyebrow {
+    margin: 0 0 12px;
+}
+
+.mt-faq-body .mt-pdp-title {
+    margin: 0 0 12px;
+}
+
+.mt-faq-intro {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--mt-color-text-soft);
+    margin: 0 0 36px;
+}
+
+.mt-faq-group + .mt-faq-group {
+    margin-top: 36px;
+}
+
+.mt-faq-group-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--mt-color-accent);
+    margin: 0 0 8px;
+}
+
+.mt-faq-item {
+    border-bottom: 1px solid var(--mt-color-border);
+}
+
+.mt-faq-group-title + .mt-faq-item {
+    border-top: 1px solid var(--mt-color-border);
+}
+
+.mt-faq-item > summary {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 4px;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--mt-color-text-strong);
+    cursor: pointer;
+}
+
+.mt-faq-item > summary::-webkit-details-marker {
+    display: none;
+}
+
+.mt-faq-item > summary::after {
+    content: '';
+    flex: 0 0 auto;
+    width: 9px;
+    height: 9px;
+    margin-right: 4px;
+    border-right: 2px solid var(--mt-color-muted);
+    border-bottom: 2px solid var(--mt-color-muted);
+    transform: translateY(-3px) rotate(45deg);
+    transition: transform 0.2s ease;
+}
+
+.mt-faq-item[open] > summary::after {
+    transform: translateY(2px) rotate(-135deg);
+    border-color: var(--mt-color-accent);
+}
+
+.mt-faq-item > summary:hover {
+    color: var(--mt-color-accent);
+}
+
+.mt-faq-item > summary:focus {
+    outline: none;
+}
+
+.mt-faq-item > summary:focus-visible {
+    outline: 2px solid var(--mt-color-accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+.mt-faq-answer {
+    padding: 0 4px 20px;
+}
+
+.mt-faq-answer p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--mt-color-text);
+    margin: 0;
+}
+
+.mt-faq-body a {
+    color: var(--mt-color-accent);
+    text-decoration: underline;
+}
+
+.mt-faq-body a:hover,
+.mt-faq-body a:focus {
+    color: var(--mt-color-accent-dark);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mt-faq-item > summary::after {
+        transition: none;
+    }
+}
+
+@media (max-width: 600px) {
+    .mt-faq-body {
+        padding: 32px 20px;
+    }
+
+    .mt-faq-item > summary {
+        font-size: 15px;
     }
 }
 
@@ -4465,10 +4324,8 @@ input[datepicker-popup] {
     }
 }
 
-/* ===== ModernTheme: error modal (checkout, cart, order history, kitView, kitVariantView) ===== */
-/* Replaces the platform's fixed-bottom-bar errors, which faded out on their own and were easy
-   to miss. <mt-error-modal> (js/directives/errorModal.js) renders a single server message;
-   kitView/kitVariantView render the same markup around a list of line item errors. */
+/* ===== ModernTheme: Add-to-cart error modal (PDT, kitView, kitVariantView) ===== */
+/* Replaces the platform's fixed-bottom-bar error list, which was easy to miss/lose. */
 
 .mt-error-modal-backdrop {
     position: fixed;
@@ -4476,51 +4333,28 @@ input[datepicker-popup] {
     left: 0;
     right: 0;
     bottom: 0;
-    /* --mt-color-text-strong at 45% - a warm scrim that matches the page, not flat black. */
-    background: rgba(33, 31, 25, 0.45);
-    -webkit-backdrop-filter: blur(2px);
-    backdrop-filter: blur(2px);
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 16px;
+    padding: 20px;
     z-index: 2000;
-    /* No animation on the backdrop itself: it is the element ng-if/ng-show toggle, and
-       ngAnimate 1.2 reads its computed animation and waits for an animationend that has
-       already fired - leaving the modal stuck on screen in .ng-leave after it is closed.
-       The entrance plays on the inner .mt-error-modal instead, which ngAnimate ignores. */
 }
 
 .mt-error-modal {
     position: relative;
     width: 100%;
-    max-width: 440px;
-    max-height: calc(100vh - 32px);
-    overflow-y: auto;
+    max-width: 420px;
     background: var(--mt-color-white);
-    border: 1px solid var(--mt-color-border);
     border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 1px 2px rgba(33, 31, 25, 0.06), 0 16px 40px rgba(33, 31, 25, 0.18);
-    font-family: var(--mt-font-body);
-    animation: mt-error-modal-rise 0.2s ease-out;
-}
-
-@keyframes mt-error-modal-rise {
-    from { opacity: 0; transform: translateY(8px) scale(0.98); }
-    to { opacity: 1; transform: none; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .mt-error-modal {
-        animation: none;
-    }
+    padding: 32px 28px 28px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
 }
 
 .mt-error-modal-close {
     position: absolute;
-    top: 14px;
-    right: 14px;
+    top: 10px;
+    right: 10px;
     width: 32px;
     height: 32px;
     display: flex;
@@ -4528,468 +4362,39 @@ input[datepicker-popup] {
     justify-content: center;
     background: none;
     border: none;
-    border-radius: 8px;
-    font-size: 15px;
+    font-size: 16px;
     color: var(--mt-color-muted);
     cursor: pointer;
 }
 
-.mt-error-modal-close:hover {
-    background: var(--mt-color-divider);
-    color: var(--mt-color-text-strong);
-}
-
-.mt-error-modal-close:focus-visible {
-    outline: 2px solid var(--mt-color-accent);
-    outline-offset: 2px;
-}
-
-/* Icon and title on one row, clear of the close button. */
-.mt-error-modal-head {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding-right: 36px;
-    margin-bottom: 12px;
+.mt-error-modal-close:hover,
+.mt-error-modal-close:focus {
+    color: var(--mt-color-text);
 }
 
 .mt-error-modal-icon {
-    flex: 0 0 40px;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    /* --mt-color-danger tinted onto white. */
-    background: rgba(179, 38, 30, 0.1);
+    text-align: center;
+    font-size: 32px;
     color: var(--mt-color-danger);
-    font-size: 18px;
-}
-
-.mt-error-modal-title {
-    margin: 0;
-    font-family: inherit;
-    font-size: 18px;
-    font-weight: 500;
-    letter-spacing: -0.01em;
-    line-height: 1.3;
-    color: var(--mt-color-text-strong);
-}
-
-.mt-error-modal-message,
-.mt-error-modal-list {
-    margin: 0;
-    color: var(--mt-color-text-soft);
-    font-size: 14px;
-    line-height: 1.55;
-    overflow-wrap: break-word;
+    margin-bottom: 12px;
 }
 
 .mt-error-modal-list {
     list-style: none;
+    margin: 0;
     padding: 0;
-}
-
-.mt-error-modal-intro {
-    margin-bottom: 10px;
+    text-align: center;
+    color: var(--mt-color-text);
+    font-size: 14px;
+    line-height: 1.5;
 }
 
 .mt-error-modal-list li {
-    position: relative;
-    padding-left: 14px;
     margin-bottom: 6px;
-}
-
-.mt-error-modal-list li:before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0.62em;
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--mt-color-danger);
 }
 
 .mt-error-modal-list li:last-child {
     margin-bottom: 0;
-}
-
-.mt-error-modal-actions {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 24px;
-}
-
-.mt-error-modal-actions .mt-btn-accent {
-    padding: 10px 22px;
-    cursor: pointer;
-}
-
-.mt-error-modal-actions .mt-btn-accent:focus-visible {
-    outline: 2px solid var(--mt-color-accent);
-    outline-offset: 2px;
-}
-
-@media (max-width: 480px) {
-    .mt-error-modal {
-        padding: 20px;
-    }
-    .mt-error-modal-actions .mt-btn-accent {
-        width: 100%;
-    }
-}
-
-/* The raw server error printed under a friendly fallback message (services/errorService.js,
-   the technicalError filter and mt-error-modal-list directive) - small and muted, there for a
-   screenshot when the error is reported, not for the shopper to read. Also used under the
-   inline product-card and quick-add errors. */
-.mt-error-modal-technical {
-    margin: 10px 0 0;
-    padding-top: 8px;
-    border-top: 1px dashed var(--mt-color-border);
-    font-family: Menlo, Consolas, 'Liberation Mono', monospace;
-    font-size: 11px;
-    line-height: 1.45;
-    color: var(--mt-color-muted);
-    overflow-wrap: anywhere;
-    text-align: left;
-}
-
-.mt-product-card-error + .mt-error-modal-technical {
-    margin-top: 4px;
-    padding-top: 4px;
-}
-
-.mt-error-modal-list li .mt-error-modal-technical {
-    display: block;
-}
-
-/* ===== ModernTheme: confirmation modal (js/services/confirmModal.js) ===== */
-/* Replaces window.confirm() for removing a cart item, a mini-cart item and clearing the cart.
-   Reuses the error modal's shell; only the product thumbnail, the red confirm button and the
-   neutral (non-destructive) icon tint are its own. */
-
-.mt-confirm-body {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-}
-
-.mt-confirm-photo {
-    flex: 0 0 56px;
-    width: 56px;
-    height: 56px;
-    object-fit: contain;
-    border: 1px solid var(--mt-color-divider);
-    border-radius: 8px;
-    background: var(--mt-color-bg);
-}
-
-.mt-confirm-icon-neutral {
-    background: rgba(15, 107, 99, 0.1);
-    color: var(--mt-color-accent);
-}
-
-.mt-confirm-actions {
-    gap: 10px;
-}
-
-.mt-confirm-actions .mt-header-btn {
-    padding: 10px 18px;
-    font-size: 14px;
-}
-
-.mt-btn-accent.mt-confirm-danger {
-    background: var(--mt-color-danger);
-}
-
-.mt-btn-accent.mt-confirm-danger:hover,
-.mt-btn-accent.mt-confirm-danger:focus {
-    background: #8F1E18;
-}
-
-@media (max-width: 480px) {
-    .mt-confirm-actions {
-        flex-direction: column-reverse;
-    }
-    .mt-confirm-actions .mt-header-btn,
-    .mt-confirm-actions .mt-btn-accent {
-        width: 100%;
-        justify-content: center;
-    }
-}
-
-/* ===== ModernTheme: address verification choice (partials/controls/addressInput.html) ===== */
-/* Reuses the error modal's shell; only the icon tint, the two selectable address cards and
-   the two-button footer are its own. */
-
-.mt-verify-modal {
-    max-width: 520px;
-}
-
-.mt-verify-icon {
-    /* --mt-color-accent tinted onto white - this is a question, not an error. */
-    background: rgba(15, 107, 99, 0.1);
-    color: var(--mt-color-accent);
-}
-
-.mt-verify-options {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-top: 16px;
-}
-
-/* Two classes: each card is a <label>, and the checkout's own form-label rules
-   (uppercase, bold, tracked, small) sit on higher-specificity selectors like
-   .mt-checkout-card label. */
-.mt-verify-modal .mt-verify-option {
-    position: relative;
-    display: flex;
-    gap: 10px;
-    align-items: flex-start;
-    margin: 0;
-    padding: 14px;
-    border: 1px solid var(--mt-color-border);
-    border-radius: 10px;
-    background: var(--mt-color-white);
-    font-size: 14px;
-    font-weight: 400;
-    letter-spacing: normal;
-    text-transform: none;
-    color: var(--mt-color-text-strong);
-    cursor: pointer;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
-}
-
-.mt-verify-modal .mt-verify-option:hover {
-    border-color: var(--mt-color-muted);
-}
-
-.mt-verify-modal .mt-verify-option.mt-verify-option-selected {
-    border-color: var(--mt-color-accent);
-    background: rgba(15, 107, 99, 0.04);
-    box-shadow: 0 0 0 1px var(--mt-color-accent);
-}
-
-.mt-verify-option input[type="radio"] {
-    flex: 0 0 auto;
-    margin: 3px 0 0;
-    accent-color: var(--mt-color-accent);
-}
-
-.mt-verify-option-body {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    min-width: 0;
-}
-
-.mt-verify-option-label {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--mt-color-muted);
-}
-
-.mt-verify-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-    padding: 1px 7px;
-    border-radius: 999px;
-    background: rgba(15, 107, 99, 0.1);
-    color: var(--mt-color-accent);
-    font-size: 11px;
-    letter-spacing: 0.02em;
-    text-transform: none;
-}
-
-.mt-verify-option-lines {
-    font-size: 14px;
-    line-height: 1.5;
-    color: var(--mt-color-text-strong);
-    overflow-wrap: break-word;
-}
-
-.mt-verify-actions {
-    gap: 10px;
-}
-
-.mt-verify-actions .mt-header-btn {
-    padding: 10px 18px;
-    font-size: 14px;
-}
-
-@media (max-width: 480px) {
-    .mt-verify-options {
-        grid-template-columns: 1fr;
-    }
-    .mt-verify-actions {
-        flex-direction: column-reverse;
-    }
-    .mt-verify-actions .mt-header-btn {
-        width: 100%;
-        justify-content: center;
-    }
-}
-
-/* ===== ModernTheme: "Added to cart" toast (js/directives/cartToast.js) ===== */
-/* Top right, just below the sticky header - the directive sets top from the header's
-   measured bottom edge. Hidden by opacity/visibility rather than display, so the fade out
-   can play and the aria-live region stays in the page to announce the next add. The
-   visibility step is 1ms, not 0s - see the header dropdown transitions below for why. */
-
-.mt-cart-toast {
-    position: fixed;
-    top: 16px;
-    right: 16px;
-    z-index: 1990;
-    width: 340px;
-    max-width: calc(100vw - 32px);
-    background: var(--mt-color-white);
-    border: 1px solid var(--mt-color-border);
-    border-radius: 12px;
-    box-shadow: 0 1px 2px rgba(33, 31, 25, 0.06), 0 12px 32px rgba(33, 31, 25, 0.16);
-    font-family: var(--mt-font-body);
-    overflow: hidden;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-8px);
-    pointer-events: none;
-    transition: opacity 0.4s ease, transform 0.4s ease, visibility 1ms linear 0.4s;
-}
-
-.mt-cart-toast.mt-cart-toast-visible {
-    opacity: 1;
-    visibility: visible;
-    transform: none;
-    pointer-events: auto;
-    transition: opacity 0.25s ease-out, transform 0.25s ease-out, visibility 1ms;
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .mt-cart-toast,
-    .mt-cart-toast.mt-cart-toast-visible {
-        transform: none;
-    }
-}
-
-.mt-cart-toast-body {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 14px 44px 14px 14px;
-    position: relative;
-}
-
-.mt-cart-toast-photo {
-    flex: 0 0 52px;
-    width: 52px;
-    height: 52px;
-    border-radius: 8px;
-    border: 1px solid var(--mt-color-divider);
-    object-fit: contain;
-    background: var(--mt-color-bg);
-}
-
-.mt-cart-toast-info {
-    min-width: 0;
-}
-
-.mt-cart-toast-title {
-    margin: 0 0 2px;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--mt-color-accent);
-}
-
-.mt-cart-toast-title .fa {
-    margin-right: 2px;
-}
-
-.mt-cart-toast-title.mt-cart-toast-title-removed {
-    color: var(--mt-color-text-soft);
-}
-
-.mt-cart-toast-name {
-    margin: 0;
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--mt-color-text-strong);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.mt-cart-toast-meta {
-    margin: 2px 0 0;
-    font-size: 12px;
-    color: var(--mt-color-muted);
-}
-
-.mt-cart-toast-close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 28px;
-    height: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: none;
-    border: none;
-    border-radius: 8px;
-    font-size: 13px;
-    color: var(--mt-color-muted);
-    cursor: pointer;
-}
-
-.mt-cart-toast-close:hover {
-    background: var(--mt-color-divider);
-    color: var(--mt-color-text-strong);
-}
-
-.mt-cart-toast-link {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    padding: 10px 14px;
-    border-top: 1px solid var(--mt-color-divider);
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--mt-color-accent);
-    text-decoration: none;
-}
-
-.mt-cart-toast-link:hover,
-.mt-cart-toast-link:focus {
-    background: var(--mt-color-bg);
-    color: var(--mt-color-accent-dark);
-    text-decoration: none;
-}
-
-.mt-cart-toast-close:focus-visible,
-.mt-cart-toast-link:focus-visible {
-    outline: 2px solid var(--mt-color-accent);
-    outline-offset: -2px;
-}
-
-@media (max-width: 480px) {
-    .mt-cart-toast {
-        right: 16px;
-        left: 16px;
-        width: auto;
-        max-width: none;
-    }
 }
 
 /* ===== ModernTheme: inline field errors (quantityfield, login, account forms) ===== */
@@ -5049,97 +4454,6 @@ input[datepicker-popup] {
         right: 0;
         width: auto;
         max-width: none;
-    }
-}
-
-/* ===== ModernTheme: header dropdown + mobile search transitions ===== */
-/* The mini-cart, the account menu and the mobile search panel all toggled display:none/block
-   (bootstrap's .open > .dropdown-menu, and .mt-search-open), which can't be transitioned -
-   they snapped open and shut. They now stay display:block but hidden (visibility + opacity,
-   pointer-events off), and fade/slide in on the same class, so the ui-bootstrap 0.10 dropdown
-   toggle and the search button's ng-class drive them unchanged.
-
-   visibility waits out the fade on close (a 1ms step delayed to the end) and flips at once
-   on open, so a hidden panel is never clickable or focusable, and the closing fade still plays.
-
-   1ms, never 0s: the platform's CSS bundler (css/<site>.source.css on the live site) minifies
-   "0s" to a unitless "0", which is invalid in a transition, so the browser drops the whole
-   transition declaration - live, these panels snapped again while the unminified local
-   custom.css animated. Any zero time in a transition or animation here has the same problem. */
-.mt-header .dropdown-menu {
-    display: block;
-    visibility: hidden;
-    opacity: 0;
-    transform: translateY(-6px) scale(0.98);
-    transform-origin: top right;
-    pointer-events: none;
-    box-shadow: 0 1px 2px rgba(33, 31, 25, 0.06), 0 12px 28px rgba(33, 31, 25, 0.14);
-    transition: opacity 0.14s ease-in, transform 0.14s ease-in, visibility 1ms linear 0.14s;
-}
-
-.mt-header .open > .dropdown-menu {
-    visibility: visible;
-    opacity: 1;
-    transform: none;
-    pointer-events: auto;
-    transition: opacity 0.2s ease-out, transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1.2), visibility 1ms;
-}
-
-/* The toggles themselves respond too, so the click reads before the panel lands. */
-.mt-header .mt-header-btn,
-.mt-header .mt-search-toggle {
-    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
-}
-
-.mt-header .mt-header-btn:active,
-.mt-header .mt-search-toggle:active {
-    transform: scale(0.96);
-}
-
-.mt-header .open > .dropdown-toggle {
-    border-color: var(--mt-color-muted);
-    background: var(--mt-color-bg);
-}
-
-.mt-header .dropdown-toggle .caret {
-    transition: transform 0.2s ease;
-}
-
-.mt-header .open > .dropdown-toggle .caret {
-    transform: rotate(180deg);
-}
-
-@media (max-width: 767px) {
-    .mt-header .mt-search {
-        display: flex;
-        visibility: hidden;
-        opacity: 0;
-        transform: translateY(-8px);
-        pointer-events: none;
-        transition: opacity 0.14s ease-in, transform 0.14s ease-in, visibility 1ms linear 0.14s;
-    }
-    .mt-header .mt-search.mt-search-open {
-        visibility: visible;
-        opacity: 1;
-        transform: none;
-        pointer-events: auto;
-        transition: opacity 0.2s ease-out, transform 0.2s ease-out, visibility 1ms;
-    }
-    /* Spans the header row now, so it grows from the top edge rather than the right corner. */
-    .mt-header .mt-minicart-panel {
-        transform-origin: top center;
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .mt-header .dropdown-menu,
-    .mt-header .open > .dropdown-menu,
-    .mt-header .mt-search,
-    .mt-header .mt-search.mt-search-open,
-    .mt-header .mt-header-btn:active,
-    .mt-header .mt-search-toggle:active,
-    .mt-header .open > .dropdown-toggle .caret {
-        transform: none;
     }
 }
 

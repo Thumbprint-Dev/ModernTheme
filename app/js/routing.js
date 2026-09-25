@@ -50,5 +50,6 @@ four51.app.config(['$routeProvider', '$locationProvider', function($routeProvide
         when('/reports', { templateUrl: 'partials/reportsView.html', controller: 'ReportsCtrl' }).
         when('/report/:id', { templateUrl: 'partials/Reporting/reportView.html', controller: 'ReportCtrl' }).
         when('/contactus', { templateUrl: 'partials/Messages/contactus.html' }).
+        when('/faq', { templateUrl: 'partials/faqView.html' }).
         otherwise({redirectTo: '/catalog'});
 }]);
