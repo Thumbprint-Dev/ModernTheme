@@ -5,8 +5,20 @@
             <orderacknowledgemessage ng-show="order.recent"></orderacknowledgemessage>
 
             <div class="mt-order-detail-header">
-                <h1 class="mt-pdp-title">{{(order.Type) + ' ' + ('Order' | r) | xlat}}<span ng-show="order.ExternalID"> {{'ID' | r}}: </span>{{order.ExternalID}}</h1>
-                <button type="button" class="mt-header-btn" ng-click="onPrint()">
+                <div class="mt-order-detail-heading">
+                    <p class="mt-order-detail-eyebrow">{{(order.Type) + ' ' + ('Order' | r) | xlat}}</p>
+                    <h1 class="mt-pdp-title">{{order.ExternalID ? ('#' + order.ExternalID) : ('Order' | r | xlat)}}</h1>
+                    <div class="mt-order-detail-meta">
+                        <span class="mt-orders-status-pill"
+                              ng-class="{'mt-orders-status-pill-open': order.Status == 'Open',
+                                         'mt-orders-status-pill-unsubmitted': order.Status == 'Unsubmitted',
+                                         'mt-orders-status-pill-pending': order.Status == 'AwaitingApproval',
+                                         'mt-orders-status-pill-approved': order.Status == 'Approved',
+                                         'mt-orders-status-pill-declined': order.Status == 'Declined'}">{{order.StatusText | r | xlat}}</span>
+                        <span ng-show="order.DateSubmitted">{{'Submitted' | r | xlat}} {{order.DateSubmitted | date:user.Culture.DateFormat.short}}</span>
+                    </div>
+                </div>
+                <button type="button" class="mt-header-btn mt-order-detail-print" ng-click="onPrint()">
                     <i class="fa fa-print"></i> {{'Print' | r | xlat}}
                 </button>
             </div>
@@ -29,15 +41,13 @@
 
                         <div class="mt-order-detail-card-footer" ng-if="order.FromUserID == user.ID && order.Status != 'Unsubmitted' && user.Type !='TempCustomer'">
                             <loadingindicator ng-show="displayLoadingIndicator"></loadingindicator>
-                            <div class="form-group view-form-icon">
-                                <div class="input-group">
-                                    <input type="text" ng-model="order.FavoriteName" placeholder="{{('Favorite' | r) + ' ' + ('Name' | r) | xlat}}" class="form-control" autocomplete="off" />
-                                    <i class="fa fa-star"></i>
-                                    <span class="input-group-btn">
-                                        <button type="button" ng-click="saveFavorite()" class="mt-btn-accent">{{('Save' | r) + ' ' + ('Favorite' | r) | xlat}}</button>
-                                    </span>
+                            <form class="mt-order-favorite" novalidate ng-submit="saveFavorite()">
+                                <label for="order-favorite-name">{{'Save this order as a favorite to reorder it quickly' | r | xlat}}</label>
+                                <div class="mt-order-favorite-row">
+                                    <input id="order-favorite-name" type="text" ng-model="order.FavoriteName" placeholder="{{('Favorite' | r) + ' ' + ('Name' | r) | xlat}}" class="form-control" autocomplete="off" />
+                                    <button type="submit" class="mt-btn-accent"><i class="fa fa-star"></i> {{('Save' | r) + ' ' + ('Favorite' | r) | xlat}}</button>
                                 </div>
-                            </div>
+                            </form>
                         </div>
                         <div class="mt-order-detail-card-footer" ng-if="order.FromUserID == user.ID && order.Status == 'Unsubmitted'">
                             <loadingindicator ng-show="displayLoadingIndicator"></loadingindicator>
@@ -64,10 +74,13 @@
                             {{('Order' | r) + ' ' + ('Details' | r) | xlat}}
                         </h2>
                         <orderhistorydetails></orderhistorydetails>
-                        <orderhistorysummary ng-if="!(user.Permissions.contains('HidePricing'))"></orderhistorysummary>
+                        <div class="mt-order-detail-totals" ng-if="!(user.Permissions.contains('HidePricing'))">
+                            <orderhistorysummary></orderhistorysummary>
+                        </div>
                         <div class="mt-order-detail-card-footer" ng-if="order.FromUserID == user.ID && order.Status != 'Unsubmitted'">
                             <loadingindicator ng-show="displayLoadingIndicator"></loadingindicator>
-                            <button ng-disabled="displayLoadingIndicator" class="mt-btn-accent" ng-click="repeatOrder()">
+                            <button type="button" ng-disabled="displayLoadingIndicator" class="mt-btn-accent mt-order-detail-repeat" ng-click="repeatOrder()">
+                                <i class="fa fa-repeat"></i>
                                 {{('Repeat' | r) + ' ' + ('Order' | r) | xlat}}
                             </button>
                         </div>

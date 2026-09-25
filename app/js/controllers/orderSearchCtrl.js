@@ -67,6 +67,18 @@ four51.app.controller('OrderSearchCtrl', ['$scope', '$location', 'OrderSearchCri
 			}
 		};
 
+		$scope.hasSearchFilters = function() {
+			var c = $scope.criteria || {};
+			return !!($scope.selectedStatus || c.OrderID || c.ShippingAddress || c.DateRangeFrom || c.DateRangeTo);
+		};
+
+		$scope.clearSearch = function() {
+			$scope.criteria = {};
+			$scope.selectedStatus = null;
+			$scope.settings.currentPage = 1;
+			loadAllOrders();
+		};
+
 		function _hasType(data, type) {
 			var hasType = false;
 			angular.forEach(data, function(o) {

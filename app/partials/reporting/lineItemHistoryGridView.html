@@ -1,69 +1,67 @@
-<div class="panel-order-history" ng-repeat="item in order.LineItems">
-    <a href="{{item.ProofUrl}}" target="_blank" title="{{'Download' | r | xlat}}" ng-if="order.Status != 'AwaitingApproval' && (item.Product.Type == 'VariableText' && item.ProofUrl)"><i class="fa fa-download"></i></a>
-    <a href="" title="{{'Download' | r | xlat}}" ng-click="downloadProof(item)" ng-if="order.Status == 'AwaitingApproval' && (item.Variant.IsMpowerVariant)"><i class="fa fa-download"></i></a>
-    <div class="col-sm-6">
-        <div class="mt-order-line-item-row">
-            <img class="mt-cart-item-photo mt-real-photo" ng-show="item.Product.LargeImageUrl" ng-src="{{item.Product.LargeImageUrl | orderImageUrl}}" />
-            <div class="mt-placeholder-photo mt-cart-item-photo" ng-hide="item.Product.LargeImageUrl">{{'[product photo]' | r | xlat}}</div>
-            <div class="mt-cart-item-info">
-                <span class="mt-cart-item-name">{{item.Product.Name}}</span>
-                <span class="mt-pdt-sku">{{item.ProductIDText}}</span>
-                <ul ng-show="item.Specs | filter:{'CanSetForLineItem':true}.length > 0">
-                    <li class="text-center" ng-repeat="spec in item.Specs | onproperty:{Property: 'CanSetForLineItem', Value: true} ">
-                        <span class="text-info">{{spec.Name}}</span>
-                        <span ng-if="spec.ControlType == 'File'"><a ng-href="{{spec.File.Url}}">{{spec.File.OriginalName + Extension}}</a></span>
-                        <span ng-if="spec.ControlType != 'File'">{{spec.Value || ('(unspecified)' | xlat)}}</span>
-                    </li>
-                </ul>
-                <a ng-if="item.ProductionURL" class="btn btn-primary printable-pdf-link" href="{{item.ProductionURL}}" target="_blank">
-                    <span><i class="fa fa-download"></i> {{'Download Printable File' | r | xlat}}</span>
+<article class="mt-oli" ng-repeat="item in order.LineItems">
+    <div class="mt-oli-product">
+        <div class="mt-oli-thumb">
+            <img class="mt-real-photo" ng-show="item.Product.LargeImageUrl" ng-src="{{item.Product.LargeImageUrl | orderImageUrl}}" alt="{{item.Product.Name}}" />
+            <div class="mt-placeholder-photo" ng-hide="item.Product.LargeImageUrl">{{'[product photo]' | r | xlat}}</div>
+        </div>
+        <div class="mt-oli-info">
+            <span class="mt-oli-name">{{item.Product.Name}}</span>
+            <span class="mt-oli-sku">{{item.ProductIDText}}</span>
+            <ul class="mt-oli-specs" ng-show="(item.Specs | onproperty:{Property: 'CanSetForLineItem', Value: true}).length > 0">
+                <li ng-repeat="spec in item.Specs | onproperty:{Property: 'CanSetForLineItem', Value: true}">
+                    <span class="mt-oli-spec-name">{{spec.Name}}</span>
+                    <span ng-if="spec.ControlType == 'File'"><a ng-href="{{spec.File.Url}}">{{spec.File.OriginalName + Extension}}</a></span>
+                    <span ng-if="spec.ControlType != 'File'">{{spec.Value || ('(unspecified)' | xlat)}}</span>
+                </li>
+            </ul>
+            <div class="mt-oli-downloads" ng-if="item.ProductionURL || (order.Status != 'AwaitingApproval' && item.Product.Type == 'VariableText' && item.ProofUrl) || (order.Status == 'AwaitingApproval' && item.Variant.IsMpowerVariant)">
+                <a class="mt-header-btn" ng-if="order.Status != 'AwaitingApproval' && (item.Product.Type == 'VariableText' && item.ProofUrl)" href="{{item.ProofUrl}}" target="_blank">
+                    <i class="fa fa-download"></i> {{'Download Proof' | r | xlat}}
+                </a>
+                <a class="mt-header-btn" ng-if="order.Status == 'AwaitingApproval' && (item.Variant.IsMpowerVariant)" href="" ng-click="downloadProof(item)">
+                    <i class="fa fa-download"></i> {{'Download Proof' | r | xlat}}
+                </a>
+                <a class="mt-header-btn" ng-if="item.ProductionURL" href="{{item.ProductionURL}}" target="_blank">
+                    <i class="fa fa-download"></i> {{'Download Printable File' | r | xlat}}
                 </a>
             </div>
         </div>
     </div>
-    <div class="col-sm-6">
-        <div class="row">
-            <div ng-if="!(user.Permissions.contains('HidePricing'))" class="col-xs-12 col-sm-4">
-                <p>
-                    <small class="text-info">{{'Total' | r | xlat}}</small><br />
-                    <span class="text-success">{{item.LineTotal | culturecurrency}}</span>
-                </p>
-            </div>
-            <div ng-if="!(user.Permissions.contains('HidePricing'))" class="col-xs-12 col-sm-4">
-                <p>
-                    <small class="text-info">{{'Unit Price' | r | xlat}}</small><br />
-                    <span class="text-success">{{item.UnitPrice | culturecurrency}}</span> x {{item.Quantity * (item.Product.QuantityMultiplier || 1)}}
-                </p>
-            </div>
-            <div class="col-xs-12 col-sm-4" ng-show="item.TotalShipped">
-                <p>
-                    <small class="text-info">{{('Quantity' | r) + ' ' + ('Shipped' | r) | xlat}}</small><br />
-                    {{item.TotalShipped}}
-                </p>
-            </div>
+
+    <dl class="mt-oli-stats">
+        <div class="mt-oli-stat" ng-if="!(user.Permissions.contains('HidePricing'))">
+            <dt>{{'Unit Price' | r | xlat}}</dt>
+            <dd>{{item.UnitPrice | culturecurrency}}</dd>
         </div>
-        <div class="row">
-            <div class="col-xs-6">
-                <p ng-if="item.CostCenter">
-                    <span class="text-info">{{('Item' | r) + ' ' + ('Cost Center' | r) | xlat}}</span> {{item.CostCenter}}
-                </p>
-                <p ng-if="item.ShipperName">
-                    <strong>{{('Shipper' | r) + ' ' + ('Name' | r) | xlat}}</strong><br />
-                    {{item.ShipperName}}
-                </p>
-                <address ng-show="item.ShipAddress">
-                    <strong>{{'Ship to' | r | xlat}}</strong><br>
-                    {{item.ShipAddress.Street1}}<br>
-                    {{item.ShipAddress.Street2}}<br ng-show="item.ShipAddress.Street2">
-                    {{item.ShipAddress.City}}, {{item.ShipAddress.State}} {{item.ShipAddress.Zip}}
-                </address>
-            </div>
-            <div class="col-xs-6">
-                <p ng-if="item.ShipAccount">
-                    <strong>{{('Shipper' | r) + ' ' + ('Account' | r) | xlat}}</strong><br />
-                    {{item.ShipAccount}}
-                </p>
-            </div>
+        <div class="mt-oli-stat">
+            <dt>{{'Quantity' | r | xlat}}</dt>
+            <dd>{{item.Quantity * (item.Product.QuantityMultiplier || 1)}}</dd>
         </div>
-    </div>
-</div>
+        <div class="mt-oli-stat" ng-if="item.TotalShipped">
+            <dt>{{('Quantity' | r) + ' ' + ('Shipped' | r) | xlat}}</dt>
+            <dd>{{item.TotalShipped}}</dd>
+        </div>
+        <div class="mt-oli-stat mt-oli-stat-total" ng-if="!(user.Permissions.contains('HidePricing'))">
+            <dt>{{'Total' | r | xlat}}</dt>
+            <dd>{{item.LineTotal | culturecurrency}}</dd>
+        </div>
+    </dl>
+
+    <dl class="mt-oli-meta" ng-if="item.ShipperName || item.CostCenter || item.ShipAddress">
+        <div ng-if="item.ShipperName">
+            <dt>{{('Shipping' | r) + ' ' + ('Method' | r) | xlat}}</dt>
+            <dd>{{item.ShipperName}}</dd>
+        </div>
+        <div ng-if="item.CostCenter">
+            <dt>{{('Item' | r) + ' ' + ('Cost Center' | r) | xlat}}</dt>
+            <dd>{{item.CostCenter}}</dd>
+        </div>
+        <div ng-if="item.ShipAddress">
+            <dt>{{'Ship to' | r | xlat}}</dt>
+            <dd>
+                {{item.ShipAddress.Street1}}<span ng-if="item.ShipAddress.Street2">, {{item.ShipAddress.Street2}}</span><br />
+                {{item.ShipAddress.City}}, {{item.ShipAddress.State}} {{item.ShipAddress.Zip}}
+            </dd>
+        </div>
+    </dl>
+</article>

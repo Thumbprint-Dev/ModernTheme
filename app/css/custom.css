@@ -2562,7 +2562,9 @@ body {
        Two classes plus :is() so this matches the (0,2,1) field rules it overrides
        (.mt-checkout .mt-field input, .mt-cart .mt-field-row input) and wins by coming later. */
     .mt-checkout .mt-checkout-inner :is(input, select, textarea),
-    .mt-cart .mt-cart-inner :is(input, select, textarea) {
+    .mt-cart .mt-cart-inner :is(input, select, textarea),
+    .mt-orders .mt-orders-inner :is(input, select, textarea),
+    .mt-order-detail .mt-order-detail-inner :is(input, select, textarea) {
         font-size: 16px;
     }
 }
@@ -2629,6 +2631,18 @@ body {
     border-color: var(--mt-color-accent);
     outline: none;
     box-shadow: none;
+}
+
+@media (max-width: 767px) {
+    /* Mobile bumps this field's font-size to 16px (see the iOS zoom fix above) - tighten the
+       padding/line-height that came with it so fields don't look oversized next to the rest
+       of the mobile layout. :is(input, select, textarea) matches the (0,2,1) specificity of
+       .mt-checkout .mt-field input/select above (same trick as that font-size fix) and wins
+       by being declared later. */
+    .mt-checkout-card :is(input, select, textarea).form-control {
+        padding: 8px 10px;
+        line-height: 1.3;
+    }
 }
 
 .mt-checkout-card textarea.form-control {
@@ -4024,29 +4038,82 @@ body {
     margin-top: 12px;
 }
 
-/* Order search: search panel */
-.mt-orders-search-fields .view-form-icon {
-    display: flex;
-    flex-wrap: wrap;
+/* Order search: filter form. Persistent labels over every field (the old ones only appeared
+   once a value was typed, shifting the whole row down). One row on desktop, two on tablet,
+   stacked on phones with the two short date fields kept side by side. */
+.mt-orders-filters {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 0.9fr) minmax(0, 0.9fr) auto;
+    grid-template-areas: "id address status from to actions";
     gap: 16px;
+    align-items: end;
 }
 
-.mt-orders-search-fields .form-group {
-    flex: 1 1 200px;
-    min-width: 160px;
+.mt-orders-filters .mt-field {
     margin: 0;
+    min-width: 0;
+}
+
+.mt-orders-filter-id      { grid-area: id; }
+.mt-orders-filter-address { grid-area: address; }
+.mt-orders-filter-status  { grid-area: status; }
+.mt-orders-filter-from    { grid-area: from; }
+.mt-orders-filter-to      { grid-area: to; }
+
+/* Date fields are readonly so phones open the picker instead of the keyboard - keep them
+   looking like normal inputs rather than bootstrap's grey disabled-style readonly fill. */
+.mt-orders-filters .form-control[readonly] {
+    background: var(--mt-color-white);
+    cursor: pointer;
+}
+
+.mt-orders-filter-actions {
+    grid-area: actions;
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.mt-orders-filter-actions .mt-btn-accent,
+.mt-orders-filter-actions .mt-header-btn {
+    white-space: nowrap;
+    min-height: 42px;
+}
+
+.mt-orders-filter-actions .mt-btn-accent {
+    padding: 10px 22px;
+}
+
+@media (max-width: 1199px) {
+    .mt-orders-filters {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        grid-template-areas:
+            "id id address address status status"
+            "from from to to actions actions";
+    }
 }
 
 @media (max-width: 767px) {
-    .mt-orders-search-fields .view-form-icon {
-        flex-direction: column;
-        flex-wrap: nowrap;
+    .mt-orders-filters {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        grid-template-areas:
+            "id      id"
+            "address address"
+            "status  status"
+            "from    to"
+            "actions actions";
+        gap: 14px 12px;
     }
 
-    .mt-orders-search-fields .form-group {
-        flex: 1 1 auto;
+    .mt-orders-filter-actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+    .mt-orders-filter-actions .mt-btn-accent,
+    .mt-orders-filter-actions .mt-header-btn {
         width: 100%;
-        min-width: 0;
+        justify-content: center;
     }
 }
 
@@ -4061,25 +4128,53 @@ input[datepicker-popup] {
     margin-bottom: 0 !important;
 }
 
-.mt-orders-search-actions {
-    margin-top: 20px;
-    text-align: right;
-}
-
 /* Order search: results list */
-.mt-orders-row {
+.mt-orders-results-title {
     display: flex;
     align-items: center;
+    gap: 10px;
+}
+
+.mt-orders-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 8px;
+    border-radius: 999px;
+    background: var(--mt-color-divider);
+    color: var(--mt-color-text-soft);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.mt-orders-row {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr) minmax(0, 1fr) minmax(0, 1.3fr) minmax(0, 1.3fr) minmax(0, 0.8fr);
+    align-items: center;
     gap: 12px;
-    padding: 12px 0;
+    padding: 14px 12px;
+    margin: 0 -12px;
     border-bottom: 1px solid var(--mt-color-divider);
+    border-radius: 8px;
+    font-size: 14px;
+    transition: background-color 0.15s ease;
 }
 
 .mt-orders-row:last-child {
     border-bottom: none;
 }
 
+.mt-orders-row:not(.mt-orders-row-head):hover {
+    background: var(--mt-color-bg);
+}
+
 .mt-orders-row-head {
+    padding-top: 0;
+    padding-bottom: 10px;
+    border-radius: 0;
     color: var(--mt-color-muted);
     font-size: 11px;
     font-weight: 600;
@@ -4088,14 +4183,42 @@ input[datepicker-popup] {
     border-bottom: 1px solid var(--mt-color-border);
 }
 
+/* position: static undoes bootstrap-451.css's global `div { position: relative }`, which would
+   otherwise make the ID column - not the row - the box the stretched link below fills. */
 .mt-orders-col-id,
 .mt-orders-col-type,
 .mt-orders-col-status,
 .mt-orders-col-submitted,
 .mt-orders-col-date,
 .mt-orders-col-total {
-    flex: 1;
+    position: static;
     min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.mt-orders-col-id a {
+    font-weight: 600;
+    color: var(--mt-color-text-strong);
+}
+
+/* The ID link stretches over its whole row, so the entire row/card is the tap target without
+   nesting the other columns inside an <a>. */
+.mt-orders-col-id a::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+}
+
+.mt-orders-row:hover .mt-orders-col-id a,
+.mt-orders-col-id a:focus-visible {
+    color: var(--mt-color-accent);
+    text-decoration: underline;
+}
+
+.mt-orders-col-total {
+    text-align: right;
+    font-weight: 600;
 }
 
 .mt-orders-row-label {
@@ -4105,34 +4228,39 @@ input[datepicker-popup] {
     letter-spacing: 0.02em;
     text-transform: uppercase;
     color: var(--mt-color-muted);
-    margin-bottom: 2px;
+    margin-bottom: 3px;
 }
 
-@media (max-width: 767px) {
+/* Tablet and phone: each order becomes its own card (orderSearchView.html hides the column
+   header and shows per-field labels at these widths via hidden-xs/sm and visible-xs/sm). */
+@media (max-width: 991px) {
     .mt-orders-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr) minmax(0, 1.3fr) auto;
         grid-template-areas:
-            "id      id        status"
-            "type    submitted date"
-            "total   total     total";
-        column-gap: 12px;
-        row-gap: 10px;
+            "id   id        id   status"
+            "type submitted date total";
+        row-gap: 14px;
         align-items: start;
-        padding: 16px;
+        padding: 16px 18px;
+        margin: 0 0 12px;
         border: 1px solid var(--mt-color-border);
-        border-radius: 10px;
-        margin-bottom: 10px;
+        border-radius: 12px;
+        background: var(--mt-color-white);
     }
 
     .mt-orders-row:last-child {
         margin-bottom: 0;
+        border-bottom: 1px solid var(--mt-color-border);
+    }
+
+    .mt-orders-row:not(.mt-orders-row-head):hover {
+        background: var(--mt-color-white);
+        border-color: var(--mt-color-muted);
     }
 
     .mt-orders-col-id {
         grid-area: id;
-        font-size: 15px;
-        font-weight: 600;
+        font-size: 16px;
     }
 
     .mt-orders-col-status {
@@ -4140,25 +4268,39 @@ input[datepicker-popup] {
         justify-self: end;
     }
 
-    .mt-orders-col-type {
-        grid-area: type;
-    }
-
-    .mt-orders-col-submitted {
-        grid-area: submitted;
-    }
-
-    .mt-orders-col-date {
-        grid-area: date;
-    }
+    .mt-orders-col-type      { grid-area: type; }
+    .mt-orders-col-submitted { grid-area: submitted; }
+    .mt-orders-col-date      { grid-area: date; }
 
     .mt-orders-col-total {
         grid-area: total;
-        text-align: right;
         font-size: 15px;
-        font-weight: 600;
+    }
+}
+
+@media (max-width: 767px) {
+    .mt-orders-row {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        grid-template-areas:
+            "id     status"
+            "date   date"
+            "type   submitted"
+            "total  total";
+        row-gap: 12px;
+        padding: 16px;
+    }
+
+    .mt-orders-col-total {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
         border-top: 1px solid var(--mt-color-divider);
-        padding-top: 10px;
+        padding-top: 12px;
+        font-size: 16px;
+    }
+
+    .mt-orders-col-total .mt-orders-row-label {
+        margin: 0;
     }
 }
 
@@ -4201,14 +4343,44 @@ input[datepicker-popup] {
 /* Order detail page */
 .mt-order-detail-header {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 16px;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
+}
+
+.mt-order-detail-heading {
+    min-width: 0;
+}
+
+.mt-order-detail-eyebrow {
+    margin: 0 0 4px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--mt-color-muted);
 }
 
 .mt-order-detail-header .mt-pdp-title {
     margin: 0;
+    font-size: 32px;
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+}
+
+.mt-order-detail-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--mt-color-muted);
+}
+
+.mt-order-detail-print {
+    flex-shrink: 0;
 }
 
 .mt-order-detail-layout {
@@ -4223,15 +4395,40 @@ input[datepicker-popup] {
 }
 
 .mt-order-detail-side {
-    flex: 0 0 320px;
+    flex: 0 0 340px;
+    min-width: 0;
+}
+
+@media (min-width: 992px) {
+    .mt-order-detail-side {
+        position: sticky;
+        top: calc(var(--mt-header-height, 123px) + 24px);
+    }
+}
+
+/* 991px, not 767px: matches .mt-checkout-layout/.mt-cart-layout, which stack their own
+   fixed-width side rail at tablet width for the same reason - a 340px rail plus gap left too
+   little room for the main column between phone and desktop widths. align-items: stretch
+   matches those too - .mt-order-detail-layout's own align-items: flex-start otherwise leaves
+   .mt-order-detail-main shrunk to its content's width instead of filling the stacked column. */
+@media (max-width: 991px) {
+    .mt-order-detail-layout {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+    }
+    .mt-order-detail-side {
+        flex: 0 0 auto;
+        width: 100%;
+    }
 }
 
 @media (max-width: 767px) {
-    .mt-order-detail-layout {
-        flex-direction: column;
+    .mt-order-detail-header {
+        margin-bottom: 20px;
     }
-    .mt-order-detail-side {
-        width: 100%;
+    .mt-order-detail-header .mt-pdp-title {
+        font-size: 26px;
     }
 }
 
@@ -4243,6 +4440,44 @@ input[datepicker-popup] {
 
 .mt-order-detail-setcurrent {
     text-align: right;
+}
+
+/* Save-as-favorite: label + input + button, the button dropping under the input on phones. */
+.mt-checkout-card .mt-order-favorite label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--mt-color-text-soft);
+}
+
+.mt-order-favorite-row {
+    display: flex;
+    gap: 10px;
+}
+
+.mt-order-favorite-row .form-control {
+    flex: 1;
+    min-width: 0;
+}
+
+.mt-order-favorite-row .mt-btn-accent {
+    flex-shrink: 0;
+    white-space: nowrap;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+@media (max-width: 767px) {
+    .mt-order-favorite-row {
+        flex-direction: column;
+    }
+    .mt-order-favorite-row .mt-btn-accent {
+        width: 100%;
+        text-align: center;
+    }
 }
 
 .mt-order-detail-shipment {
@@ -4284,7 +4519,9 @@ input[datepicker-popup] {
 }
 
 .mt-order-detail-side p .pull-right {
+    float: none !important;
     text-align: right;
+    overflow-wrap: anywhere;
 }
 
 .mt-order-detail-side hr {
@@ -4296,28 +4533,288 @@ input[datepicker-popup] {
 .mt-order-detail-side address {
     font-size: 13px;
     font-style: normal;
+    line-height: 1.5;
     margin-bottom: 16px;
 }
 
-/* Order detail: the shared lineitemhistorygrid directive template
-   (partials/Reporting/lineItemHistoryGridView.html) renders a .panel-order-history block per
-   line item inside .mt-order-detail-main - style those generically the same way. */
-.mt-order-detail-main .panel-order-history {
-    border-top: 1px solid var(--mt-color-border);
-    padding: 20px 0;
+.mt-order-detail-side address .text-primary {
+    display: inline-block;
+    margin-bottom: 4px;
+    font-size: 11px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--mt-color-muted);
 }
 
-.mt-order-detail-main .panel-order-history:first-child {
+.mt-order-detail-totals {
+    margin-top: 4px;
+    padding-top: 16px;
+    border-top: 1px solid var(--mt-color-border);
+}
+
+.mt-order-detail-totals p:last-child {
+    margin: 12px 0 0;
+    padding-top: 12px;
+    border-top: 1px solid var(--mt-color-divider);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--mt-color-text-strong);
+}
+
+.mt-order-detail-totals p:last-child .text-info {
+    color: var(--mt-color-text-strong);
+}
+
+.mt-order-detail-repeat {
+    width: 100%;
+    text-align: center;
+}
+
+/* Tablet: the side card spans the full width once stacked, so lay its order details and
+   totals out side by side instead of one long narrow column. */
+@media (min-width: 768px) and (max-width: 991px) {
+    .mt-order-detail-side .mt-checkout-card {
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+        column-gap: 40px;
+        align-items: start;
+    }
+    .mt-order-detail-side .mt-checkout-card > .mt-checkout-card-title,
+    .mt-order-detail-side .mt-checkout-card > .mt-order-detail-card-footer {
+        grid-column: 1 / -1;
+    }
+    .mt-order-detail-totals {
+        margin-top: 0;
+        padding: 16px 20px;
+        border: none;
+        border-radius: 10px;
+        background: var(--mt-color-bg);
+    }
+    .mt-order-detail-side .mt-order-detail-card-footer {
+        text-align: right;
+    }
+    .mt-order-detail-repeat {
+        width: auto;
+    }
+}
+
+/* Order detail line items (partials/Reporting/lineItemHistoryGridView.html). Wide desktop:
+   product on the left, price figures on the right, shipping details underneath. Narrower
+   desktop/tablet: the figures drop under the product, lined up with its name. Phone: figures
+   in a boxed row with the line total on its own emphasised line. */
+.mt-oli {
+    display: grid;
+    grid-template-columns: 88px minmax(0, 1fr) auto;
+    grid-template-areas:
+        "thumb info stats"
+        "meta  meta meta";
+    gap: 14px 16px;
+    padding: 20px 0;
+    border-top: 1px solid var(--mt-color-border);
+}
+
+.mt-oli:first-child {
     border-top: none;
     padding-top: 0;
 }
 
-/* Thumbnail + name/sku row inside each line item - reuses the same .mt-cart-item-photo/
-   .mt-cart-item-name/.mt-cart-item-info/.mt-pdt-sku classes as the cart page for a consistent
-   look between "what I'm buying" and "what I bought". */
-.mt-order-line-item-row {
+/* The wrapper only groups the markup - its thumb and info are placed on .mt-oli's own grid, so
+   the price figures can sit right under the product name at narrower widths. */
+.mt-oli-product {
+    display: contents;
+}
+
+.mt-oli-thumb {
+    grid-area: thumb;
+    width: 88px;
+    height: 88px;
+    overflow: hidden;
+    border-radius: 10px;
+    border: 1px solid var(--mt-color-divider);
+    background: var(--mt-color-bg);
+}
+
+.mt-oli-thumb .mt-real-photo,
+.mt-oli-thumb .mt-placeholder-photo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: auto;
+    border-radius: 0;
+}
+
+.mt-oli-thumb .mt-placeholder-photo {
     display: flex;
-    gap: 16px;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    font-size: 10px;
+    text-align: center;
+}
+
+.mt-oli-info {
+    grid-area: info;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.mt-oli-name {
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.35;
+    color: var(--mt-color-text-strong);
+    overflow-wrap: anywhere;
+}
+
+.mt-oli-sku {
+    font-size: 12px;
+    color: var(--mt-color-muted);
+    overflow-wrap: anywhere;
+}
+
+.mt-oli-specs {
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 0;
+    font-size: 13px;
+    color: var(--mt-color-text-soft);
+}
+
+.mt-oli-specs li {
+    margin: 2px 0;
+}
+
+.mt-oli-spec-name {
+    color: var(--mt-color-muted);
+}
+
+.mt-oli-spec-name:after {
+    content: ":";
+    margin-right: 4px;
+}
+
+.mt-oli-downloads {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.mt-oli-stats {
+    grid-area: stats;
+    display: flex;
+    gap: 28px;
+    margin: 0 0 0 16px;
+    align-self: start;
+}
+
+.mt-oli-stat dt,
+.mt-oli-meta dt {
+    margin-bottom: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--mt-color-muted);
+}
+
+.mt-oli-stat dd,
+.mt-oli-meta dd {
+    margin: 0;
+    font-size: 14px;
+    color: var(--mt-color-text);
+}
+
+.mt-oli-stat dd {
+    white-space: nowrap;
+}
+
+.mt-oli-stat-total {
+    text-align: right;
+}
+
+.mt-oli-stat-total dd {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--mt-color-text-strong);
+}
+
+.mt-oli-meta {
+    grid-area: meta;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 40px;
+    margin: 0;
+    padding: 12px 16px;
+    border-radius: 10px;
+    background: var(--mt-color-bg);
+}
+
+.mt-oli-meta dd {
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+@media (max-width: 1199px) {
+    .mt-oli {
+        grid-template-columns: 88px minmax(0, 1fr);
+        grid-template-areas:
+            "thumb info"
+            "thumb stats"
+            "meta  meta";
+    }
+    .mt-oli-stats {
+        margin-left: 0;
+    }
+    .mt-oli-stat-total {
+        margin-left: auto;
+    }
+}
+
+@media (max-width: 767px) {
+    .mt-oli {
+        grid-template-columns: 72px minmax(0, 1fr);
+        grid-template-areas:
+            "thumb info"
+            "stats stats"
+            "meta  meta";
+        gap: 12px 14px;
+    }
+    .mt-oli-thumb {
+        width: 72px;
+        height: 72px;
+        border-radius: 8px;
+    }
+    .mt-oli-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+        gap: 12px;
+        padding: 12px 14px;
+        border: 1px solid var(--mt-color-border);
+        border-radius: 10px;
+    }
+    .mt-oli-stat-total {
+        grid-column: 1 / -1;
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        margin-left: 0;
+        padding-top: 12px;
+        border-top: 1px solid var(--mt-color-divider);
+    }
+    .mt-oli-stat-total dt {
+        margin: 0;
+    }
+    .mt-oli-stat-total dd {
+        font-size: 16px;
+    }
+    .mt-oli-meta {
+        flex-direction: column;
+        gap: 10px;
+        padding: 12px 14px;
+    }
 }
 
 /* Line item detail page */

@@ -8,53 +8,48 @@
             <button type="button" class="mt-btn-accent" redirect="catalog">{{'Continue Shopping' | r}}</button>
         </div>
 
-        <div class="mt-checkout-card" ng-show="hasStandardTypes || hasReplenishmentTypes || hasPriceRequestTypes">
+        <div class="mt-checkout-card mt-orders-search-card" ng-show="hasStandardTypes || hasReplenishmentTypes || hasPriceRequestTypes">
             <h2 class="mt-checkout-card-title">{{('Search' | r) + ' ' + ('Orders' | r) | xlat}}</h2>
-            <div class="mt-orders-search-fields">
-                <div class="view-form-icon">
-                    <div class="form-group">
-                        <label ng-show="criteria.OrderID">{{'Order ID' | r | xlat}}</label>
-                        <input class="form-control" type="text" ng-model="criteria.OrderID" placeholder="{{('Order' | r) + ' ' + ('ID' | r) | xlat}}" autocomplete="off" />
-                        <i class="fa">#</i>
-                    </div>
-                    <div class="form-group">
-                        <label ng-show="criteria.ShippingAddress">{{('Shipping' | r) + ' ' + ('Address' | r) | xlat}}</label>
-                        <input class="form-control" type="text" ng-model="criteria.ShippingAddress" placeholder="{{('Shipping' | r) + ' ' + ('Address' | r) | xlat}}" autocomplete="off" />
-                        <i class="fa fa-map-marker"></i>
-                    </div>
-                    <div class="form-group">
-                        <label ng-show="selectedStatus">{{'Status' | r | xlat}}</label>
-                        <select class="form-control" ng-model="selectedStatus" ng-options="c as (c.DisplayName + ' (' + c.Count + ')') for c in OrderSearchCriteria">
-                            <option value="">{{'All Statuses' | r | xlat}}</option>
-                        </select>
-                        <i class="fa fa-flag"></i>
-                    </div>
-                    <div class="form-group">
-                        <label ng-show="criteria.DateRangeFrom">{{('Start' | r) + ' ' + ('Date' | r) | xlat}}</label>
-                        <input name="daterangefrom" placeholder="{{('Start' | r) + ' ' + ('Date' | r) | xlat}}" ng-model="criteria.DateRangeFrom"
-                               type="text"
-                               class="form-control"
-                               datepicker-popup="{{user.Culture.DateFormat.short}}"
-                               is-open="startopened"
-                               ng-click="startopened = true"/>
-                        <i class="fa fa-calendar"></i>
-                    </div>
-                    <div class="form-group">
-                        <label ng-show="criteria.DateRangeTo">{{('End' | r) + ' ' + ('Date' | r) | xlat}}</label>
-                        <input name="daterangeto" placeholder="{{('End' | r) + ' ' + ('Date' | r) | xlat}}" ng-model="criteria.DateRangeTo"
-                               type="text"
-                               class="form-control"
-                               datepicker-popup="{{user.Culture.DateFormat.short}}"
-                               is-open="endopened"
-                               ng-click="endopened = true"
-                               min="criteria.DateRangeFrom"/>
-                        <i class="fa fa-calendar"></i>
-                    </div>
+            <form class="mt-orders-filters" name="orderSearchForm" novalidate ng-submit="runSearch($event)">
+                <div class="mt-field mt-orders-filter-id">
+                    <label for="order-search-id">{{'Order ID' | r | xlat}}</label>
+                    <input id="order-search-id" class="form-control" type="text" ng-model="criteria.OrderID"
+                           placeholder="{{'e.g. 1004MMD' | r | xlat}}" autocomplete="off" />
                 </div>
-            </div>
-            <div class="mt-orders-search-actions">
-                <button type="submit" class="mt-btn-accent" ng-click="runSearch($event)">{{'Search' | r | xlat}}</button>
-            </div>
+                <div class="mt-field mt-orders-filter-address">
+                    <label for="order-search-address">{{('Shipping' | r) + ' ' + ('Address' | r) | xlat}}</label>
+                    <input id="order-search-address" class="form-control" type="text" ng-model="criteria.ShippingAddress"
+                           placeholder="{{'Street, city or ZIP' | r | xlat}}" autocomplete="off" />
+                </div>
+                <div class="mt-field mt-orders-filter-status">
+                    <label for="order-search-status">{{'Status' | r | xlat}}</label>
+                    <select id="order-search-status" class="form-control" ng-model="selectedStatus"
+                            ng-options="c as (c.DisplayName + ' (' + c.Count + ')') for c in OrderSearchCriteria">
+                        <option value="">{{'All Statuses' | r | xlat}}</option>
+                    </select>
+                </div>
+                <div class="mt-field mt-orders-filter-from">
+                    <label for="order-search-from">{{('Start' | r) + ' ' + ('Date' | r) | xlat}}</label>
+                    <input id="order-search-from" name="daterangefrom" class="form-control" type="text" readonly
+                           placeholder="{{'Any' | r | xlat}}" ng-model="criteria.DateRangeFrom"
+                           datepicker-popup="{{user.Culture.DateFormat.short}}"
+                           is-open="startopened"
+                           ng-click="startopened = true" />
+                </div>
+                <div class="mt-field mt-orders-filter-to">
+                    <label for="order-search-to">{{('End' | r) + ' ' + ('Date' | r) | xlat}}</label>
+                    <input id="order-search-to" name="daterangeto" class="form-control" type="text" readonly
+                           placeholder="{{'Any' | r | xlat}}" ng-model="criteria.DateRangeTo"
+                           datepicker-popup="{{user.Culture.DateFormat.short}}"
+                           is-open="endopened"
+                           ng-click="endopened = true"
+                           min="criteria.DateRangeFrom" />
+                </div>
+                <div class="mt-orders-filter-actions">
+                    <button type="button" class="mt-header-btn" ng-show="hasSearchFilters()" ng-click="clearSearch()">{{'Clear' | r | xlat}}</button>
+                    <button type="submit" class="mt-btn-accent"><i class="fa fa-search"></i> {{'Search' | r | xlat}}</button>
+                </div>
+            </form>
         </div>
 
         <div class="mt-checkout-card" ng-show="showNoResults">
@@ -64,18 +59,19 @@
         </div>
 
         <div class="mt-checkout-card mt-orders-results-card" ng-show="orders">
-            <h2 class="mt-checkout-card-title">
+            <h2 class="mt-checkout-card-title mt-orders-results-title">
                 {{orderSearchStat.DisplayName | r | xlat}}
                 <span ng-show="!orderSearchStat.Type && !orderSearchStat.DisplayName">
                     {{'Search' | r | xlat}}
                 </span>
+                <span class="mt-orders-count" ng-show="settings.listCount">{{settings.listCount}}</span>
             </h2>
             <loadingindicator ng-show="pagedIndicator"></loadingindicator>
             <div class="mt-pagination" ng-show="settings.listCount > settings.pageSize">
                 <pagination page="settings.currentPage" max-size="8" rotate="false" boundary-links="true" total-items="settings.listCount"
                             items-per-page="settings.pageSize" direction-links="true"></pagination>
             </div>
-            <div class="mt-orders-row mt-orders-row-head hidden-xs">
+            <div class="mt-orders-row mt-orders-row-head hidden-xs hidden-sm">
                 <div class="mt-orders-col-id">{{'ID' | r | xlat}}</div>
                 <div class="mt-orders-col-type">{{'Type' | r | xlat}}</div>
                 <div class="mt-orders-col-status">{{'Status' | r | xlat}}</div>
@@ -85,15 +81,13 @@
             </div>
             <div class="mt-orders-row" ng-repeat="order in orders | paginate:(settings.currentPage-1) * settings.pageSize | limitTo:settings.pageSize">
                 <div class="mt-orders-col-id">
-                    <span class="visible-xs mt-orders-row-label">{{'ID' | r | xlat}}</span>
                     <a ng-href="{{currentOrder.ID == order.ID ? 'cart' : 'order/' + order.ID}}">{{order.ExternalID || ('(unspecified)' | xlat)}}</a>
                 </div>
                 <div class="mt-orders-col-type">
-                    <span class="visible-xs mt-orders-row-label">{{'Type' | r | xlat}}</span>
+                    <span class="visible-xs visible-sm mt-orders-row-label">{{'Type' | r | xlat}}</span>
                     {{order.Type}}
                 </div>
                 <div class="mt-orders-col-status">
-                    <span class="visible-xs mt-orders-row-label">{{'Status' | r | xlat}}</span>
                     <span class="mt-orders-status-pill"
                           ng-class="{'mt-orders-status-pill-open': order.Status == 'Open',
                                      'mt-orders-status-pill-unsubmitted': order.Status == 'Unsubmitted',
@@ -102,15 +96,15 @@
                                      'mt-orders-status-pill-declined': order.Status == 'Declined'}">{{order.StatusText}}</span>
                 </div>
                 <div class="mt-orders-col-submitted">
-                    <span class="visible-xs mt-orders-row-label">{{'Submitted' | r | xlat}}</span>
+                    <span class="visible-xs visible-sm mt-orders-row-label">{{'Submitted' | r | xlat}}</span>
                     {{order.FromUserFirstName + ' ' + order.FromUserLastName}}
                 </div>
                 <div class="mt-orders-col-date">
-                    <span class="visible-xs mt-orders-row-label">{{('Submitted' | r) + ' ' + ('Date' | r) | xlat}}</span>
+                    <span class="visible-xs visible-sm mt-orders-row-label">{{('Submitted' | r) + ' ' + ('Date' | r) | xlat}}</span>
                     {{order.DateSubmitted || order.DateCreated | date:user.Culture.DateFormat.long}}
                 </div>
                 <div class="mt-orders-col-total" ng-if="!(user.Permissions.contains('HidePricing'))">
-                    <span class="visible-xs mt-orders-row-label">{{'Total' | r}}</span>
+                    <span class="visible-xs visible-sm mt-orders-row-label">{{'Total' | r}}</span>
                     {{order.Total | culturecurrency}}
                 </div>
             </div>

@@ -51,7 +51,7 @@
     </p>
 
     <button type="button" class="mt-btn-accent mt-cart-checkout-btn" ng-click="submitOrder()"
-            ng-disabled="submitClicked">
+            ng-disabled="submitClicked || cart_order.$invalid || cart_shipping.$invalid || cart_billing.$invalid">
         <i ng-show="submitAttempted && (cart_shipping.$invalid || cart_order.$invalid || cart_billing.$invalid)" class="fa fa-warning"></i>
         {{('Submit' | r) + ' ' + ('Order' | r) | xlat}}
     </button>
