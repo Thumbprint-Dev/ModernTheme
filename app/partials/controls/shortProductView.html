@@ -44,7 +44,7 @@
             <p ng-show="LineItem.Product.UnitOfMeasure">
                 {{'Unit of Measure' | r | xlat}}: {{LineItem.Product.UnitOfMeasure}}
             </p>
-            <p ng-show="inventoryDisplay(LineItem.Product, LineItem.Variant)">
+            <p ng-show="LineItem.Product.DisplayInventory && inventoryDisplay(LineItem.Product, LineItem.Variant)">
                 {{'Quantity Available' | r | xlat}}: {{inventoryDisplay(LineItem.Product, LineItem.Variant) }}
             </p>
             <button class="btn btn-default" redirect="product/{{LineItem.Product.InteropID}}">

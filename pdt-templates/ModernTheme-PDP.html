@@ -135,7 +135,7 @@
                     <addtoorderspecs ng-show="allowAddToOrder"></addtoorderspecs>
 
                     <div class="mt-order-actions" ng-show="allowAddToOrder">
-                        <p class="mt-pdp-meta" ng-show="(LineItem.Variant || LineItem.Product.Variants.length == 0) && isInventoryTracked(LineItem.Product, LineItem.Variant)">
+                        <p class="mt-pdp-meta" ng-show="LineItem.Product.DisplayInventory && (LineItem.Variant || LineItem.Product.Variants.length == 0) && isInventoryTracked(LineItem.Product, LineItem.Variant)">
                             {{'Quantity Available' | r | xlat}}: {{inventoryDisplay(LineItem.Product, LineItem.Variant)}}
                         </p>
                         <p class="mt-pdp-meta" ng-show="LineItem.PriceSchedule.MinQuantity > 1 && !LineItem.PriceSchedule.RestrictedQuantity">
