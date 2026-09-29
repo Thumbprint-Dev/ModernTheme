@@ -74,6 +74,11 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 			// site says so.
 			domesticCountries: ['US']
 		},
+		// Message bars under a category page's title, keyed by the category's InteropID
+		// (lowercased here). Each value is a list of { message, linkText, linkUrl, style }.
+		// Built by categoryMessages() below rather than the generic merge, since its keys are
+		// the site's own category IDs, not fixed setting names.
+		categoryMessages: {},
 		// Applied to the hero element by ngStyle; recomputed whenever the file lands.
 		heroStyle: {}
 	};
@@ -116,6 +121,49 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 
 	function isSafeUrl(value) {
 		return angular.isString(value) && value.trim() !== '' && !EXECUTABLE_SCHEME.test(value);
+	}
+
+	var MESSAGE_STYLES = ['tint', 'solid', 'neutral'];
+
+	// One category's entry: a single message object or a list of them. Anything without a
+	// non-blank message is dropped (an unfilled template slot), a bad style falls back to tint,
+	// and an unsafe or half-filled link is dropped while the message itself still shows.
+	function categoryMessageList(interopID, value) {
+		var output = [];
+		angular.forEach(angular.isArray(value) ? value : [value], function(entry) {
+			if (!angular.isObject(entry) || !angular.isString(entry.message) || !entry.message.trim()) return;
+			var style = angular.isString(entry.style) ? entry.style.trim().toLowerCase() : '';
+			if (style && MESSAGE_STYLES.indexOf(style) === -1) {
+				$log.warn('SiteConfig: categoryMessages.' + interopID + ' style must be tint, solid or neutral, using tint -- ' + entry.style);
+				style = '';
+			}
+			var message = { message: entry.message.trim(), style: style || 'tint' };
+			var hasText = angular.isString(entry.linkText) && entry.linkText.trim() !== '';
+			if (hasText && isSafeUrl(entry.linkUrl)) {
+				message.linkText = entry.linkText.trim();
+				message.linkUrl = entry.linkUrl.trim();
+				message.external = /^https?:\/\//i.test(message.linkUrl);
+			} else if (hasText || entry.linkUrl) {
+				$log.warn('SiteConfig: categoryMessages.' + interopID + ' link needs both linkText and a safe linkUrl, showing the message without it');
+			}
+			output.push(message);
+		});
+		return output;
+	}
+
+	function categoryMessages(value) {
+		var output = {};
+		if (!angular.isObject(value) || angular.isArray(value)) {
+			if (value !== undefined) $log.warn('SiteConfig: categoryMessages must be an object keyed by category InteropID, ignoring');
+			return output;
+		}
+		angular.forEach(value, function(entry, interopID) {
+			// _help and any other underscore keys are notes for whoever edits the file.
+			if (interopID.charAt(0) === '_') return;
+			var list = categoryMessageList(interopID, entry);
+			if (list.length) output[interopID.trim().toLowerCase()] = list;
+		});
+		return output;
 	}
 
 	// Hover/pressed states need a darker sibling. Deriving it means a site only
@@ -264,6 +312,8 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 				else if (angular.isString(override) && override !== '') defaults[key] = override;
 			});
 		});
+
+		settings.categoryMessages = categoryMessages(data && data.categoryMessages);
 
 		settings.heroStyle = settings.hero.image
 			? { 'background-image': "url('" + settings.hero.image + "')" }

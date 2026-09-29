@@ -80,6 +80,15 @@
     <div class="mt-container mt-plp-header">
         <p class="mt-breadcrumb"><span ng-bind-html="currentCategory.Name || ('Categories' | r | xlat)"></span></p>
         <h1 id="451_lbl_curcat" ng-bind-html="currentCategory.Name || ('Categories' | r | xlat)"></h1>
+        <!-- site.json categoryMessages: zero or more bars for this category, plain text only. -->
+        <div class="mt-category-message mt-category-message--{{msg.style}}" role="note" ng-repeat="msg in categoryMessages()">
+            <i class="fa fa-info-circle mt-category-message-icon" aria-hidden="true"></i>
+            <p>
+                {{msg.message}}
+                <a ng-if="msg.linkUrl && !msg.external" ng-href="{{msg.linkUrl}}">{{msg.linkText}}</a>
+                <a ng-if="msg.linkUrl && msg.external" ng-href="{{msg.linkUrl}}" target="_blank" rel="noopener">{{msg.linkText}}</a>
+            </p>
+        </div>
     </div>
     <div class="mt-container">
         <categorylistview></categorylistview>

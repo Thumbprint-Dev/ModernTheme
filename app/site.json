@@ -29,6 +29,9 @@
 		"buttonText": "Shop the collection",
 		"buttonHref": "catalog"
 	},
+	"categoryMessages": {
+		"_help": "Message bars under a category page's title. Add an entry keyed by the category's InteropID (subcategories get their own entries; nothing is inherited). A category that isn't listed shows nothing. Each entry is one message or a list: [{\"message\": \"Holiday orders must be placed by Dec 5.\", \"linkText\": \"See shipping details\", \"linkUrl\": \"faq\", \"style\": \"tint\"}]. message: plain text. linkText + linkUrl: optional link at the end - a site page (faq, contactus), a full https:// URL (opens in a new tab), or mailto:. style: tint (default), solid or neutral."
+	},
 	"shipping": {
 		"_help_allowedDomesticMethods": "allowedDomesticMethods: what a DOMESTIC order may use. Matched on the name Four51 returns, trimmed and case-insensitive, and the whole name must match - `Fedex International` does not match `Fedex International Priority`, so list each variant you want. Leave it empty for no restriction. Methods seen: `Bulk Shipping (over 150 lbs)`, `Fedex International`, `UPS Ground`, `UPS 3 Day Select`, `UPS 2nd Day Air`, `UPS Next Day Air Saver`, `UPS Next Day Air`, `UPS Next Day Air Early A.M.`.",
 		"_help_allowedInternationalMethods": "allowedInternationalMethods: what an order shipping OUTSIDE domesticCountries may use. The rule is symmetric - an international address sees only these, and a domestic address never sees them, so a carrier listed here is automatically kept out of domestic checkout. Leave it empty and country plays no part at all. A name matching nothing empties the dropdown and logs a warning to the console.",

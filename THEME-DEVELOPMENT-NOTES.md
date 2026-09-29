@@ -768,6 +768,18 @@ Four51 without forking the theme.
   went wrong." Same true/false rules as `showButton`. `addressinput` has an
   isolate scope, so `AddressInputCtrl` puts `SiteConfig.settings` on its own
   `$scope.site` -- the inherited one from `Four51Ctrl` doesn't reach it.
+- **Category messages**: `categoryMessages` puts message bars under a category
+  page's title, keyed by the category's InteropID (case-insensitive):
+  `"mm_inventory": [{ "message": "...", "linkText": "...", "linkUrl": "faq", "style": "tint" }]`.
+  - A single object works as well as a list. Several messages stack.
+  - Only the exact category shows its messages. Subcategories need their own entries, and
+    unlisted categories show nothing.
+  - `message` is plain text. The link is optional and needs both `linkText` and `linkUrl`.
+    `https://` links open in a new tab, and `javascript:` is rejected.
+  - `style` is `tint` (default), `solid` or `neutral`, all derived from the accent.
+  - Because the keys are the site's own IDs, not fixed setting names, this block is parsed
+    by `categoryMessages()` in the service instead of the generic merge. Underscore keys
+    (`_help`) are skipped.
 
 - `js/services/siteConfigService.js` holds the same keys as hard-coded fallbacks
   and merges the file over them, **ignoring blanks**. A site only fills in what it

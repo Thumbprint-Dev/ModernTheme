@@ -993,6 +993,67 @@ body {
     padding-bottom: 8px;
 }
 
+/* site.json categoryMessages - bars under the category title (categoryView.html). All three
+   styles derive from the site's accent, so they follow site.json theme.accent. The first
+   background/border/color in each pair is a fallback for browsers without color-mix(). */
+.mt-category-message {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 16px 0 0;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.mt-category-message + .mt-category-message {
+    margin-top: 8px;
+}
+
+.mt-category-message p {
+    margin: 0;
+}
+
+.mt-category-message a {
+    color: inherit;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.mt-category-message-icon {
+    flex: 0 0 auto;
+    font-size: 18px;
+    line-height: 21px;
+    color: var(--mt-color-accent);
+}
+
+.mt-category-message--tint {
+    background: var(--mt-color-white);
+    background: color-mix(in srgb, var(--mt-color-accent) 9%, var(--mt-color-white));
+    border: 1px solid var(--mt-color-border);
+    border: 1px solid color-mix(in srgb, var(--mt-color-accent) 25%, var(--mt-color-white));
+    color: var(--mt-color-text-strong);
+    color: color-mix(in srgb, var(--mt-color-accent) 55%, #000);
+}
+
+.mt-category-message--solid {
+    background: var(--mt-color-accent);
+    border: 1px solid var(--mt-color-accent);
+    color: var(--mt-color-white);
+}
+
+.mt-category-message--solid .mt-category-message-icon {
+    color: var(--mt-color-white);
+}
+
+.mt-category-message--neutral {
+    background: var(--mt-color-white);
+    border: 1px solid var(--mt-color-border);
+    color: var(--mt-color-text-strong);
+}
+
 .mt-breadcrumb {
     font-size: 12px;
     color: var(--mt-color-muted);

@@ -2,6 +2,15 @@ four51.app.controller('CategoryCtrl', ['$routeParams', '$sce', '$scope', '$rootS
 function ($routeParams, $sce, $scope, $rootScope, $451, Category, Product, AppConst, Order, User, $modal, ProductDisplayService) {
 	$scope.isHome = !$routeParams.categoryInteropID;
 
+	// site.json categoryMessages for this exact category (a subcategory only shows its own).
+	// Returns the stored list itself, so ng-repeat sees the same array on every digest.
+	var NO_MESSAGES = [];
+	$scope.categoryMessages = function() {
+		var id = ($scope.currentCategory && $scope.currentCategory.InteropID) || $routeParams.categoryInteropID;
+		var map = $scope.site && $scope.site.categoryMessages;
+		return (id && map && map[id.toLowerCase()]) || NO_MESSAGES;
+	};
+
 	// Computes the home page's "Shop by category" tiles and the "Browse full catalog" tile's
 	// target category, both derived from the same top-level tree. Featured and All Products are
 	// never real departments, so they're always excluded from "Shop by category"; an optional
