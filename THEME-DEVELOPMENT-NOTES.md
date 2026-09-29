@@ -686,6 +686,27 @@ back in `SortOptions`), so the hand-authored placeholder `<option value="">` mea
 sort selected" had no text and rendered as a blank line in the dropdown. Give it real text
 (`{{'Default Sort' | r | xlat}}`) rather than leaving it empty.
 
+## Coming Soon products are switched on by category name
+
+A product becomes browse-only when it's in any category whose InteropID contains `comingsoon`.
+Case and punctuation are ignored, so `mm_comingsoon`, `coming-soon` and `Coming_Soon_2026` all
+count. It shows a disabled "Coming Soon" button and no inventory on every product card and on the
+PDP, and quick-add and `addToOrder()` refuse it even if it has stock. Moving the product out of
+the category is the whole launch step. There is no separate PDT; the main PDT branches on
+`isComingSoon()`.
+
+- **Products carry no category reference**, so `comingSoonService.js` works the other way round.
+  It finds the coming-soon categories in the shopper's own `Category.tree()` and fetches their
+  product IDs once per visit. That means the category has to be visible to the shopper.
+- **Don't use `Product.search()` for background lookups.** It keeps one shared result array, the
+  same array the category grid renders, and every call empties it in place. The service calls
+  `$resource($451.api('Products'))` directly.
+- **While the list loads**, add buttons stay hidden (`isPending()`), so nothing flashes "Add to
+  cart". A lookup failure falls back to normal behaviour.
+- **Not covered:** reordering a past order, items already in a cart before the product moved into
+  the category, and kits. It's also theme-level only; the Four51 API itself will still accept an
+  order for the product.
+
 ## Self-registration already exists natively at `/admin` - don't assume it needs to be built
 
 Went looking for a "create your own account" flow and initially concluded there wasn't one - no
