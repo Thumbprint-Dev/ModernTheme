@@ -939,6 +939,39 @@ Four51 without forking the theme.
 - Adding a key means adding it in *both* places -- the JSON and the service's
   defaults. A key only in the JSON is ignored.
 
+## Per-site tracking scripts: `app/custom-scripts.html`
+
+The place for a site's Google Analytics, MS Clarity, pixels and other third-party
+tags. The platform owns `<!--headscriptToken-->` in `index.html`, so a site has
+nowhere else to put its own. Paste each vendor's snippet into the file exactly as
+given, `<script>` tags included. `js/services/customScriptsService.js` fetches it
+once at boot and adds it to every page, the login page included.
+
+- **Scripts are rebuilt, not injected as HTML.** Browsers never run a `<script>`
+  added through `innerHTML`. The service parses the file with `DOMParser`, which keeps
+  it inert, then recreates each script as a real element with the same attributes and body.
+- **Order is kept.** A plain `<script src>` (no `async`/`defer`) is waited on before
+  the next node goes in, so an inline block after it can rely on it. The chain uses
+  callbacks, not `$q`: `onload` fires outside a digest, where Angular 1.2 would never
+  resolve the promise and the rest of the file would stall. A script that fails to
+  load logs a warning and the chain moves on.
+- **Placement:** `script`/`link`/`meta`/`style` go in `<head>`. Anything else, such as a
+  tracking `<img>`, goes at the end of `<body>`. Comments are skipped.
+- **Missing file:** Four51 answers with a 404 HTML page, and nothing is added. The
+  service also ignores any response that contains `<html>`, `<head>` or `<body>`
+  (checked with comments removed, since the template's own comment names those tags).
+  That stops a host that answers unknown paths with a 200 page from having that
+  page's scripts replayed into the storefront.
+- **Page views:** routing uses `html5Mode(true)` (pushState). GA4's enhanced
+  measurement ("page changes based on browser history events", on by default)
+  records route changes, and Clarity tracks SPA navigation by itself. Check in GA4
+  DebugView when setting up a new site.
+- **Timing:** the tags load a moment after boot rather than from static `<head>`
+  markup. That's fine for async vendor loaders, but a snippet that uses
+  `document.write` won't work here.
+- Everything in the file runs on checkout too, so only paste code from vendors you
+  trust. For Clarity, consider setting masking to Strict in the project settings.
+
 ## The address form saves on submit only
 
 `partials/controls/addressInput.html` used to call `autoSaveIfValid()` from `ng-blur`
