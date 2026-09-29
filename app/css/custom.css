@@ -282,6 +282,12 @@ body {
     cursor: default;
 }
 
+/* Keep a disabled button (Out of Stock, Coming Soon) from darkening on hover as if clickable. */
+.mt-btn-accent[disabled]:hover,
+.mt-btn-accent[disabled]:focus {
+    background: var(--mt-color-accent);
+}
+
 .mt-dept-tile,
 .mt-product-card-link {
     display: block;
