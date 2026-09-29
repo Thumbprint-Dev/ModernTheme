@@ -6,6 +6,10 @@
 
   All bindings below are unchanged from Four51's stock default template (LineItem.Product, LineItem.Variant,
   LineItem.PriceSchedule, allowAddToOrder, etc.) - only markup/classes changed for the ModernTheme visual design.
+  Coming soon: isComingSoon() / comingSoonPending() come from productCtrl.js (see comingSoonService.js) -
+  products in a category whose InteropID contains "comingsoon" get a disabled Coming Soon button and
+  no inventory or ordering controls. They're undefined in other controllers that reuse this template
+  (LineItemEditCtrl), which reads as "not coming soon".
   quantityfield, addtoorderspecs, priceScheduleTable, staticSpecsTable, relatedproducts and productnav are
   separate directives whose own templates live in app/partials/ and ARE git-deployed - restyle those there.
 
@@ -105,16 +109,16 @@
                                     <a ng-class="{'col-sm-6': allowAddFromVariantList, 'col-sm-11': !allowAddFromVariantList }" href=#/product/{{LineItem.Product.InteropID}}/{{v.InteropID}}>
                                         <strong>{{v.ExternalID}}</strong>
                                         <p ng-show="v.Description" ng-bind-html="trustedDescription(v)" />
-                                        <p ng-show="LineItem.Product.DisplayInventory && LineItem.Product.IsVariantLevelInventory">
+                                        <p ng-show="LineItem.Product.DisplayInventory && LineItem.Product.IsVariantLevelInventory && !isComingSoon()">
                                             {{'Quantity Available' | r | xlat}}: {{v.QuantityAvailable}}
                                         </p>
                                     </a>
-                                    <div class="col-sm-2" ng-show="allowAddFromVariantList && !(user.Permissions.contains('HidePricing'))">
+                                    <div class="col-sm-2" ng-show="allowAddFromVariantList && !isComingSoon() && !(user.Permissions.contains('HidePricing'))">
                                         <div class="text-center" ng-show="variantLineItems[v.InteropID].LineTotal > 0">
                                             <small>{{'Total' | r | xlat}}<br /><span class="mt-pdp-price">{{variantLineItems[v.InteropID].LineTotal | culturecurrency}}</span></small>
                                         </div>
                                     </div>
-                                    <div class="col-sm-3" ng-show="allowAddFromVariantList">
+                                    <div class="col-sm-3" ng-show="allowAddFromVariantList && !isComingSoon()">
                                         <quantityfield required="false" calculated="calcVariantLineItems" lineitem="variantLineItems[v.InteropID]" class="quantity"></quantityfield>
                                     </div>
                                     <div class="col-sm-1" ng-show="v.IsMpowerVariant">
@@ -131,24 +135,29 @@
                         </div>
                     </div>
 
-                    <ordertypeselector ng-show="(canAddToStandardOrder && canAddToReplenishmentOrder && !currentOrder.ID)"></ordertypeselector>
-                    <addtoorderspecs ng-show="allowAddToOrder"></addtoorderspecs>
+                    <ordertypeselector ng-show="(canAddToStandardOrder && canAddToReplenishmentOrder && !currentOrder.ID) && !isComingSoon()"></ordertypeselector>
+                    <addtoorderspecs ng-show="allowAddToOrder && !isComingSoon()"></addtoorderspecs>
 
                     <div class="mt-order-actions" ng-show="allowAddToOrder">
-                        <p class="mt-pdp-meta" ng-show="LineItem.Product.DisplayInventory && (LineItem.Variant || LineItem.Product.Variants.length == 0) && isInventoryTracked(LineItem.Product, LineItem.Variant)">
+                        <p class="mt-pdp-meta" ng-show="LineItem.Product.DisplayInventory && !isComingSoon() && (LineItem.Variant || LineItem.Product.Variants.length == 0) && isInventoryTracked(LineItem.Product, LineItem.Variant)">
                             {{'Quantity Available' | r | xlat}}: {{inventoryDisplay(LineItem.Product, LineItem.Variant)}}
                         </p>
-                        <p class="mt-pdp-meta" ng-show="LineItem.PriceSchedule.MinQuantity > 1 && !LineItem.PriceSchedule.RestrictedQuantity">
+                        <p class="mt-pdp-meta" ng-show="LineItem.PriceSchedule.MinQuantity > 1 && !LineItem.PriceSchedule.RestrictedQuantity && !isComingSoon()">
                             {{'Minimum Quantity' | r | xlat}}: {{LineItem.PriceSchedule.MinQuantity}}
                         </p>
-                        <p class="mt-pdp-meta" ng-show="LineItem.PriceSchedule.MaxQuantity && !LineItem.PriceSchedule.RestrictedQuantity">
+                        <p class="mt-pdp-meta" ng-show="LineItem.PriceSchedule.MaxQuantity && !LineItem.PriceSchedule.RestrictedQuantity && !isComingSoon()">
                             {{'Maximum Quantity' | r | xlat}}: {{LineItem.PriceSchedule.MaxQuantity}}
                         </p>
-                        <div class="mt-order-row" ng-if="!allowAddFromVariantList">
+                        <div class="mt-order-row" ng-if="!allowAddFromVariantList && !isComingSoon()">
                             <label ng-class="{required: !allowAddFromVariantList}">{{('Order' | r) + ' ' + ('Quantity' | r) | xlat}}</label>
                             <quantityfield required="true" lineitem="LineItem" class="quantity"></quantityfield>
                         </div>
-                        <button class="mt-btn-accent mt-pdt-add-btn" type="button" id="451_btn_orderadd" ng-click="addToOrder()" ng-disabled="outOfInventory()">
+                        <!-- Coming soon (comingSoonService.js): a disabled button with no action. While that list
+                             is still loading, neither button shows, so the page never flashes Add To Cart. -->
+                        <button class="mt-btn-accent mt-pdt-add-btn" type="button" disabled="disabled" ng-if="isComingSoon()">
+                            {{'Coming Soon' | r | xlat}}
+                        </button>
+                        <button class="mt-btn-accent mt-pdt-add-btn" type="button" id="451_btn_orderadd" ng-click="addToOrder()" ng-disabled="outOfInventory()" ng-if="!isComingSoon() && !comingSoonPending()">
                             <loadingindicator ng-show="addToOrderIndicator"></loadingindicator>
                             <i ng-show="lineItemErrors.length > 0 && !outOfInventory()" class="fa fa-warning"></i>
                             <span ng-if="outOfInventory()">{{'Out of Stock' | r | xlat}}</span>

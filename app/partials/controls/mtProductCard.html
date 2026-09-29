@@ -13,16 +13,22 @@
             {{product.StandardPriceSchedule.PriceBreaks[0].Price | culturecurrency}}
         </p>
     </a>
-    <button type="button" class="mt-btn-accent mt-product-card-add" ng-if="canQuickAdd(product) && !quickAddNeedsOptions[product.InteropID] && !productOutOfInventory(product)"
+    <!-- Products in a "coming soon" category (see comingSoonService.js) get this in place of every
+         other button. While that list is still loading, the add/out-of-stock buttons stay hidden
+         so a coming-soon product never flashes "Add to cart". -->
+    <button type="button" class="mt-btn-accent mt-product-card-add" disabled="disabled" ng-if="$root.comingSoon.has(product)">
+        {{'Coming Soon' | r | xlat}}
+    </button>
+    <button type="button" class="mt-btn-accent mt-product-card-add" ng-if="!$root.comingSoon.has(product) && !$root.comingSoon.isPending() && canQuickAdd(product) && !quickAddNeedsOptions[product.InteropID] && !productOutOfInventory(product)"
             ng-click="quickAddToCart(product)" ng-disabled="quickAddIndicator[product.InteropID]">
         <i ng-show="quickAddIndicator[product.InteropID]" class="fa fa-spinner fa-spin"></i>
         {{'Add to cart' | r | xlat}}
     </button>
     <button type="button" class="mt-btn-accent mt-product-card-add" disabled="disabled"
-            ng-if="canQuickAdd(product) && !quickAddNeedsOptions[product.InteropID] && productOutOfInventory(product)">
+            ng-if="!$root.comingSoon.has(product) && !$root.comingSoon.isPending() && canQuickAdd(product) && !quickAddNeedsOptions[product.InteropID] && productOutOfInventory(product)">
         {{'Out of Stock' | r | xlat}}
     </button>
-    <a ng-if="!canQuickAdd(product) || quickAddNeedsOptions[product.InteropID]" href="{{product.Type == 'Kit' ? 'kit' : 'product'}}/{{product.InteropID}}{{currentCategory.InteropID ? ('?cat=' + currentCategory.InteropID) : ''}}" class="mt-header-btn mt-product-card-add">
+    <a ng-if="!$root.comingSoon.has(product) && (!canQuickAdd(product) || quickAddNeedsOptions[product.InteropID])" href="{{product.Type == 'Kit' ? 'kit' : 'product'}}/{{product.InteropID}}{{currentCategory.InteropID ? ('?cat=' + currentCategory.InteropID) : ''}}" class="mt-header-btn mt-product-card-add">
         {{'Select Options' | r | xlat}}
     </a>
     <p class="mt-product-card-note" ng-show="quickAddNeedsOptions[product.InteropID]">{{'This item has options to choose before adding to your cart.' | r | xlat}}</p>

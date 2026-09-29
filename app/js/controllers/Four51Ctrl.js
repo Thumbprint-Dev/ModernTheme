@@ -1,6 +1,9 @@
-four51.app.controller('Four51Ctrl', ['$scope', '$route', '$rootScope', '$timeout', '$document', '$window', '$location', '$451', 'User', 'Order', 'Security', 'OrderConfig', 'Category', 'AppConst','XLATService', 'GoogleAnalytics', 'FavoriteProducts', 'SiteConfig', 'publicRoutes',
-function ($scope, $route, $rootScope, $timeout, $document, $window, $location, $451, User, Order, Security, OrderConfig, Category, AppConst, XLATService, GoogleAnalytics, FavoriteProducts, SiteConfig, publicRoutes) {
+four51.app.controller('Four51Ctrl', ['$scope', '$route', '$rootScope', '$timeout', '$document', '$window', '$location', '$451', 'User', 'Order', 'Security', 'OrderConfig', 'Category', 'AppConst','XLATService', 'GoogleAnalytics', 'FavoriteProducts', 'SiteConfig', 'publicRoutes', 'ComingSoon',
+function ($scope, $route, $rootScope, $timeout, $document, $window, $location, $451, User, Order, Security, OrderConfig, Category, AppConst, XLATService, GoogleAnalytics, FavoriteProducts, SiteConfig, publicRoutes, ComingSoon) {
 	$scope.AppConst = AppConst;
+	// On $root, like the favorites helpers below: the product card partial is ng-included, and a
+	// child scope there can't shadow a $root property.
+	$scope.$root.comingSoon = ComingSoon;
 	// This controller sits on <html>, so every view and directive below it -- the
 	// nav logo, the home hero -- reads site.json off the inherited `site` object.
 	$scope.site = SiteConfig.settings;
@@ -69,6 +72,7 @@ function ($scope, $route, $rootScope, $timeout, $document, $window, $location, $
 			});
 			Category.tree(function (data) {
 				$scope.tree = data;
+				ComingSoon.load(data);
 				$scope.$broadcast("treeComplete", data);
 			});
 

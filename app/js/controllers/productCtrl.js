@@ -1,5 +1,5 @@
-four51.app.controller('ProductCtrl', ['$scope', '$rootScope', '$routeParams', '$route', '$location', '$451', 'Product', 'ProductDisplayService', 'Order', 'Variant', 'User', 'AppConst',
-function ($scope, $rootScope, $routeParams, $route, $location, $451, Product, ProductDisplayService, Order, Variant, User, AppConst) {
+four51.app.controller('ProductCtrl', ['$scope', '$rootScope', '$routeParams', '$route', '$location', '$451', 'Product', 'ProductDisplayService', 'Order', 'Variant', 'User', 'AppConst', 'ComingSoon',
+function ($scope, $rootScope, $routeParams, $route, $location, $451, Product, ProductDisplayService, Order, Variant, User, AppConst, ComingSoon) {
     $scope.isEditforApproval = $routeParams.orderID && $scope.user.Permissions.contains('EditApprovalOrder');
     if ($scope.isEditforApproval) {
         Order.get($routeParams.orderID, function(order) {
@@ -55,6 +55,14 @@ function ($scope, $rootScope, $routeParams, $route, $location, $451, Product, Pr
 			$scope.variantLineItemsOrderTotal += item.LineTotal || 0;
 		})
 	};
+	// Products in a "coming soon" category (comingSoonService.js) show a disabled Coming Soon
+	// button and no inventory in the PDT. Both are functions so the PDT can call them safely from
+	// other controllers that reuse it (LineItemEditCtrl), where they're simply undefined - falsy.
+	$scope.isComingSoon = function() {
+		return !!($scope.LineItem && ComingSoon.has($scope.LineItem.Product));
+	};
+	$scope.comingSoonPending = ComingSoon.isPending;
+
 	$scope.outOfInventory = function(){
 		var li = $scope.LineItem;
 		if ($scope.allowAddFromVariantList || !li.Product || !li.PriceSchedule) return false;
@@ -155,6 +163,8 @@ function ($scope, $rootScope, $routeParams, $route, $location, $451, Product, Pr
 	// Order.save's own event:orderUpdate broadcast (fires on success too) keeps the real,
 	// inherited currentOrder in sync without this controller ever touching it directly.
 	$scope.addToOrder = function(){
+		// The PDT never shows an add button for these; this is the backstop.
+		if ($scope.isComingSoon() || $scope.comingSoonPending()) return;
 		if($scope.lineItemErrors && $scope.lineItemErrors.length){
 			$scope.showAddToCartErrors = true;
 			return;

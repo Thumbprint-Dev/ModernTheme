@@ -188,6 +188,8 @@ function ($routeParams, $sce, $scope, $rootScope, $451, Category, Product, AppCo
 	}
 
 	$scope.quickAddToCart = function(product) {
+		// The card already swaps its button for a disabled "Coming Soon" one; this is the backstop.
+		if ($scope.comingSoon.has(product) || $scope.comingSoon.isPending()) return;
 		$scope.quickAddNeedsOptions[product.InteropID] = false;
 		$scope.quickAddError[product.InteropID] = null;
 		$scope.quickAddIndicator[product.InteropID] = true;
