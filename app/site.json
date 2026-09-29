@@ -30,7 +30,11 @@
 		"buttonHref": "catalog"
 	},
 	"categoryMessages": {
-		"_help": "Message bars under a category page's title. Add an entry keyed by the category's InteropID (subcategories get their own entries; nothing is inherited). A category that isn't listed shows nothing. Each entry is one message or a list: [{\"message\": \"Holiday orders must be placed by Dec 5.\", \"linkText\": \"See shipping details\", \"linkUrl\": \"faq\", \"style\": \"tint\"}]. message: plain text. linkText + linkUrl: optional link at the end - a site page (faq, contactus), a full https:// URL (opens in a new tab), or mailto:. style: tint (default), solid or neutral."
+		"_help": "Message bars under a category page's title, keyed by the category's InteropID (not its display name; capitals don't matter). A category that isn't listed shows nothing, and each subcategory needs its own entry - nothing is inherited from the parent. Each category takes a list of messages, which stack in order. message: plain text, required (a blank message is skipped). linkText + linkUrl: optional link at the end of the message - a site page (faq, contactus, order), a full https:// URL (opens in a new tab), or mailto:. style: tint (default), solid or neutral, all in the site's accent colour. Keys starting with _ are ignored: to add messages, copy _example_category-interopid, rename it to the real InteropID and fill it in. Reload the page to see a change.",
+		"_example_category-interopid": [
+			{"message": "Holiday orders must be placed by December 5 to arrive before December 20.", "linkText": "See shipping details", "linkUrl": "faq", "style": "tint"},
+			{"message": "A second message stacks underneath this one.", "style": "solid"}
+		]
 	},
 	"shipping": {
 		"_help_allowedDomesticMethods": "allowedDomesticMethods: what a DOMESTIC order may use. Matched on the name Four51 returns, trimmed and case-insensitive, and the whole name must match - `Fedex International` does not match `Fedex International Priority`, so list each variant you want. Leave it empty for no restriction. Methods seen: `Bulk Shipping (over 150 lbs)`, `Fedex International`, `UPS Ground`, `UPS 3 Day Select`, `UPS 2nd Day Air`, `UPS Next Day Air Saver`, `UPS Next Day Air`, `UPS Next Day Air Early A.M.`.",
