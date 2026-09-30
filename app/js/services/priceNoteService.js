@@ -59,5 +59,28 @@ four51.app.factory('PriceNotes', ['SiteConfig', 'CategoryProducts', '$q', '$log'
 		return byCategory || forAll;
 	}
 
-	return { forProduct: forProduct };
+	// The showInOrderSummary notes that apply to at least one item in the order, each once, in
+	// site.json order. Uses forProduct() per item, so the same most-specific-wins rule decides
+	// which note an item contributes. Returns the same array while the result is unchanged, so
+	// an ng-repeat over it stays stable across digests.
+	var lastKey = null, lastList = [];
+	function forOrder(order) {
+		var notes = SiteConfig.settings.priceNotes;
+		var picked = [];
+		if (order && order.LineItems && notes && notes.length) {
+			angular.forEach(order.LineItems, function(li) {
+				var note = forProduct(li.Product);
+				if (note && note.showInOrderSummary && picked.indexOf(note) === -1) picked.push(note);
+			});
+			picked.sort(function(a, b) { return notes.indexOf(a) - notes.indexOf(b); });
+		}
+		var key = picked.map(function(note) { return notes.indexOf(note); }).join(',');
+		if (key !== lastKey) {
+			lastKey = key;
+			lastList = picked;
+		}
+		return lastList;
+	}
+
+	return { forProduct: forProduct, forOrder: forOrder };
 }]);

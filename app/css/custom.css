@@ -1310,6 +1310,19 @@ body {
     margin: 0 0 12px;
 }
 
+/* Cart and checkout order summaries (showInOrderSummary): compact, between the total and the
+   primary button. */
+.mt-price-note--summary {
+    margin: 12px 0;
+    padding: 8px 10px;
+    font-size: 12px;
+}
+
+.mt-price-note--summary .mt-price-note-icon {
+    font-size: 13px;
+    line-height: 18px;
+}
+
 /* Price schedule table - rendered by the pricescheduletable directive (partials/
    priceScheduleView.html), reused on the PDP, kit views and line-item history. Previously raw
    Bootstrap .row/.col-xs-6/.text-info markup with the framework's default grid styling. */

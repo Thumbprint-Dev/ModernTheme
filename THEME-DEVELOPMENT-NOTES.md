@@ -797,6 +797,11 @@ Four51 without forking the theme.
     never flashes first.
   - The note hides under `HidePricing`. It's rendered by the PDT via `priceNote()` from
     `productCtrl.js`.
+  - `"showInOrderSummary": true` (a real boolean) also shows the note in the cart summary
+    (under Subtotal) and the checkout summary (under Total), whenever it applies to at least
+    one cart item. It uses the same per-item most-specific rule and shows each note once.
+    `PriceNotes.forOrder()`, exposed as `$root.priceNotes`, returns a stable array for the
+    `ng-repeat`.
 
 - `js/services/siteConfigService.js` holds the same keys as hard-coded fallbacks
   and merges the file over them, **ignoring blanks**. A site only fills in what it

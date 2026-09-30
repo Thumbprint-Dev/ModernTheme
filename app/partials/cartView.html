@@ -153,6 +153,12 @@
                         </div>
                         <p class="mt-pdp-meta" ng-show="TaxMethod" ng-if="user.Company.TaxMethod != 'NoTax'">{{'Shipping, handling and tax may be added to this subtotal.' | r | xlat}}</p>
 
+                        <!-- site.json priceNotes with showInOrderSummary: each applicable note once. Hidden with pricing. -->
+                        <div class="mt-price-note mt-price-note--summary" ng-repeat="note in $root.priceNotes.forOrder(currentOrder)" ng-if="!(user.Permissions.contains('HidePricing'))">
+                            <i class="fa fa-tag mt-price-note-icon" aria-hidden="true"></i>
+                            <p>{{note.message}}</p>
+                        </div>
+
                         <button type="button" class="mt-btn-accent mt-cart-checkout-btn" ng-click="checkOut()" ng-disabled="cart.$invalid || kitValidation">
                             <i ng-show="cart.$invalid || kitValidation" class="fa fa-warning"></i>
                             {{'Proceed to Checkout' | r | xlat}}

@@ -182,7 +182,11 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 			}
 			var products = stringList(entry.products).map(function(id) { return id.toLowerCase(); });
 			var categories = stringList(entry.categories);
-			output.push({ message: entry.message.trim(), placement: placement || 'price', products: products, categories: categories });
+			// A real true/false only: a quoted "false" is a non-empty string and would read as on.
+			var inSummary = entry.showInOrderSummary === true;
+			if (entry.showInOrderSummary !== undefined && typeof entry.showInOrderSummary !== 'boolean')
+				$log.warn('SiteConfig: priceNotes.notes[' + i + '] showInOrderSummary must be true or false without quotes, leaving it off -- ' + angular.toJson(entry.showInOrderSummary));
+			output.push({ message: entry.message.trim(), placement: placement || 'price', products: products, categories: categories, showInOrderSummary: inSummary });
 		});
 		return output;
 	}

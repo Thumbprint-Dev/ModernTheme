@@ -50,6 +50,12 @@
         {{'Remaining balance to be charged to your other payment method.' | r | xlat}}
     </p>
 
+    <!-- site.json priceNotes with showInOrderSummary: each applicable note once. Hidden with pricing. -->
+    <div class="mt-price-note mt-price-note--summary" ng-repeat="note in $root.priceNotes.forOrder(currentOrder)" ng-if="!(user.Permissions.contains('HidePricing'))">
+        <i class="fa fa-tag mt-price-note-icon" aria-hidden="true"></i>
+        <p>{{note.message}}</p>
+    </div>
+
     <button type="button" class="mt-btn-accent mt-cart-checkout-btn" ng-click="submitOrder()"
             ng-disabled="submitClicked || cart_order.$invalid || cart_shipping.$invalid || cart_billing.$invalid">
         <i ng-show="submitAttempted && (cart_shipping.$invalid || cart_order.$invalid || cart_billing.$invalid)" class="fa fa-warning"></i>

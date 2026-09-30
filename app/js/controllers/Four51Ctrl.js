@@ -1,9 +1,11 @@
-four51.app.controller('Four51Ctrl', ['$scope', '$route', '$rootScope', '$timeout', '$document', '$window', '$location', '$451', 'User', 'Order', 'Security', 'OrderConfig', 'Category', 'AppConst','XLATService', 'GoogleAnalytics', 'FavoriteProducts', 'SiteConfig', 'publicRoutes', 'ComingSoon',
-function ($scope, $route, $rootScope, $timeout, $document, $window, $location, $451, User, Order, Security, OrderConfig, Category, AppConst, XLATService, GoogleAnalytics, FavoriteProducts, SiteConfig, publicRoutes, ComingSoon) {
+four51.app.controller('Four51Ctrl', ['$scope', '$route', '$rootScope', '$timeout', '$document', '$window', '$location', '$451', 'User', 'Order', 'Security', 'OrderConfig', 'Category', 'AppConst','XLATService', 'GoogleAnalytics', 'FavoriteProducts', 'SiteConfig', 'publicRoutes', 'ComingSoon', 'PriceNotes',
+function ($scope, $route, $rootScope, $timeout, $document, $window, $location, $451, User, Order, Security, OrderConfig, Category, AppConst, XLATService, GoogleAnalytics, FavoriteProducts, SiteConfig, publicRoutes, ComingSoon, PriceNotes) {
 	$scope.AppConst = AppConst;
 	// On $root, like the favorites helpers below: the product card partial is ng-included, and a
 	// child scope there can't shadow a $root property.
 	$scope.$root.comingSoon = ComingSoon;
+	// Cart and checkout order summaries read site.json price notes through this (priceNoteService.js).
+	$scope.$root.priceNotes = PriceNotes;
 	// This controller sits on <html>, so every view and directive below it -- the
 	// nav logo, the home hero -- reads site.json off the inherited `site` object.
 	$scope.site = SiteConfig.settings;
