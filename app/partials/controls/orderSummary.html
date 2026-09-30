@@ -61,6 +61,10 @@
         <i ng-show="submitAttempted && (cart_shipping.$invalid || cart_order.$invalid || cart_billing.$invalid)" class="fa fa-warning"></i>
         {{('Submit' | r) + ' ' + ('Order' | r) | xlat}}
     </button>
+    <p class="mt-checkout-submit-hint" ng-show="!submitClicked && (cart_order.$invalid || cart_shipping.$invalid || cart_billing.$invalid)">
+        {{'Complete the highlighted fields to place your order.' | r | xlat}}
+        <button type="button" class="mt-checkout-submit-hint-link" ng-click="showMissingFields()">{{'Show me' | r | xlat}}</button>
+    </p>
 
 
     <button type="button" class="mt-header-btn mt-checkout-security-link" redirect="/security">

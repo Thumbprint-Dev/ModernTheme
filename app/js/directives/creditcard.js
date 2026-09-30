@@ -11,91 +11,82 @@ four51.app.directive('creditcard', function() {
 				else
 					return $scope.user.Permissions.contains('PayBy' + type);
 			}
-			function validateNumber(ccNumb) {
-				/* This script and many more are available free online at
-				 The JavaScript Source!! http://javascript.internet.com
-				 Created by: David Leppek :: https://www.azcode.com/Mod10
 
-				 Basically, the alorithum takes each digit, from right to left and muliplies each second
-				 digit by two. If the multiple is two-digits long (i.e.: 6 * 2 = 12) the two digits of
-				 the multiple are then added together for a new number (1 + 2 = 3). You then add up the
-				 string of numbers, both unaltered and new values and get a total sum. This sum is then
-				 divided by 10 and the remainder should be zero if it is a valid credit card. Hense the
-				 name Mod 10 or Modulus 10. */
-				var valid = "0123456789",  // Valid digits in a credit card number
-					len = ccNumb.length,  // The length of the submitted cc number
-					iCCN = parseInt(ccNumb),  // integer of ccNumb
-					sCCN = ccNumb.toString().replace(/^\s+|\s+$/g,''),  // string of ccNumb
-					iTotal = 0,  // integer total set at zero
-					bNum = true,  // by default assume it is a number
-					bResult = false,  // by default assume it is NOT a valid cc
-					temp,  // temp variable for parsing string
-					calc;  // used for calculation of each digit
+			function digitsOnly(value) {
+				return value ? String(value).replace(/[\s-]/g, '') : '';
+			}
 
-				// Determine if the ccNumb is in fact all numbers
-				for (var j=0; j<len; j++) {
-					temp = "" + sCCN.substring(j, j+1);
-					if (valid.indexOf(temp) == "-1"){bNum = false;}
-				}
-
-				// if it is NOT a number, you can either alert to the fact, or just pass a failure
-				if(!bNum) bResult = false;
-
-				// Determine if it is the proper length
-				if((len == 0) && (bResult))  // nothing, field is blank AND passed above # check
-					bResult = false;
-				else {  // ccNumb is a number and the proper length - let's see if it is a valid card number
-					if(len >= 14){  // 15 or 16 for Amex or V/MC
-						for(var i=len;i>0;i--){  // LOOP throught the digits of the card
-							calc = parseInt(iCCN) % 10;  // right most digit
-							calc = parseInt(calc);  // assure it is an integer
-							iTotal += calc;  // running total of the card number as we loop - Do Nothing to first digit
-							i--;  // decrement the count - move to the next digit in the card
-							iCCN = iCCN / 10;                               // subtracts right most digit from ccNumb
-							calc = parseInt(iCCN) % 10 ;    // NEXT right most digit
-							calc = calc *2;                                 // multiply the digit by two
-							// Instead of some screwy method of converting 16 to a string and then parsing 1 and 6 and then adding them to make 7,
-							// I use a simple switch statement to change the value of calc2 to 7 if 16 is the multiple.
-							switch(calc){
-								case 10: calc = 1; break;       //5*2=10 & 1+0 = 1
-								case 12: calc = 3; break;       //6*2=12 & 1+2 = 3
-								case 14: calc = 5; break;       //7*2=14 & 1+4 = 5
-								case 16: calc = 7; break;       //8*2=16 & 1+6 = 7
-								case 18: calc = 9; break;       //9*2=18 & 1+8 = 9
-								default: calc = calc;           //4*2= 8 &   8 = 8  -same for all lower numbers
-							}
-							iCCN = iCCN / 10;  // subtracts right most digit from ccNum
-							iTotal += calc;  // running total of the card number as we loop
-						}  // END OF LOOP
-						if ((iTotal%10)==0)  // check to see if the sum Mod 10 is zero
-							bResult = true;  // This IS (or could be) a valid credit card number.
-						else
-							bResult = false;  // This could NOT be a valid credit card number
+			// Luhn checksum on the digit string - the old version did the arithmetic on a parsed
+			// Number, which loses precision past 16 digits.
+			function validateNumber(number) {
+				if (!/^\d{12,19}$/.test(number)) return false;
+				var sum = 0, double = false;
+				for (var i = number.length - 1; i >= 0; i--) {
+					var digit = +number.charAt(i);
+					if (double) {
+						digit *= 2;
+						if (digit > 9) digit -= 9;
 					}
+					sum += digit;
+					double = !double;
 				}
-				return bResult;
-			};
+				return sum % 10 === 0;
+			}
+
+			// ui-mask="99/99" stores MMYY without the slash.
+			function validateExpiration(date) {
+				var value = digitsOnly(date);
+				if (value.length != 4) return false;
+				var month = parseInt(value.substring(0, 2), 10);
+				var year = parseInt(value.substring(2, 4), 10) + 2000;
+				var now = new Date();
+				if (month < 1 || month > 12) return false;
+				return year > now.getFullYear() || (year == now.getFullYear() && month >= now.getMonth() + 1);
+			}
+
+			function validateCvn(cvn, type) {
+				var value = String(cvn);
+				if (!/^\d+$/.test(value)) return false;
+				if (type == 'AmericanExpress') return value.length == 4;
+				return type ? value.length == 3 : (value.length == 3 || value.length == 4);
+			}
+
+			function setFieldValidity(fieldName, key, valid) {
+				var field = $scope.cart_billing && $scope.cart_billing[fieldName];
+				if (field) field.$setValidity(key, valid);
+			}
+
+			function cardEntryActive() {
+				return !!($scope.currentOrder && $scope.currentOrder.PaymentMethod == 'CreditCard' && !$scope.currentOrder.CreditCardID);
+			}
+
+			// Validity lives on each input, not on cart_billing itself, and is cleared whenever
+			// card entry isn't in use. The old form-level errors outlived the card fields: typing
+			// a bad number and then switching to a PO or a saved card left cart_billing invalid,
+			// which kept Submit Order disabled with nothing on screen to fix. Empty fields are
+			// left to ng-required so they read as "still needed", not as mistakes.
+			function validateCard() {
+				var active = cardEntryActive();
+				var card = ($scope.currentOrder && $scope.currentOrder.CreditCard) || {};
+				var number = digitsOnly(card.AccountNumber);
+				setFieldValidity('creditCardNumber', 'creditCardNumber', !active || !number || validateNumber(number));
+				setFieldValidity('creditCardNumber', 'creditCardType', !active || !number || validateType(card.Type));
+				setFieldValidity('expirationDate', 'expDate', !active || !card.ExpirationDate || validateExpiration(card.ExpirationDate));
+				setFieldValidity('cvnNumber', 'cvnNumber', !active || !card.CVN || validateCvn(card.CVN, card.Type));
+			}
+
+			$scope.$watch(function() {
+				var card = ($scope.currentOrder && $scope.currentOrder.CreditCard) || {};
+				return [cardEntryActive(), card.AccountNumber, card.Type, card.ExpirationDate, card.CVN].join('|');
+			}, validateCard);
 
 			$scope.$watch('currentOrder.CreditCard.AccountNumber', function(ccnumber) {
 				//http://tamas.io/custom-angularjs-filter-to-determine-credit-card-type/
 				if (!ccnumber) return;
 				$scope.currentOrder.CreditCard.Type = null;
 				$scope.creditCardIconUrl = null;
-				var len = ccnumber.length;
-				if (ccnumber && len >= 4) {
-					var cardType,
-						mul = 0,
-						prodArr = [
-							[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-							[0, 2, 4, 6, 8, 1, 3, 5, 7, 9]
-						],
-						sum = 0;
-
-					while (len--) {
-						sum += prodArr[mul][parseInt(ccnumber.charAt(len), 10)];
-						mul ^= 1;
-					}
-
+				if (ccnumber.length >= 4) {
+					var cardType;
 					if(/^(34)|^(37)/.test(ccnumber)) {
 						cardType = "AmericanExpress";
 					}
@@ -131,38 +122,7 @@ four51.app.directive('creditcard', function() {
 					}
 					$scope.currentOrder.CreditCard.Type = cardType;
 					$scope.creditCardIconUrl = cardType ? 'css/images/CreditCardIcons/' + cardType + '.png' : null;
-
-					ccnumber = ccnumber.toString().replace(/\s+/g, '');
-					//$scope.cart_billing.$setValidity('creditCardNumber', true);
-					$scope.cart_billing.$setValidity('creditCardNumber', validateNumber(ccnumber));
-					$scope.cart_billing.$setValidity('creditCardType', validateType(cardType));
 				}
-			});
-
-			$scope.$watch('currentOrder.CreditCard.CVN', function(cvn) {
-				if (!cvn || $scope.currentOrder.CreditCard.Type == null) return false;
-
-				function validate(cvn) {
-					if ($scope.currentOrder.CreditCard.Type == 'AmericanExpress')
-						return cvn.length == 4;
-					return cvn.length == 3;
-				}
-				$scope.cart_billing.$setValidity('cvnNumber', validate(cvn));
-			});
-
-			$scope.$watch('currentOrder.CreditCard.ExpirationDate', function(date) {
-				if (!date) return false;
-				var month = parseInt(date.substring(0,2));
-				var year = parseInt(date.substring(2,4)) + 2000;
-				var current = new Date();
-                var valid = false;
-                if (month > 0 && month < 13 && (year > current.getFullYear())) {
-                    valid = true;
-                }
-                else if (month > 0 && month < 13 && (month >= current.getMonth()+1) && (year == current.getFullYear())) {
-                    valid = true;
-                }
-				$scope.cart_billing.$setValidity('expDate', valid);
 			});
 
 			$scope.friendlyName = function(type) {

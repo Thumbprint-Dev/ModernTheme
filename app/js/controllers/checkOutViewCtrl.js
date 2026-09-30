@@ -136,6 +136,22 @@ function ($scope, $routeParams, $location, $route, $filter, $rootScope, $451, Us
 		    $location.path('catalog');
     };
 
+	// Submit Order stays disabled while anything is missing, so this is the way to find out what.
+	// Jumps to the first visible field js/directives/fieldStatus.js marked as still needed or
+	// wrong; if the problem isn't a single field (e.g. an insufficient spending account), it
+	// falls back to the modal that lists every missing detail.
+	$scope.showMissingFields = function() {
+		var fields = document.querySelectorAll('.mt-checkout .mt-fs-needed, .mt-checkout .mt-fs-error');
+		for (var i = 0; i < fields.length; i++) {
+			if (fields[i].offsetParent !== null) {
+				fields[i].scrollIntoView({ behavior: 'smooth', block: 'center' });
+				fields[i].focus({ preventScroll: true });
+				return;
+			}
+		}
+		$scope.showCheckoutErrors = true;
+	};
+
 	$scope.submitOrder = function() {
 		$scope.submitAttempted = true;
 		if ($scope.cart_order.$invalid || $scope.cart_shipping.$invalid || $scope.cart_billing.$invalid) {

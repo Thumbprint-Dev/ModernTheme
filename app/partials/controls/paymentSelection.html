@@ -44,7 +44,7 @@
         </div>
         <div class="mt-field" ng-show="(SpendingAccounts|filter:{ForPurchase:true}).length > 1">
             <label ng-show="currentOrder.BudgetAccountID">{{'Spending Account' | r}}</label>
-            <select class="form-control"
+            <select class="form-control" mt-field-status
                     ng-options="account.ID as (account.Label + ' - ' + ('Balance' | xlat) + ': ' + (account.Balance | culturecurrency)) for account in SpendingAccounts | filter:{ForPurchase:true}"
                     ng-model="currentOrder.BudgetAccountID"
                     ng-required="currentOrder.PaymentMethod == 'BudgetAccount'"

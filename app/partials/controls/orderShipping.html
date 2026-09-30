@@ -32,7 +32,7 @@
             <div class="mt-checkout-shipping-fields" ng-show="!currentOrder.IsMultipleShip()">
                 <div class="mt-field" ng-show="shipaddresses">
                     <label ng-class="{required: !currentOrder.IsMultipleShip()}" ng-show="currentOrder.ShipAddressID || !currentOrder.IsMultipleShip()">{{('Shipping' | r) + ' ' + ('Address' | r) | xlat}}</label>
-                    <select class="form-control" name="shippingAddress"
+                    <select class="form-control" mt-field-status name="shippingAddress"
                             ng-change="setShipAddressAtOrderLevel()"
                             ng-options="address.ID as address.AddressName for address in shipaddresses"
                             ng-model="currentOrder.ShipAddressID"
@@ -47,7 +47,7 @@
                      has loaded, empty or not, and still hides it while the fetch is in flight. -->
                 <div class="mt-field" ng-show="user.ShipMethod != null && shippers != null">
                     <label ng-class="{required: !currentOrder.IsMultipleShip() && user.ShipMethod != null}" ng-show="currentOrder.LineItems[0].ShipperName || !currentOrder.IsMultipleShip() && user.ShipMethod != null">{{('Shipping' | r) + ' Method' | xlat}}</label>
-                    <select class="form-control" ng-change="updateShipper()" name="shipMethod"
+                    <select class="form-control" mt-field-status ng-change="updateShipper()" name="shipMethod"
                             ng-model="currentOrder.LineItems[0].ShipperName"
                             ng-show="user.ShipMethod.ShipperSelectionType == 'UserDropDown' && shippers.length"
                             ng-options="shipper.Name as (shipper.Name + ' ' + (shipper.ShippingRate.Price | currency | xlat)) for shipper in shippers"
@@ -102,18 +102,18 @@
                     <div class="mt-checkout-shipto-name-row" ng-show="user.Permissions.contains('EditShipToName') && !ShipAddress.IsCustEditable && item.ShipAddressID">
                         <div class="mt-field">
                             <label ng-show="item.ShipFirstName || currentOrder.IsMultipleShip() && user.Permissions.contains('EditShipToName') && !ShipAddress.IsCustEditable" ng-class="{required: currentOrder.IsMultipleShip() && user.Permissions.contains('EditShipToName') && !ShipAddress.IsCustEditable}">{{('First' | r) + ' ' + ('Name' | r) | xlat}}</label>
-                            <input class="form-control" ng-required="currentOrder.IsMultipleShip() && user.Permissions.contains('EditShipToName') && !ShipAddress.IsCustEditable" type="text" ng-model="item.ShipFirstName" placeholder="{{('First' | r) + ' ' + ('Name' | r) | xlat}}" autocomplete="off" />
+                            <input class="form-control" mt-field-status ng-required="currentOrder.IsMultipleShip() && user.Permissions.contains('EditShipToName') && !ShipAddress.IsCustEditable" type="text" ng-model="item.ShipFirstName" placeholder="{{('First' | r) + ' ' + ('Name' | r) | xlat}}" autocomplete="off" />
                         </div>
                         <div class="mt-field">
                             <label ng-show="item.ShipLastName || currentOrder.IsMultipleShip() && user.Permissions.contains('EditShipToName') && !ShipAddress.IsCustEditable" ng-class="{required: currentOrder.IsMultipleShip() && user.Permissions.contains('EditShipToName') && !ShipAddress.IsCustEditable}">{{('Last' | r) + ' ' + ('Name' | r) | xlat}}</label>
-                            <input class="form-control" ng-required="currentOrder.IsMultipleShip() && user.Permissions.contains('EditShipToName') && !ShipAddress.IsCustEditable" type="text" ng-model="item.ShipLastName" placeholder="{{('Last' | r) + ' ' + ('Name' | r) | xlat}}" autocomplete="off" />
+                            <input class="form-control" mt-field-status ng-required="currentOrder.IsMultipleShip() && user.Permissions.contains('EditShipToName') && !ShipAddress.IsCustEditable" type="text" ng-model="item.ShipLastName" placeholder="{{('Last' | r) + ' ' + ('Name' | r) | xlat}}" autocomplete="off" />
                         </div>
                     </div>
                 </div>
                 <div class="mt-checkout-shipto-item-fields">
                     <div class="mt-field">
                         <label ng-class="{required: currentOrder.IsMultipleShip()}" ng-show="currentOrder.ShipAddressID || currentOrder.IsMultipleShip()">{{('Shipping' | r) + ' ' + ('Address' | r) | xlat}}</label>
-                        <select class="form-control" name="shippingAddressLineItem"
+                        <select class="form-control" mt-field-status name="shippingAddressLineItem"
                                 ng-options="address.ID as address.AddressName for address in shipaddresses"
                                 ng-model="item.ShipAddressID"
                                 ng-required="currentOrder.IsMultipleShip()"
@@ -123,7 +123,7 @@
                     </div>
                     <div class="mt-field" ng-show="item.ShipAddressID || currentOrder.IsMultipleShip() && item.ShipAddressID && user.ShipMethod != null">
                         <label ng-class="{required: currentOrder.IsMultipleShip() && user.ShipMethod != null}">{{('Shipping' | r) + ' ' + ('Method' | r) | xlat}}</label>
-                        <select class="form-control" ng-change="updateShipper(item)"
+                        <select class="form-control" mt-field-status ng-change="updateShipper(item)"
                                 ng-show="user.ShipMethod.ShipperSelectionType == 'UserDropDown' && (shippers | noliverates).length"
                                 ng-options="shipper.Name as shipper.Name for shipper in shippers | noliverates"
                                 ng-model="item.ShipperName"

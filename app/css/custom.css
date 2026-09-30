@@ -56,6 +56,7 @@ Template: Howdy
     /* Semantic */
     --mt-color-danger: #B3261E;
     --mt-color-warning: #A85D00;
+    --mt-color-success: #1E7B4C;
 
     /* Typography */
     --mt-font-body: 'Inter', 'Droid Sans', sans-serif;
@@ -2766,6 +2767,126 @@ body {
 
 .mt-checkout-card textarea.form-control {
     resize: vertical;
+}
+
+/* Checkout field status, set by js/directives/fieldStatus.js: amber for a required field that's
+   still empty, red once a field has been left invalid, green with a check when it's done. Scoped
+   to .mt-checkout because the same directive sits on shared field templates (custom order
+   fields) that other pages render too. The icons are background images because a pseudo-element
+   can't go inside an input. */
+.mt-checkout .form-control.mt-fs-needed,
+.mt-checkout .form-control.mt-fs-error,
+.mt-checkout .form-control.mt-fs-valid {
+    transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.mt-checkout .form-control.mt-fs-needed {
+    border-color: #E2A94B;
+    background-color: #FFFAF0;
+}
+
+.mt-checkout .form-control.mt-fs-needed:focus {
+    border-color: var(--mt-color-accent);
+    background-color: var(--mt-color-white);
+}
+
+.mt-checkout .form-control.mt-fs-error,
+.mt-checkout .form-control.mt-fs-valid {
+    padding-right: 34px;
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 14px 14px;
+}
+
+.mt-checkout .form-control.mt-fs-error {
+    border-color: var(--mt-color-danger);
+    background-color: #FFF7F6;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='10' fill='%23B3261E'/%3E%3Cpath d='M10 5.5v5.2' stroke='%23fff' stroke-width='2' stroke-linecap='round'/%3E%3Ccircle cx='10' cy='14.3' r='1.2' fill='%23fff'/%3E%3C/svg%3E");
+}
+
+.mt-checkout .form-control.mt-fs-valid {
+    border-color: var(--mt-color-success);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='10' fill='%231E7B4C'/%3E%3Cpath d='M5.8 10.3l2.8 2.8 5.6-5.8' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.mt-checkout .form-control.mt-fs-error:focus {
+    box-shadow: 0 0 0 3px rgba(179, 38, 30, 0.14);
+}
+
+.mt-checkout .form-control.mt-fs-valid:focus {
+    box-shadow: 0 0 0 3px rgba(30, 123, 76, 0.14);
+}
+
+/* Checkout dropdowns draw their own arrow (the native one can't be moved), so a status icon can
+   sit at the far right with the arrow just to its left. */
+.mt-checkout select.form-control {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    padding-right: 36px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23726D5F' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 12px 8px;
+}
+
+.mt-checkout select.form-control.mt-fs-error,
+.mt-checkout select.form-control.mt-fs-valid {
+    padding-right: 52px;
+    background-position: right 12px center, right 32px center;
+    background-size: 14px 14px, 12px 8px;
+}
+
+.mt-checkout select.form-control.mt-fs-error {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='10' fill='%23B3261E'/%3E%3Cpath d='M10 5.5v5.2' stroke='%23fff' stroke-width='2' stroke-linecap='round'/%3E%3Ccircle cx='10' cy='14.3' r='1.2' fill='%23fff'/%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23726D5F' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.mt-checkout select.form-control.mt-fs-valid {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='10' fill='%231E7B4C'/%3E%3Cpath d='M5.8 10.3l2.8 2.8 5.6-5.8' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23726D5F' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.mt-checkout textarea.form-control.mt-fs-error,
+.mt-checkout textarea.form-control.mt-fs-valid {
+    background-position: right 12px top 12px;
+}
+
+/* The card number already shows the card brand logo at its right edge - sit the status icon
+   just inside it. */
+.mt-checkout-cc-number:has(.mt-checkout-cc-icon.active) .form-control.mt-fs-error,
+.mt-checkout-cc-number:has(.mt-checkout-cc-icon.active) .form-control.mt-fs-valid {
+    padding-right: 72px;
+    background-position: right 48px center;
+}
+
+.mt-checkout .mt-field-error {
+    margin: 6px 0 0;
+    font-size: 12px;
+    line-height: 1.4;
+    color: var(--mt-color-danger);
+}
+
+.mt-checkout-submit-hint {
+    margin: 10px 0 0;
+    font-size: 13px;
+    line-height: 1.45;
+    text-align: center;
+    color: var(--mt-color-text-soft);
+}
+
+.mt-checkout-submit-hint-link {
+    display: inline;
+    min-height: 0;
+    line-height: inherit;
+    margin-left: 2px;
+    padding: 0;
+    border: 0;
+    background: none;
+    font-weight: 600;
+    color: var(--mt-color-accent);
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 .mt-checkout-card .view-form-icon > div > i.fa {
