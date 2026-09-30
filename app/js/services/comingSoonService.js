@@ -5,16 +5,9 @@
 //
 // Products carry no category reference of their own, so this looks the other way: it takes the
 // shopper's category tree (Four51Ctrl hands it over as it loads), finds the coming-soon
-// categories, and fetches their product lists once. The product card, quick-add and the PDP
-// then check membership with has().
-//
-// It calls the Products API directly rather than Product.search(): that service keeps ONE
-// shared result array, the same array the category page is rendering, and every search empties
-// it in place - a background search from here would blank the grid on screen.
-four51.app.factory('ComingSoon', ['$resource', '$451', '$q', '$log', '$timeout', function($resource, $451, $q, $log, $timeout) {
-	var PAGE_SIZE = 100;
-	var MAX_PAGES = 10;
-
+// categories, and loads their product lists through CategoryProducts once. The product card,
+// quick-add and the PDP then check membership with has().
+four51.app.factory('ComingSoon', ['CategoryProducts', '$q', '$log', '$timeout', function(CategoryProducts, $q, $log, $timeout) {
 	var ids = {};
 	// waiting: no tree seen yet. none: this site has no coming-soon category. loading/ready: as named.
 	var state = 'waiting';
@@ -39,18 +32,6 @@ four51.app.factory('ComingSoon', ['$resource', '$451', '$q', '$log', '$timeout',
 		return out;
 	}
 
-	function fetchCategory(interopID, page, found) {
-		var criteria = { CategoryInteropID: interopID, SearchTerms: '', Page: page, PageSize: PAGE_SIZE };
-		return $resource($451.api('Products')).get(criteria).$promise.then(function(result) {
-			angular.forEach(result.List, function(product) {
-				if (product && product.InteropID) found[product.InteropID] = true;
-			});
-			if (result.Count > page * PAGE_SIZE && page < MAX_PAGES)
-				return fetchCategory(interopID, page + 1, found);
-			return found;
-		});
-	}
-
 	function load(tree) {
 		var categories = collect(tree, []);
 		var key = categories.slice().sort().join(',');
@@ -67,7 +48,9 @@ four51.app.factory('ComingSoon', ['$resource', '$451', '$q', '$log', '$timeout',
 		var mine = ++token;
 		var found = {};
 		$q.all(categories.map(function(interopID) {
-			return fetchCategory(interopID, 1, found).then(null, function() {
+			return CategoryProducts.ids(interopID).then(function(members) {
+				angular.extend(found, members);
+			}, function() {
 				// Fail open: a lookup error shouldn't block every product on the site.
 				$log.warn('ComingSoon: could not load products for category ' + interopID);
 			});

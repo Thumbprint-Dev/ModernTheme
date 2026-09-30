@@ -79,6 +79,10 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 		// Built by categoryMessages() below rather than the generic merge, since its keys are
 		// the site's own category IDs, not fixed setting names.
 		categoryMessages: {},
+		// Notes next to the PDP price (e.g. a special-pricing program), as a list of
+		// { message, placement, products[], categories[] }. Built by priceNotes() below;
+		// PriceNotes (priceNoteService.js) picks the one that applies to a product.
+		priceNotes: [],
 		// Applied to the hero element by ngStyle; recomputed whenever the file lands.
 		heroStyle: {}
 	};
@@ -147,6 +151,38 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 				$log.warn('SiteConfig: categoryMessages.' + interopID + ' link needs both linkText and a safe linkUrl, showing the message without it');
 			}
 			output.push(message);
+		});
+		return output;
+	}
+
+	var NOTE_PLACEMENTS = ['price', 'button'];
+
+	// priceNotes.notes: each needs a non-blank message. placement is price (default) or button.
+	// products / categories narrow who sees it; a note with neither applies to every product.
+	function priceNotes(value) {
+		var output = [];
+		if (value === undefined) return output;
+		var notes = angular.isObject(value) && !angular.isArray(value) ? value.notes : value;
+		if (!angular.isArray(notes)) {
+			$log.warn('SiteConfig: priceNotes.notes must be a list, ignoring');
+			return output;
+		}
+		angular.forEach(notes, function(entry, i) {
+			if (!angular.isObject(entry) || !angular.isString(entry.message) || !entry.message.trim()) return;
+			var placement = angular.isString(entry.placement) ? entry.placement.trim().toLowerCase() : '';
+			if (placement && NOTE_PLACEMENTS.indexOf(placement) === -1) {
+				$log.warn('SiteConfig: priceNotes.notes[' + i + '] placement must be price or button, using price -- ' + entry.placement);
+				placement = '';
+			}
+			// A malformed target list skips the note rather than guessing: dropping it would widen
+			// the note to every product, and a bare string would be read letter by letter.
+			if ((entry.products !== undefined && !angular.isArray(entry.products)) || (entry.categories !== undefined && !angular.isArray(entry.categories))) {
+				$log.warn('SiteConfig: priceNotes.notes[' + i + '] products and categories must be lists, e.g. ["ABC-123"] - skipping this note');
+				return;
+			}
+			var products = stringList(entry.products).map(function(id) { return id.toLowerCase(); });
+			var categories = stringList(entry.categories);
+			output.push({ message: entry.message.trim(), placement: placement || 'price', products: products, categories: categories });
 		});
 		return output;
 	}
@@ -314,6 +350,7 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 		});
 
 		settings.categoryMessages = categoryMessages(data && data.categoryMessages);
+		settings.priceNotes = priceNotes(data && data.priceNotes);
 
 		settings.heroStyle = settings.hero.image
 			? { 'background-image': "url('" + settings.hero.image + "')" }

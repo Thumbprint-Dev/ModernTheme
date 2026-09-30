@@ -699,8 +699,10 @@ the category is the whole launch step. There is no separate PDT; the main PDT br
   It finds the coming-soon categories in the shopper's own `Category.tree()` and fetches their
   product IDs once per visit. That means the category has to be visible to the shopper.
 - **Don't use `Product.search()` for background lookups.** It keeps one shared result array, the
-  same array the category grid renders, and every call empties it in place. The service calls
-  `$resource($451.api('Products'))` directly.
+  same array the category grid renders, and every call empties it in place. The shared
+  `CategoryProducts` service (`categoryProductsService.js`) calls `$resource($451.api('Products'))`
+  directly and caches each category's product IDs per visit. Use it for any "is this product in
+  category X" rule (price notes use it too).
 - **While the list loads**, add buttons stay hidden (`isPending()`), so nothing flashes "Add to
   cart". A lookup failure falls back to normal behaviour.
 - **Not covered:** reordering a past order, items already in a cart before the product moved into
@@ -780,6 +782,21 @@ Four51 without forking the theme.
   - Because the keys are the site's own IDs, not fixed setting names, this block is parsed
     by `categoryMessages()` in the service instead of the generic merge. Underscore keys
     (`_help`) are skipped.
+- **Price notes**: `priceNotes.notes` puts a short note on the PDP, under the price
+  (`"placement": "price"`, the default) or above the add button (`"button"`). Use it for
+  things like a special-pricing program.
+  - A note with no `products` or `categories` applies to every product. `categories` limits it
+    to products in those categories; each is matched on its own, with no subcategory
+    inheritance. `products` limits it by InteropID or SKU/ExternalID.
+  - One note per product. The most specific wins: products, then categories, then every
+    product. Ties go to the note listed first.
+  - A malformed `products`/`categories` value (a string instead of a list) skips the note
+    rather than widening it to every product.
+  - Category membership comes from `CategoryProducts` (see Coming Soon). Until those lookups
+    land, a product that might match a category note shows no note, so a less specific one
+    never flashes first.
+  - The note hides under `HidePricing`. It's rendered by the PDT via `priceNote()` from
+    `productCtrl.js`.
 
 - `js/services/siteConfigService.js` holds the same keys as hard-coded fallbacks
   and merges the file over them, **ignoring blanks**. A site only fills in what it

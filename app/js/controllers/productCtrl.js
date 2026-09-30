@@ -1,5 +1,5 @@
-four51.app.controller('ProductCtrl', ['$scope', '$rootScope', '$routeParams', '$route', '$location', '$451', 'Product', 'ProductDisplayService', 'Order', 'Variant', 'User', 'AppConst', 'ComingSoon',
-function ($scope, $rootScope, $routeParams, $route, $location, $451, Product, ProductDisplayService, Order, Variant, User, AppConst, ComingSoon) {
+four51.app.controller('ProductCtrl', ['$scope', '$rootScope', '$routeParams', '$route', '$location', '$451', 'Product', 'ProductDisplayService', 'Order', 'Variant', 'User', 'AppConst', 'ComingSoon', 'PriceNotes',
+function ($scope, $rootScope, $routeParams, $route, $location, $451, Product, ProductDisplayService, Order, Variant, User, AppConst, ComingSoon, PriceNotes) {
     $scope.isEditforApproval = $routeParams.orderID && $scope.user.Permissions.contains('EditApprovalOrder');
     if ($scope.isEditforApproval) {
         Order.get($routeParams.orderID, function(order) {
@@ -62,6 +62,12 @@ function ($scope, $rootScope, $routeParams, $route, $location, $451, Product, Pr
 		return !!($scope.LineItem && ComingSoon.has($scope.LineItem.Product));
 	};
 	$scope.comingSoonPending = ComingSoon.isPending;
+
+	// site.json priceNotes: the note for this product, or null (priceNoteService.js). The PDT
+	// shows it under the price or above the add button, per its placement.
+	$scope.priceNote = function() {
+		return ($scope.LineItem && PriceNotes.forProduct($scope.LineItem.Product)) || null;
+	};
 
 	$scope.outOfInventory = function(){
 		var li = $scope.LineItem;

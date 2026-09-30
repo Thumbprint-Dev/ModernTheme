@@ -10,6 +10,8 @@
   products in a category whose InteropID contains "comingsoon" get a disabled Coming Soon button and
   no inventory or ordering controls. They're undefined in other controllers that reuse this template
   (LineItemEditCtrl), which reads as "not coming soon".
+  Price notes: priceNote() (productCtrl.js / priceNoteService.js) returns the site.json priceNotes
+  note for this product, or null - shown under the price or above the add button per placement.
   quantityfield, addtoorderspecs, priceScheduleTable, staticSpecsTable, relatedproducts and productnav are
   separate directives whose own templates live in app/partials/ and ARE git-deployed - restyle those there.
 
@@ -69,6 +71,12 @@
                 </p>
 
                 <priceScheduleTable ng-if="!(user.Permissions.contains('HidePricing')) && LineItem.PriceSchedule.PriceBreaks.length > 1" ps='LineItem.PriceSchedule' p='LineItem.Product'></priceScheduleTable>
+
+                <!-- site.json priceNotes (placement "price"): note under the price. Hidden with pricing. -->
+                <div class="mt-price-note" ng-if="priceNote().placement == 'price' && !(user.Permissions.contains('HidePricing'))">
+                    <i class="fa fa-tag mt-price-note-icon" aria-hidden="true"></i>
+                    <p>{{priceNote().message}}</p>
+                </div>
 
                 <staticspecstable ng-show="StaticSpecGroups && user.Permissions.contains('ViewNonCustomizableSpecs')" specgroups="StaticSpecGroups" length="LineItem.Product.StaticSpecLength"></staticspecstable>
 
@@ -151,6 +159,11 @@
                         <div class="mt-order-row" ng-if="!allowAddFromVariantList && !isComingSoon()">
                             <label ng-class="{required: !allowAddFromVariantList}">{{('Order' | r) + ' ' + ('Quantity' | r) | xlat}}</label>
                             <quantityfield required="true" lineitem="LineItem" class="quantity"></quantityfield>
+                        </div>
+                        <!-- site.json priceNotes (placement "button"): note right above the add button. -->
+                        <div class="mt-price-note mt-price-note--button" ng-if="priceNote().placement == 'button' && !(user.Permissions.contains('HidePricing'))">
+                            <i class="fa fa-tag mt-price-note-icon" aria-hidden="true"></i>
+                            <p>{{priceNote().message}}</p>
                         </div>
                         <!-- Coming soon (comingSoonService.js): a disabled button with no action. While that list
                              is still loading, neither button shows, so the page never flashes Add To Cart. -->
