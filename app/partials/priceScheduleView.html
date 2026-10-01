@@ -1,7 +1,10 @@
 <section class="mt-price-schedule">
-    <button id="451qa_btn_showhide_psched" class="mt-price-schedule-toggle" type="button" ng-init="showPS = true" ng-click="showPS = !showPS">
-        {{'Price Schedule' | r | xlat}}
-        <i class="fa" ng-class="showPS ? 'fa-caret-up' : 'fa-caret-down'"></i>
+    <button id="451qa_btn_showhide_psched" class="mt-price-schedule-toggle" type="button" ng-click="showPS = !showPS" aria-controls="451qa_list_pric_schd" aria-expanded="{{showPS ? 'true' : 'false'}}">
+        <span>
+            {{'Price Schedule' | r | xlat}}
+            <span class="mt-price-schedule-from" ng-show="!showPS && fromPrice() !== null">&middot; {{'from' | r | xlat}} {{fromPrice() | culturecurrency}}</span>
+        </span>
+        <i class="fa" ng-class="showPS ? 'fa-caret-up' : 'fa-caret-down'" aria-hidden="true"></i>
     </button>
     <div id="451qa_list_pric_schd" class="mt-price-schedule-table" ng-show="ps && p && showPS">
         <div class="mt-price-schedule-row mt-price-schedule-head">

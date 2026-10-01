@@ -13,7 +13,7 @@
                     <h2 class="mt-checkout-card-title">{{'Description' | r | xlat}}</h2>
                     <p ng-bind-html='LineItem.Product.Description'></p>
                     <span ng-if="!(user.Permissions.contains('HidePricing'))">
-                       <priceScheduleTable ps='LineItem.PriceSchedule' p='LineItem.Product'></priceScheduleTable>
+                       <priceScheduleTable ps='LineItem.PriceSchedule' p='LineItem.Product' start-open="true"></priceScheduleTable>
                     </span>
                 </div>
                 <staticspecstable specGroups="StaticSpecGroups"></staticspecstable>

@@ -1352,6 +1352,14 @@ body {
     color: var(--mt-color-accent);
 }
 
+/* "· from $X" on the collapsed toggle - the starting price, so a tiered product still shows a
+   price before the table is opened. */
+.mt-price-schedule-from {
+    font-weight: 400;
+    color: var(--mt-color-muted);
+    margin-left: 4px;
+}
+
 .mt-price-schedule-table {
     border: 1px solid var(--mt-color-border);
     border-radius: 10px;
