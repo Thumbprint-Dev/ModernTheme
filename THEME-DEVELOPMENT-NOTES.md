@@ -815,10 +815,15 @@ Four51 without forking the theme.
     off for those products.
   - Savings are each line's retail total minus its `LineTotal`. Invalid kit parents are
     skipped, matching the cart subtotal. Shipping, tax and coupons are excluded.
-  - Order history recomputes savings with **today's** settings.
+  - The savings figure isn't stored on the order. It's recomputed from **today's** settings
+    every time it's shown, so it appears only before and right after ordering: cart, checkout,
+    the cart print view, and the confirmation page (`order.recent`, set by `OrderViewCtrl` on
+    `/order/new/:id`). It's left off Order History and the order print view, so a later
+    discount change can't rewrite what a past order says was saved. To show it on past orders,
+    save the figure onto the order at checkout (e.g. a custom order field) and read that back.
   - All math lives in `comparePricingService.js`, exposed as `$root.comparePricing`. It's used
     by: product cards, the PDP (PDT), the price schedule, quick-add, the mini-cart, cart lines
-    and summary, the checkout summary, order history/confirmation and both print views.
+    and summary, the checkout summary, the order confirmation page and the cart print view.
   - Four51's own emails and invoices can't show any of it.
   - `categoryMessages`, `priceNotes` and `comparePricing` are skipped by the generic merge in
     `apply()` (`CUSTOM_SECTIONS`). Each has its own parser, and the generic merge would

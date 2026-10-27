@@ -18,8 +18,11 @@
     <p><span class="text-info">{{'Total' | r | xlat}}</span>
         <span class="pull-right">{{order.Total | culturecurrency}}</span>
     </p>
-    <!-- site.json comparePricing: savings on this order's lines, worked out with today's settings. -->
-    <div class="mt-order-savings" ng-if="$root.comparePricing.savingsText(order) && !(user.Permissions.contains('HidePricing'))">
+    <!-- site.json comparePricing: savings on the confirmation page only (order.recent, set by
+         OrderViewCtrl on /order/new/:id). The figure is worked out from today's settings rather
+         than stored on the order, so Order History doesn't show it - a later change to the
+         discount would otherwise rewrite what past orders say was saved. -->
+    <div class="mt-order-savings" ng-if="order.recent && $root.comparePricing.savingsText(order) && !(user.Permissions.contains('HidePricing'))">
         <i class="fa fa-check-circle" aria-hidden="true"></i>
         <span>{{$root.comparePricing.savingsText(order)}}</span>
     </div>
