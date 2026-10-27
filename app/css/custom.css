@@ -1318,6 +1318,54 @@ body {
     font-size: 12px;
 }
 
+/* site.json comparePricing: struck-through retail price beside a real price, the "Your price"
+   label above the PDP price, and the "You saved" line in the order summaries. The retail
+   price is muted and lighter so the real price stays the one that reads first. */
+.mt-retail-price {
+    font-size: 0.75em;
+    font-weight: 400;
+    color: var(--mt-color-muted);
+    margin-left: 6px;
+    white-space: nowrap;
+}
+
+.mt-sale-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--mt-color-muted);
+    margin-bottom: 2px;
+}
+
+.mt-cart-item-retail {
+    margin: 0;
+    text-align: inherit;
+}
+
+.mt-cart-item-retail .mt-retail-price,
+.mt-minicart-item-price .mt-retail-price {
+    display: block;
+    margin-left: 0;
+    font-size: 12px;
+}
+
+/* Inside already-small text (the cart's "Unit Price" line), match it rather than shrinking further. */
+.mt-pdp-meta .mt-retail-price {
+    font-size: 1em;
+}
+
+.mt-order-savings {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 8px 0 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--mt-color-accent);
+}
+
 .mt-price-note--summary .mt-price-note-icon {
     font-size: 13px;
     line-height: 18px;

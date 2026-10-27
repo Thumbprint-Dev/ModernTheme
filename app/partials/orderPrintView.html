@@ -62,6 +62,7 @@
                     <p>{{'Tax' | r | xlat}}: {{order.TaxCost | culturecurrency}}</p>
                     <p ng-if="order.Coupon">{{'Coupon' | r | xlat}} ({{order.Coupon.Label}}): {{order.Coupon.OrderDiscount * -1 | culturecurrency}}</p>
                     <p>{{'Total' | r | xlat}}: {{order.Total | culturecurrency}}</p>
+                    <p ng-if="$root.comparePricing.savingsText(order) && !(user.Permissions.contains('HidePricing'))">{{$root.comparePricing.savingsText(order)}}</p>
                 </div>
             </div>
         </div>

@@ -45,6 +45,19 @@
 		],
 		"notes": []
 	},
+	"comparePricing": {
+		"_help": "Retail (\"compare at\") pricing. Display only - the real Four51 price is always what's charged. enabled: true or false, without quotes - the master switch; false hides everything below. discountPercent: how far the real price is below retail, as a number from 0 to 90. retail = price / (1 - discountPercent / 100), rounded to the cent, so 15 shows $10.00 against a retail price of $11.76. showRetailPrice: true or false - the retail price struck through next to the real price (product cards, product page, price schedule, quick add, mini-cart, cart lines). showSaleLabel: true or false - saleLabel above the real price on the product page and quick add. showOrderSavings: true or false - savingsText under the totals in the cart, checkout, order confirmation, order history and print views. Savings are each line's retail total minus its real total; shipping, tax and coupons aren't included. Order history uses today's settings, not the ones in force when the order was placed. retailLabel (read by screen readers before the struck price), saleLabel, savingsText: wording; {amount} in savingsText becomes the amount. overrides: a different discountPercent for some products - each needs products: [\"PRODUCT-SKU\"] (InteropID or SKU) or categories: [\"category-interopid\"] (each category matched on its own). The most specific wins: a products override beats a categories override, which beats the site-wide discountPercent. 0 turns retail pricing off for those products. Keys starting with _ are ignored. Reload the page to see a change.",
+		"_example": {"enabled": true, "discountPercent": 15, "overrides": [{"discountPercent": 25, "categories": ["category-interopid"]}, {"discountPercent": 0, "products": ["PRODUCT-SKU"]}]},
+		"enabled": false,
+		"discountPercent": 15,
+		"showRetailPrice": true,
+		"showSaleLabel": true,
+		"showOrderSavings": true,
+		"retailLabel": "Retail",
+		"saleLabel": "Your price",
+		"savingsText": "You saved {amount}!",
+		"overrides": []
+	},
 	"shipping": {
 		"_help_allowedDomesticMethods": "allowedDomesticMethods: what a DOMESTIC order may use. Matched on the name Four51 returns, trimmed and case-insensitive, and the whole name must match - `Fedex International` does not match `Fedex International Priority`, so list each variant you want. Leave it empty for no restriction. Methods seen: `Bulk Shipping (over 150 lbs)`, `Fedex International`, `UPS Ground`, `UPS 3 Day Select`, `UPS 2nd Day Air`, `UPS Next Day Air Saver`, `UPS Next Day Air`, `UPS Next Day Air Early A.M.`.",
 		"_help_allowedInternationalMethods": "allowedInternationalMethods: what an order shipping OUTSIDE domesticCountries may use. The rule is symmetric - an international address sees only these, and a domestic address never sees them, so a carrier listed here is automatically kept out of domestic checkout. Leave it empty and country plays no part at all. A name matching nothing empties the dropdown and logs a warning to the console.",

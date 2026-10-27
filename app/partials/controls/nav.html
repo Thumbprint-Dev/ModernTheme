@@ -55,7 +55,7 @@
                                     <p class="mt-minicart-item-name">{{item.Product.Name}}</p>
                                     <p class="mt-minicart-item-meta">{{'Qty' | r | xlat}}: {{item.Quantity}}</p>
                                 </div>
-                                <p class="mt-minicart-item-price" ng-if="!(user.Permissions.contains('HidePricing'))">{{item.LineTotal | culturecurrency}}</p>
+                                <p class="mt-minicart-item-price" ng-if="!(user.Permissions.contains('HidePricing'))">{{item.LineTotal | culturecurrency}} <s class="mt-retail-price" ng-if="$root.comparePricing.retail(item.LineTotal, item.Product)"><span class="sr-only">{{$root.comparePricing.retailLabel() | r | xlat}}</span> {{$root.comparePricing.retail(item.LineTotal, item.Product) | culturecurrency}}</s></p>
                                 <button type="button" class="mt-minicart-item-remove" ng-click="removeMinicartItem(item)" aria-label="{{'Remove' | r | xlat}}" title="{{'Remove' | r | xlat}}">
                                     <i class="fa fa-times"></i>
                                 </button>

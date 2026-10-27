@@ -2,7 +2,7 @@
     <button id="451qa_btn_showhide_psched" class="mt-price-schedule-toggle" type="button" ng-click="showPS = !showPS" aria-controls="451qa_list_pric_schd" aria-expanded="{{showPS ? 'true' : 'false'}}">
         <span>
             {{'Price Schedule' | r | xlat}}
-            <span class="mt-price-schedule-from" ng-show="!showPS && fromPrice() !== null">&middot; {{'from' | r | xlat}} {{fromPrice() | culturecurrency}}</span>
+            <span class="mt-price-schedule-from" ng-show="!showPS && fromPrice() !== null">&middot; {{'from' | r | xlat}} {{fromPrice() | culturecurrency}} <s class="mt-retail-price" ng-if="$root.comparePricing.retail(fromPrice(), p)"><span class="sr-only">{{$root.comparePricing.retailLabel() | r | xlat}}</span> {{$root.comparePricing.retail(fromPrice(), p) | culturecurrency}}</s></span>
         </span>
         <i class="fa" ng-class="showPS ? 'fa-caret-up' : 'fa-caret-down'" aria-hidden="true"></i>
     </button>
@@ -28,6 +28,7 @@
             </div>
             <div class="mt-price-schedule-col mt-price-schedule-col-price">
                 {{pb.Price * (ps.RestrictedQuantity ? pb.Quantity : 1)| culturecurrency}}
+                <s class="mt-retail-price" ng-if="$root.comparePricing.retail(pb.Price * (ps.RestrictedQuantity ? pb.Quantity : 1), p)"><span class="sr-only">{{$root.comparePricing.retailLabel() | r | xlat}}</span> {{$root.comparePricing.retail(pb.Price * (ps.RestrictedQuantity ? pb.Quantity : 1), p) | culturecurrency}}</s>
             </div>
         </div>
     </div>

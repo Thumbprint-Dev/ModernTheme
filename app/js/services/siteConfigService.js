@@ -83,6 +83,19 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 		// { message, placement, products[], categories[] }. Built by priceNotes() below;
 		// PriceNotes (priceNoteService.js) picks the one that applies to a product.
 		priceNotes: [],
+		// Retail ("compare at") pricing and order savings. Built by comparePricing() below;
+		// ComparePricing (comparePricingService.js) does the math. Off unless enabled is true.
+		comparePricing: {
+			enabled: false,
+			discountPercent: 0,
+			showRetailPrice: true,
+			showSaleLabel: true,
+			showOrderSavings: true,
+			retailLabel: 'Retail',
+			saleLabel: 'Your price',
+			savingsText: 'You saved {amount}!',
+			overrides: []
+		},
 		// Applied to the hero element by ngStyle; recomputed whenever the file lands.
 		heroStyle: {}
 	};
@@ -90,6 +103,11 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 	// Anything here is written into a CSS custom property, so keep it to values
 	// that are unambiguously colours -- no url(), no semicolons, nothing that
 	// could carry extra declarations along with it.
+	// Sections with their own parser below (keys are the site's own IDs, or values aren't the
+	// plain strings/booleans/lists the generic merge in apply() understands). The merge skips them.
+	var CUSTOM_SECTIONS = ['categoryMessages', 'priceNotes', 'comparePricing'];
+	var COMPARE_PRICING_DEFAULTS = angular.copy(settings.comparePricing);
+
 	var COLOR = /^(#[0-9a-f]{3}|#[0-9a-f]{6}|rgba?\([\d\s.,%]+\)|hsla?\([\d\s.,%]+\)|[a-z]{3,20})$/i;
 
 	// Same reasoning as COLOR, for a value that ends up in a font-family
@@ -188,6 +206,59 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 				$log.warn('SiteConfig: priceNotes.notes[' + i + '] showInOrderSummary must be true or false without quotes, leaving it off -- ' + angular.toJson(entry.showInOrderSummary));
 			output.push({ message: entry.message.trim(), placement: placement || 'price', products: products, categories: categories, showInOrderSummary: inSummary });
 		});
+		return output;
+	}
+
+	// A percentage between 0 and 90 (a number, or a numeric string), or null if it isn't one.
+	// Capped at 90 so a typo can't produce an absurd "retail" price (99% off = 100x the price).
+	function percent(value, where) {
+		var n = angular.isString(value) && value.trim() !== '' ? Number(value) : value;
+		if (typeof n !== 'number' || isNaN(n) || n < 0 || n > 90) {
+			if (value !== undefined) $log.warn('SiteConfig: ' + where + ' must be a number from 0 to 90 -- ' + angular.toJson(value));
+			return null;
+		}
+		return n;
+	}
+
+	function comparePricing(value) {
+		var output = angular.copy(COMPARE_PRICING_DEFAULTS);
+		if (value === undefined) return output;
+		if (!angular.isObject(value) || angular.isArray(value)) {
+			$log.warn('SiteConfig: comparePricing must be an object, leaving retail pricing off');
+			return output;
+		}
+		angular.forEach(['enabled', 'showRetailPrice', 'showSaleLabel', 'showOrderSavings'], function(key) {
+			if (typeof value[key] === 'boolean') output[key] = value[key];
+			else if (value[key] !== undefined) $log.warn('SiteConfig: comparePricing.' + key + ' must be true or false without quotes, ignoring -- ' + angular.toJson(value[key]));
+		});
+		angular.forEach(['retailLabel', 'saleLabel', 'savingsText'], function(key) {
+			if (angular.isString(value[key]) && value[key].trim() !== '') output[key] = value[key].trim();
+		});
+		var pct = percent(value.discountPercent, 'comparePricing.discountPercent');
+		if (pct !== null) output.discountPercent = pct;
+		if (value.overrides !== undefined && !angular.isArray(value.overrides)) {
+			$log.warn('SiteConfig: comparePricing.overrides must be a list, ignoring');
+		} else {
+			angular.forEach(value.overrides, function(entry, i) {
+				var where = 'comparePricing.overrides[' + i + ']';
+				if (!angular.isObject(entry)) return;
+				var overridePct = percent(entry.discountPercent, where + '.discountPercent');
+				if (overridePct === null) return;
+				// Same rule as priceNotes: a malformed target list skips the entry instead of
+				// widening it to every product.
+				if ((entry.products !== undefined && !angular.isArray(entry.products)) || (entry.categories !== undefined && !angular.isArray(entry.categories))) {
+					$log.warn('SiteConfig: ' + where + ' products and categories must be lists, e.g. ["ABC-123"] - skipping it');
+					return;
+				}
+				var products = stringList(entry.products).map(function(id) { return id.toLowerCase(); });
+				var categories = stringList(entry.categories);
+				if (!products.length && !categories.length) {
+					$log.warn('SiteConfig: ' + where + ' needs products or categories - use discountPercent for every product. Skipping it');
+					return;
+				}
+				output.overrides.push({ discountPercent: overridePct, products: products, categories: categories });
+			});
+		}
 		return output;
 	}
 
@@ -321,6 +392,7 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 		if (settings.name) $document[0].title = settings.name;
 
 		angular.forEach(settings, function(defaults, section) {
+			if (CUSTOM_SECTIONS.indexOf(section) !== -1) return;
 			var overrides = data && data[section];
 			if (!angular.isObject(defaults) || !angular.isObject(overrides)) return;
 
@@ -355,6 +427,7 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 
 		settings.categoryMessages = categoryMessages(data && data.categoryMessages);
 		settings.priceNotes = priceNotes(data && data.priceNotes);
+		settings.comparePricing = comparePricing(data && data.comparePricing);
 
 		settings.heroStyle = settings.hero.image
 			? { 'background-image': "url('" + settings.hero.image + "')" }

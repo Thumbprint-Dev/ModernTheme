@@ -46,6 +46,11 @@
         <span>{{'Total' | r | xlat}}</span>
         <span>{{(currentOrder.BudgetAccountID && currentBudgetAccount ? (remainingOrderTotal > 0 ? remainingOrderTotal : 0) : currentOrder.Total) | culturecurrency}}</span>
     </div>
+    <!-- site.json comparePricing: total savings across the order's lines. -->
+    <div class="mt-order-savings" ng-if="$root.comparePricing.savingsText(currentOrder) && !(user.Permissions.contains('HidePricing'))">
+        <i class="fa fa-check-circle" aria-hidden="true"></i>
+        <span>{{$root.comparePricing.savingsText(currentOrder)}}</span>
+    </div>
     <p class="mt-pdp-meta" ng-show="currentOrder.BudgetAccountID && currentBudgetAccount && !(user.Permissions.contains('HidePricing'))">
         {{'Remaining balance to be charged to your other payment method.' | r | xlat}}
     </p>

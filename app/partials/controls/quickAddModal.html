@@ -7,7 +7,9 @@
 
     <div ng-show="!modalLoading && !needsFullPdpFallback">
         <p class="mt-product-price" ng-if="LineItem.PriceSchedule.PriceBreaks[0] && !(user.Permissions.contains('HidePricing'))">
+            <span class="mt-sale-label" ng-if="$root.comparePricing.saleLabel(LineItem.Product)">{{$root.comparePricing.saleLabel(LineItem.Product) | r | xlat}}</span>
             {{LineItem.PriceSchedule.PriceBreaks[0].Price | culturecurrency}}
+            <s class="mt-retail-price" ng-if="$root.comparePricing.retail(LineItem.PriceSchedule.PriceBreaks[0].Price, LineItem.Product)"><span class="sr-only">{{$root.comparePricing.retailLabel() | r | xlat}}</span> {{$root.comparePricing.retail(LineItem.PriceSchedule.PriceBreaks[0].Price, LineItem.Product) | culturecurrency}}</s>
         </p>
 
         <kitaddtoorderspecs template="{{LineItem.Product.InteropID}}"></kitaddtoorderspecs>

@@ -11,6 +11,8 @@
         <p class="mt-pdt-sku" ng-if="product.ExternalID">{{'SKU' | r | xlat}} {{product.ExternalID}}</p>
         <p class="mt-product-price" ng-if="product.StandardPriceSchedule.PriceBreaks[0] && !(user.Permissions.contains('HidePricing'))">
             {{product.StandardPriceSchedule.PriceBreaks[0].Price | culturecurrency}}
+            <!-- site.json comparePricing: retail price struck through (comparePricingService.js). -->
+            <s class="mt-retail-price" ng-if="$root.comparePricing.retail(product.StandardPriceSchedule.PriceBreaks[0].Price, product)"><span class="sr-only">{{$root.comparePricing.retailLabel() | r | xlat}}</span> {{$root.comparePricing.retail(product.StandardPriceSchedule.PriceBreaks[0].Price, product) | culturecurrency}}</s>
         </p>
     </a>
     <!-- Products in a "coming soon" category (see comingSoonService.js) get this in place of every

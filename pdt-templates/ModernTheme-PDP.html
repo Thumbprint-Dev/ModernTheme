@@ -12,6 +12,8 @@
   (LineItemEditCtrl), which reads as "not coming soon".
   Price notes: priceNote() (productCtrl.js / priceNoteService.js) returns the site.json priceNotes
   note for this product, or null - shown under the price or above the add button per placement.
+  Compare pricing: $root.comparePricing (comparePricingService.js) gives the "Your price" label and
+  the struck-through retail price from site.json comparePricing; both are blank when it's off.
   quantityfield, addtoorderspecs, priceScheduleTable, staticSpecsTable, relatedproducts and productnav are
   separate directives whose own templates live in app/partials/ and ARE git-deployed - restyle those there.
 
@@ -67,7 +69,10 @@
                 <p class="mt-pdt-sku" ng-show="LineItem.Product.ExternalID">{{LineItem.Product.ExternalID}}</p>
 
                 <p class="mt-pdp-price" ng-show="LineItem.PriceSchedule.PriceBreaks.length == 1" ng-if="!(user.Permissions.contains('HidePricing'))">
+                    <!-- site.json comparePricing: "Your price" label and the retail price struck through. -->
+                    <span class="mt-sale-label" ng-if="$root.comparePricing.saleLabel(LineItem.Product)">{{$root.comparePricing.saleLabel(LineItem.Product) | r | xlat}}</span>
                     {{LineItem.PriceSchedule.PriceBreaks[0].Price | culturecurrency}}
+                    <s class="mt-retail-price" ng-if="$root.comparePricing.retail(LineItem.PriceSchedule.PriceBreaks[0].Price, LineItem.Product)"><span class="sr-only">{{$root.comparePricing.retailLabel() | r | xlat}}</span> {{$root.comparePricing.retail(LineItem.PriceSchedule.PriceBreaks[0].Price, LineItem.Product) | culturecurrency}}</s>
                 </p>
 
                 <priceScheduleTable ng-if="!(user.Permissions.contains('HidePricing')) && LineItem.PriceSchedule.PriceBreaks.length > 1" ps='LineItem.PriceSchedule' p='LineItem.Product'></priceScheduleTable>

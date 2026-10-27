@@ -21,6 +21,7 @@
                 <p>
                     {{'Subtotal' | r | xlat}}: <span>{{currentOrder.Subtotal | culturecurrency}}</span>
                 </p>
+                <p ng-if="$root.comparePricing.savingsText(currentOrder)">{{$root.comparePricing.savingsText(currentOrder)}}</p>
                 <p ng-show="TaxMethod" ng-if="user.Company.TaxMethod != 'NoTax'">
                     {{'Shipping, handling and tax may be added to this subtotal.' | r | xlat}}
                 </p>

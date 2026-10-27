@@ -803,6 +803,27 @@ Four51 without forking the theme.
     `PriceNotes.forOrder()`, exposed as `$root.priceNotes`, returns a stable array for the
     `ng-repeat`.
 
+- **Compare pricing**: `comparePricing` shows a struck-through retail price beside the real one,
+  a "Your price" label, and "You saved $X!" under the order totals. It's display only; Four51's
+  price is always what's charged.
+  - It's a discount model: retail = price ÷ (1 − `discountPercent`/100), rounded to the cent, so
+    15 gives $10.00 against $11.76.
+  - `enabled` is the master switch. `showRetailPrice`, `showSaleLabel` and `showOrderSavings` are
+    the three features, and the labels are editable (`{amount}` in `savingsText`).
+  - `overrides` set a different percentage by product (InteropID or SKU) or category, with the
+    same most-specific-wins rules and `CategoryProducts` loading wait as price notes. 0 turns it
+    off for those products.
+  - Savings are each line's retail total minus its `LineTotal`. Invalid kit parents are
+    skipped, matching the cart subtotal. Shipping, tax and coupons are excluded.
+  - Order history recomputes savings with **today's** settings.
+  - All math lives in `comparePricingService.js`, exposed as `$root.comparePricing`. It's used
+    by: product cards, the PDP (PDT), the price schedule, quick-add, the mini-cart, cart lines
+    and summary, the checkout summary, order history/confirmation and both print views.
+  - Four51's own emails and invoices can't show any of it.
+  - `categoryMessages`, `priceNotes` and `comparePricing` are skipped by the generic merge in
+    `apply()` (`CUSTOM_SECTIONS`). Each has its own parser, and the generic merge would
+    otherwise copy a quoted number in as text.
+
 - `js/services/siteConfigService.js` holds the same keys as hard-coded fallbacks
   and merges the file over them, **ignoring blanks**. A site only fills in what it
   changes, a missing or half-written file still renders the stock theme, and

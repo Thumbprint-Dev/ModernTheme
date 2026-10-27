@@ -121,8 +121,9 @@
                             </div>
 
                             <div class="mt-cart-item-price" ng-if="!(item.IsKitParent && item.KitIsInvalid) && !(user.Permissions.contains('HidePricing'))">
-                                <p class="mt-pdp-meta">{{'Unit Price' | r | xlat}} {{item.UnitPrice | culturecurrency}}</p>
+                                <p class="mt-pdp-meta">{{'Unit Price' | r | xlat}} {{item.UnitPrice | culturecurrency}} <s class="mt-retail-price" ng-if="$root.comparePricing.retail(item.UnitPrice, item.Product)"><span class="sr-only">{{$root.comparePricing.retailLabel() | r | xlat}}</span> {{$root.comparePricing.retail(item.UnitPrice, item.Product) | culturecurrency}}</s></p>
                                 <p class="mt-pdp-price">{{item.LineTotal | culturecurrency}}</p>
+                                <p class="mt-cart-item-retail" ng-if="$root.comparePricing.retail(item.LineTotal, item.Product)"><s class="mt-retail-price" ng-if="$root.comparePricing.retail(item.LineTotal, item.Product)"><span class="sr-only">{{$root.comparePricing.retailLabel() | r | xlat}}</span> {{$root.comparePricing.retail(item.LineTotal, item.Product) | culturecurrency}}</s></p>
                             </div>
 
                             <div class="mt-cart-item-pending-action" ng-if="item.IsKitParent && item.KitIsInvalid">
@@ -150,6 +151,11 @@
                         <div class="mt-cart-summary-row" ng-if="!(user.Permissions.contains('HidePricing'))">
                             <span>{{'Subtotal' | r | xlat}}</span>
                             <span>{{currentOrder.Subtotal | culturecurrency}}</span>
+                        </div>
+                        <!-- site.json comparePricing: total savings across the order's lines. -->
+                        <div class="mt-order-savings" ng-if="$root.comparePricing.savingsText(currentOrder) && !(user.Permissions.contains('HidePricing'))">
+                            <i class="fa fa-check-circle" aria-hidden="true"></i>
+                            <span>{{$root.comparePricing.savingsText(currentOrder)}}</span>
                         </div>
                         <p class="mt-pdp-meta" ng-show="TaxMethod" ng-if="user.Company.TaxMethod != 'NoTax'">{{'Shipping, handling and tax may be added to this subtotal.' | r | xlat}}</p>
 
