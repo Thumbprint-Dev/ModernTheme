@@ -9,7 +9,7 @@
         <div class="mt-field mt-checkout-cc-number">
             <input id="account-number" class="form-control" ng-model="currentOrder.CreditCard.AccountNumber" name="creditCardNumber"
                    ng-required="currentOrder.PaymentMethod == 'CreditCard' && !currentOrder.CreditCardID"
-                   type="text" placeholder="{{'Account Number' | r | xlat}}" autocomplete="off" />
+                   type="text" placeholder="{{'Credit Card Number' | r | xlat}}" autocomplete="off" />
             <div class="mt-checkout-cc-icon" style="background-image:url({{creditCardIconUrl}})" ng-class="{'active':creditCardIconUrl}"></div>
         </div>
         <div class="mt-checkout-cc-row" ng-class="{'mt-checkout-cc-row-split': currentOrder.RequireCVN}">
@@ -20,7 +20,7 @@
             <div class="mt-field" ng-if="currentOrder.RequireCVN">
                 <input id="cvn" class="form-control" ng-model="currentOrder.CreditCard.CVN" name="cvnNumber"
                        ng-required="currentOrder.PaymentMethod == 'CreditCard' && !currentOrder.CreditCardID"
-                       type="text" placeholder="{{'CVN' | r | xlat}}" ng-maxlength="4" autocomplete="off" />
+                       type="text" placeholder="{{'CVV' | r | xlat}}" ng-maxlength="4" autocomplete="off" />
             </div>
         </div>
         <label class="mt-checkout-cc-save" ng-if="user.Permissions.contains('AllowSaveCreditCard')" ng-show="!currentOrder.CreditCardID">
@@ -45,7 +45,7 @@
         {{friendlyName(currentOrder.CreditCard.Type) + ' is not supported' | rl | xlat}}
     </p>
     <p ng-show="cart_billing.$error.cvnNumber">
-        {{'Please enter a valid ' + ('CVN' | rl) | xlat}}
+        {{'Please enter a valid ' + ('CVV' | rl) | xlat}}
     </p>
     <p ng-show="cart_billing.$error.expDate">
         {{'Please enter a valid ' + ('Expiration Date' | rl) | xlat}}
