@@ -8,8 +8,17 @@
     </div>
 
     <div ng-hide="billaddressform || (billaddresses.length == 0 && user.Permissions.contains('CreateBillToAddress'))">
-        <form name="cart_billing" novalidate="">
-            <paymentselector></paymentselector>
+        <!-- Billing address only. Payment methods are their own section (orderPayment.html), so
+             they show even before a billing address exists - this form is hidden until then.
+             Its name is cart_billaddress; cart_billing belongs to the Payment form, which is where
+             the payment and credit card validity is set. -->
+        <form name="cart_billaddress" novalidate="">
+            <div class="mt-checkout-billing-actions"
+                 ng-hide="(billaddressform || (!addressform && (addresses | filter:{IsBilling:true}).length == 0) || !user.Permissions.contains('CreateBillToAddress'))">
+                <button class="mt-header-btn mt-checkout-shipto-new" type="button" ng-click="billaddressform = true">
+                    {{('New' | r) + ' ' +  ('Address' | r) | xlat}}
+                </button>
+            </div>
 
             <div class="mt-field" ng-show="billaddresses.length > 0">
                 <label class="required">{{('Billing' | r) + ' ' + ('Address' | r) | xlat}}</label>

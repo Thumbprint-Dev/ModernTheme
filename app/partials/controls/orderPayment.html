@@ -1,0 +1,9 @@
+<!-- Payment methods, split out of Billing so they show whether or not a billing address exists
+     (Billing hides its whole form until one does). The form keeps the name cart_billing because
+     paymentselection.js and creditcard.js set the payment and card validity on that form. -->
+<div class="mt-checkout-card mt-checkout-payment-card">
+    <h2 class="mt-checkout-card-title">{{'Payment' | r | xlat}}</h2>
+    <form name="cart_billing" novalidate="">
+        <paymentselector></paymentselector>
+    </form>
+</div>

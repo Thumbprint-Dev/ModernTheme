@@ -138,7 +138,7 @@ function ($scope, $routeParams, $location, $route, $filter, $rootScope, $451, Us
 
 	$scope.submitOrder = function() {
 		$scope.submitAttempted = true;
-		if ($scope.cart_order.$invalid || $scope.cart_shipping.$invalid || $scope.cart_billing.$invalid) {
+		if ($scope.cart_order.$invalid || $scope.cart_shipping.$invalid || $scope.cart_billing.$invalid || ($scope.cart_billaddress && $scope.cart_billaddress.$invalid)) {
 			// Lists what's missing in a modal (checkOutView.html) - the bottom-bar badge it
 			// replaces showed only a count until expanded, easy to miss below the fold.
 			$scope.showCheckoutErrors = true;

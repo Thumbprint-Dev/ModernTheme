@@ -686,6 +686,22 @@ back in `SortOptions`), so the hand-authored placeholder `<option value="">` mea
 sort selected" had no text and rendered as a blank line in the dropdown. Give it real text
 (`{{'Default Sort' | r | xlat}}`) rather than leaving it empty.
 
+## Checkout: Payment is its own section, last on the page
+
+The payment selector (`<paymentselector>`) used to sit inside Billing's form, and Billing hides
+that whole form until a billing address exists. So a shopper with no saved address saw no
+payment methods at all.
+
+- It now lives in its own `<orderpayment>` section (`controls/orderPayment.html`, with the
+  directive defined in `orderbilling.js`), placed **last** in `checkOutView.html` and shown
+  when `currentOrder.BillingEnabled`.
+- **The form names swapped.** The Payment section's form is `cart_billing`, because
+  `paymentselection.js` and `creditcard.js` set `paymentMethod` and the card errors on
+  `$scope.cart_billing`. Billing's address form is now `cart_billaddress`, and the submit
+  button, `submitOrder()` and the missing-details list check both forms.
+- Billing's "New Address" button moved out of the payment row into
+  `.mt-checkout-billing-actions`.
+
 ## Coming Soon products are switched on by category name
 
 A product becomes browse-only when it's in any category whose InteropID contains `comingsoon`.

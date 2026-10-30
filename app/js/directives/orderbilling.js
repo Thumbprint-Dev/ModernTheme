@@ -110,3 +110,13 @@ four51.app.directive('billingmessage', function() {
 	};
 	return obj;
 });
+
+// Payment section of checkout (partials/controls/orderPayment.html): the payment selector on its
+// own, last on the page. No scope of its own, like the other checkout sections, so its
+// cart_billing form registers on the checkout scope where CheckOutViewCtrl and the summary read it.
+four51.app.directive('orderpayment', function() {
+	return {
+		restrict: 'E',
+		templateUrl: 'partials/controls/orderPayment.html'
+	};
+});
