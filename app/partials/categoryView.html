@@ -6,6 +6,10 @@
             <h1 ng-if="site.hero.heading">{{site.hero.heading | r | xlat}}</h1>
             <p class="mt-hero-sub" ng-if="site.hero.subheading">{{site.hero.subheading | r | xlat}}</p>
             <a ng-if="site.hero.showButton && site.hero.buttonText" ng-href="{{site.hero.buttonHref}}" class="mt-btn-accent">{{site.hero.buttonText | r | xlat}}</a>
+            <!-- Dummy feature flag `test` (see "Feature flags" in THEME-DEVELOPMENT-NOTES.md):
+                 the first line is the template-side check, the second shows CategoryCtrl's. -->
+            <p class="mt-hero-sub" ng-if="feature_flag('test')">{{'Feature flag "test" is on (checked in the template).' | r | xlat}}</p>
+            <p class="mt-hero-sub" ng-if="testFlagNote()">{{testFlagNote()}}</p>
         </div>
     </div>
 

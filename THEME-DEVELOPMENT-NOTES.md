@@ -750,6 +750,60 @@ existing form rather than having a dedicated one. `app/partials/controls/login.h
 `/login` route) had no link to this at all - fixed by adding a plain "Need an account? Click here"
 link to `/admin`, styled like the existing "Need help logging on?" link already on that page.
 
+## Feature flags: `?feature_flags=` (per tab, sessionStorage)
+
+Unfinished or not-yet-rolled-out UI ships behind a flag that is off by default. Turn flags on by
+adding the pseudo query param to **any** storefront URL -- it is not a route:
+
+```
+/storefront/catalog?feature_flags=test,new_address_verification
+```
+
+- The list **replaces** whatever was on before; `?feature_flags=` (empty) clears every flag.
+- Names are case-insensitive; anything but letters, digits, `_` and `-` is dropped.
+- Stored in `sessionStorage` (`mt.featureFlags`): survives navigation and reloads in that tab,
+  gone when the tab closes. A shared link only flags whoever opens it.
+- Read once when the app boots, then stripped from the address bar. Typing the URL or following
+  an outside link works; an in-app route change carrying the param does not re-read it.
+- Implementation: `app/js/services/featureFlagsService.js`.
+
+**Flags are not secret and not security.** Every flag name ships to the browser in the theme's
+source, so anyone can find and switch any of them on. Use them to stage UI, never to restrict
+what a user may do -- anything that matters must still be enforced by the Four51 API.
+
+### Using a flag
+
+In any template -- isolate-scope directives included, because `feature_flag` sits on the shared
+Scope prototype rather than `$rootScope`:
+
+```html
+<p ng-if="feature_flag('test')">Only with the flag on</p>
+<p ng-if="!feature_flag('test')">Only with it off</p>
+```
+
+In a controller, directive or service, inject `FeatureFlags`:
+
+```js
+four51.app.controller('ExampleCtrl', ['$scope', 'FeatureFlags', function($scope, FeatureFlags) {
+	$scope.save = function() {
+		if (FeatureFlags.isOn('test')) { /* new path */ } else { /* existing path */ }
+	};
+}]);
+```
+
+Check the flag at the point of use (it is a plain object lookup) rather than caching it at
+controller start, and keep the old path intact beside the new one so retiring the flag is a
+pure delete. There is nothing to register: adding a flag is just using a new name -- plus a row
+in the table below, in the same PR.
+
+### Current flags
+
+Add a row with every new flag; delete the row in the PR that removes the flag's checks.
+
+| Flag | What it changes | Where | Remove when |
+|---|---|---|---|
+| `test` | Dummy example: two extra lines in the home page hero, one checked in the template and one in the controller | `app/partials/categoryView.html`, `app/js/controllers/categoryCtrl.js` | Once a real flag shows usage -- or keep as a smoke test that flags work |
+
 ## Per-site branding: `app/site.json`
 
 There is no CMS behind this theme, and the platform has no field for a home-page

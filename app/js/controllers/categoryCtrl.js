@@ -1,6 +1,13 @@
-four51.app.controller('CategoryCtrl', ['$routeParams', '$sce', '$scope', '$rootScope', '$451', 'Category', 'Product', 'AppConst', 'Order', 'User', '$modal', 'ProductDisplayService',
-function ($routeParams, $sce, $scope, $rootScope, $451, Category, Product, AppConst, Order, User, $modal, ProductDisplayService) {
+four51.app.controller('CategoryCtrl', ['$routeParams', '$sce', '$scope', '$rootScope', '$451', 'Category', 'Product', 'AppConst', 'Order', 'User', '$modal', 'ProductDisplayService', 'FeatureFlags',
+function ($routeParams, $sce, $scope, $rootScope, $451, Category, Product, AppConst, Order, User, $modal, ProductDisplayService, FeatureFlags) {
 	$scope.isHome = !$routeParams.categoryInteropID;
+
+	// Dummy feature flag `test` -- the controller-side example (see "Feature flags" in
+	// THEME-DEVELOPMENT-NOTES.md). The template-side example is in categoryView.html's hero.
+	var TEST_FLAG_NOTE = 'Feature flag "test" is on (checked in CategoryCtrl).';
+	$scope.testFlagNote = function() {
+		return FeatureFlags.isOn('test') ? TEST_FLAG_NOTE : '';
+	};
 
 	// site.json categoryMessages for this exact category (a subcategory only shows its own).
 	// Returns the stored list itself, so ng-repeat sees the same array on every digest.
