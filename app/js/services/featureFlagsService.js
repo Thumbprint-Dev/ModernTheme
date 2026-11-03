@@ -50,23 +50,36 @@ four51.app.factory('FeatureFlags', ['$window', '$log', function($window, $log) {
 		}
 	}
 
-	// Read from the raw URL rather than $location, so the param is caught on the very
-	// first page load even if a route redirect runs before anything asks for flags.
-	function fromUrl() {
-		var query = ($window.location.search || '').replace(/^\?/, '');
+	// The raw feature_flags value in a query string ('?a=1&feature_flags=x,y' -> 'x,y'),
+	// '' for a bare `?feature_flags`, or null when the param is absent. Pure -- it takes the
+	// string rather than reading $window -- so tests can call it directly.
+	function fromUrl(search) {
+		var query = (search || '').replace(/^\?/, '');
 		var found = null;
 		query.split('&').forEach(function(pair) {
 			var eq = pair.indexOf('=');
-			var key = decodeURIComponent((eq < 0 ? pair : pair.slice(0, eq)).replace(/\+/g, ' '));
-			if (key === PARAM) {
-				found = eq < 0 ? '' : decodeURIComponent(pair.slice(eq + 1).replace(/\+/g, ' '));
-			}
+			if (decode(eq < 0 ? pair : pair.slice(0, eq)) !== PARAM) return;
+			var value = eq < 0 ? '' : decode(pair.slice(eq + 1));
+			if (value !== null) found = value;
 		});
 		return found;
 	}
 
+	// decodeURIComponent throws on a malformed escape (e.g. a stray `%`); null instead, so a
+	// bad param on an inbound link is skipped -- as Angular's own $location parsing does --
+	// rather than stopping the storefront from booting.
+	function decode(part) {
+		try {
+			return decodeURIComponent(part.replace(/\+/g, ' '));
+		} catch (e) {
+			return null;
+		}
+	}
+
 	var flags = load();
-	var requested = fromUrl();
+	// Read from the raw URL rather than $location, so the param is caught on the very
+	// first page load even if a route redirect runs before anything asks for flags.
+	var requested = fromUrl($window.location.search);
 	if (requested !== null) {
 		flags = parse(requested);
 		save(flags);
@@ -80,7 +93,10 @@ four51.app.factory('FeatureFlags', ['$window', '$log', function($window, $log) {
 		},
 		list: function() {
 			return Object.keys(flags);
-		}
+		},
+		// Exposed for test/node/featureFlagsService.test.js; not meant for app code.
+		fromUrl: fromUrl,
+		parse: parse
 	};
 }]);
 

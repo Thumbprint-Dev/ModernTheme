@@ -9,4 +9,8 @@ serve:
 help:
 	node devserver.mjs --help
 
-.PHONY: serve help
+# Node's built-in test runner; no install. (The Karma suite in test/unit no longer runs.)
+test:
+	node --test 'test/node/*.test.js'
+
+.PHONY: serve help test
