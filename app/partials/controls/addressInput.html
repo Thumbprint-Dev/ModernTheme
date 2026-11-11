@@ -28,7 +28,13 @@
         </div>
 
         <div class="mt-field">
-            <label ng-class="{'required': address.IsCustEditable != false}">{{'Address Line 1' | r | xlat}}</label>
+            <label ng-class="{'required': address.IsCustEditable != false}">
+                {{'Address Line 1' | r | xlat}}
+                <span class="mt-verify-badge pull-right" ng-if="feature_flag('new_address_verification') && addressType != null">
+                    <i class="fa" ng-class="addressType ? 'fa-home' : 'fa-building'" aria-hidden="true"></i>
+                    {{(addressType ? 'Residential' : 'Commercial') | r | xlat}}
+                </span>
+            </label>
             <input name="street1" class="form-control" type="text" ng-model="address.Street1" placeholder="{{'Address Line 1' | r | xlat}}" autocomplete="off" ng-required="address.IsCustEditable != false" ng-disabled="address.IsCustEditable == false" />
         </div>
         <div class="mt-field">
@@ -140,7 +146,14 @@
                 <label class="mt-verify-option" ng-if="verification.suggested" ng-class="{'mt-verify-option-selected': verification.choice == 'suggested'}">
                     <input type="radio" name="mtVerifyChoice{{$id}}" value="suggested" ng-model="verification.choice" />
                     <span class="mt-verify-option-body">
-                        <span class="mt-verify-option-label">{{'Suggested' | r | xlat}} <span class="mt-verify-badge"><i class="fa fa-check" aria-hidden="true"></i> {{'Verified' | r | xlat}}</span></span>
+                        <span class="mt-verify-option-label">
+                            {{'Suggested' | r | xlat}}
+                            <span class="mt-verify-badge"><i class="fa fa-check" aria-hidden="true"></i> {{'Verified' | r | xlat}}</span>
+                            <span class="mt-verify-badge" ng-if="feature_flag('new_address_verification') && verification.suggestedResidential != null">
+                                <i class="fa" ng-class="verification.suggestedResidential ? 'fa-home' : 'fa-building'" aria-hidden="true"></i>
+                                {{(verification.suggestedResidential ? 'Residential' : 'Commercial') | r | xlat}}
+                            </span>
+                        </span>
                         <span class="mt-verify-option-lines">
                             {{verification.suggested.Street1}}<br />
                             <span ng-if="verification.suggested.Street2">{{verification.suggested.Street2}}<br /></span>
@@ -151,7 +164,13 @@
                 <label class="mt-verify-option" ng-class="{'mt-verify-option-selected': verification.choice == 'entered'}">
                     <input type="radio" name="mtVerifyChoice{{$id}}" value="entered" ng-model="verification.choice" />
                     <span class="mt-verify-option-body">
-                        <span class="mt-verify-option-label">{{'As entered' | r | xlat}}</span>
+                        <span class="mt-verify-option-label">
+                            {{'As entered' | r | xlat}}
+                            <span class="mt-verify-badge" ng-if="feature_flag('new_address_verification') && verification.enteredResidential != null">
+                                <i class="fa" ng-class="verification.enteredResidential ? 'fa-home' : 'fa-building'" aria-hidden="true"></i>
+                                {{(verification.enteredResidential ? 'Residential' : 'Commercial') | r | xlat}}
+                            </span>
+                        </span>
                         <span class="mt-verify-option-lines">
                             {{verification.entered.Street1}}<br />
                             <span ng-if="verification.entered.Street2">{{verification.entered.Street2}}<br /></span>
