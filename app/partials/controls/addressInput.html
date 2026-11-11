@@ -36,17 +36,42 @@
             <input name="street2" class="form-control" type="text" ng-model="address.Street2" placeholder="{{'Address Line 2' | r | xlat}}" autocomplete="off" ng-disabled="address.IsCustEditable == false" />
         </div>
 
+        <p class="text-muted" ng-if="feature_flag('new_address_verification') && line2Check && line2Check.status == 'line2-suggested'" aria-live="polite">
+            <i class="fa fa-info-circle" aria-hidden="true"></i>
+            {{'This address may have an apartment or suite number. Add one on Address Line 2 if needed.' | r | xlat}}
+        </p>
+
+        <div class="mt-checkout-payment-warning" ng-if="feature_flag('new_address_verification') && line2Check && line2Check.status != 'line2-suggested'" aria-live="polite">
+            <p>
+                <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                <span ng-if="line2Check.status == 'invalid-address'">{{'This address is invalid.' | r | xlat}}</span>
+                <span ng-if="line2Check.status == 'line2-required'">{{'This address needs an apartment or suite number.' | r | xlat}}</span>
+                <span ng-if="line2Check.status == 'line2-remove'">{{'Line 2 could be invalid.' | r | xlat}} {{'Should' | r | xlat}} &ldquo;{{address.Street2}}&rdquo; {{'be removed?' | r | xlat}}</span>
+                <span ng-if="line2Check.status == 'line2-invalid' && line2Check.suggestedLine2">{{'Line 2 could be invalid. Did you mean' | r | xlat}} {{line2Check.suggestedLine2}}?</span>
+                <span ng-if="line2Check.status == 'line2-invalid' && !line2Check.suggestedLine2">{{'Line 2 could be invalid. Check the apartment or suite number.' | r | xlat}}</span>
+            </p>
+            <p ng-if="line2Check.suggestedLine2 || line2Check.canRemove">
+                <button type="button" class="mt-header-btn" ng-if="line2Check.suggestedLine2" ng-click="useLine2Suggestion()">{{'Use' | r | xlat}} {{line2Check.suggestedLine2}}</button>
+                <button type="button" class="mt-header-btn" ng-if="line2Check.canRemove" ng-click="removeLine2()">{{'Remove line 2' | r | xlat}}</button>
+            </p>
+        </div>
+
+        <p class="mt-checkout-payment-warning" ng-show="feature_flag('new_address_verification') && poBoxError">{{'We cannot ship to a PO Box. Please update your shipping details with a physical street address so we can process your order.' | r | xlat}}</p>
+
         <div class="mt-checkout-shipping-fields">
             <div class="mt-field">
                 <label ng-class="{'required': address.IsCustEditable != false}">{{'City' | r | xlat}}</label>
-                <input name="city" class="form-control" type="text" ng-model="address.City" placeholder="{{'City' | r | xlat}}" autocomplete="off" ng-required="address.IsCustEditable != false" ng-disabled="address.IsCustEditable == false" />
+                <input name="city" class="form-control" type="text" ng-model="address.City" placeholder="{{fieldHints.City || ('City' | r | xlat)}}" autocomplete="off" ng-required="address.IsCustEditable != false" ng-disabled="address.IsCustEditable == false" />
             </div>
             <div class="mt-field" ng-show="!hasStates()">
                 <label ng-class="{required: !hasStates && address.IsCustEditable != false}">{{'State' | r | xlat}}</label>
-                <input ng-show="!hasStates()" class="form-control" type="text" ng-model="address.State" placeholder="{{'State' | r | xlat}}" autocomplete="off" ng-required="!hasStates() && address.IsCustEditable != false" ng-disabled="address.IsCustEditable == false" />
+                <input ng-show="!hasStates()" class="form-control" type="text" ng-model="address.State" placeholder="{{fieldHints.State || ('State' | r | xlat)}}" autocomplete="off" ng-required="!hasStates() && address.IsCustEditable != false" ng-disabled="address.IsCustEditable == false" />
             </div>
             <div class="mt-field" ng-show="hasStates()">
-                <label ng-class="{required: hasStates && address.IsCustEditable != false}">{{'State' | r | xlat}}</label>
+                <label ng-class="{required: hasStates && address.IsCustEditable != false}">
+                    {{'State' | r | xlat}}
+                    <span class="text-muted" ng-if="feature_flag('new_address_verification') && fieldHints.State">({{'Suggested' | r | xlat}}: {{fieldHints.State}})</span>
+                </label>
                 <select ng-show="hasStates()" class="form-control" ng-options="state.value as state.label for state in states | filter:country" ng-model="address.State" placeholder="{{'State' | r | xlat}}" ng-required="hasStates() && address.IsCustEditable != false" ng-disabled="address.IsCustEditable == false">
                 </select>
             </div>
@@ -55,12 +80,13 @@
         <div class="mt-checkout-shipping-fields">
             <div class="mt-field">
                 <label ng-class="{required: hasStates() && address.IsCustEditable != false}">{{'Zip' | r | xlat}}</label>
-                <input name="zip" class="form-control" type="text" ng-model="address.Zip" placeholder="{{'Zip' | r | xlat}}" autocomplete="off" ng-required="hasStates() && address.IsCustEditable != false"
+                <input name="zip" class="form-control" type="text" ng-model="address.Zip" placeholder="{{fieldHints.Zip || ('Zip' | r | xlat)}}" autocomplete="off" ng-required="hasStates() && address.IsCustEditable != false"
                        ng-disabled="address.IsCustEditable == false" />
             </div>
             <div class="mt-field">
                 <label ng-class="{'required': address.IsCustEditable != false}">{{'Country' | r | xlat}}</label>
-                <select name="country" class="form-control" ng-options="country.value as country.label for country in countries" ng-model="address.Country" placeholder="{{'Country' | r | xlat}}" ng-required="address.IsCustEditable != false" ng-disabled="address.IsCustEditable == false"></select>
+                <select name="country" class="form-control" ng-options="country.value as country.label for country in countries" ng-model="address.Country" placeholder="{{'Country' | r | xlat}}" ng-required="address.IsCustEditable != false" ng-disabled="address.IsCustEditable == false">
+                </select>
             </div>
         </div>
 
@@ -89,7 +115,7 @@
                 <button ng-if="(user.Permissions.contains('CreateShipToAddress') || user.Permissions.contains('CreateBillToAddress')) && address.IsCustEditable" class="mt-header-btn" ng-click="delete()" type="button">{{'Delete' | r | xlat}}</button>
                 <button class="mt-header-btn" type="button" ng-click="cancel()">{{'Cancel' | r | xlat}}</button>
             </span>
-            <button ng-if="(user.Permissions.contains('CreateShipToAddress') || user.Permissions.contains('CreateBillToAddress')) && address.IsCustEditable != false" class="mt-btn-accent" type="submit" ng-disabled="addressEdit.$invalid || verifying">
+            <button ng-if="(user.Permissions.contains('CreateShipToAddress') || user.Permissions.contains('CreateBillToAddress')) && address.IsCustEditable != false" class="mt-btn-accent" type="submit" ng-disabled="addressEdit.$invalid || verifying || (feature_flag('new_address_verification') && poBoxError)">
                 <span ng-if="!verifying">{{'Save' | r | xlat}}</span>
                 <span ng-if="verifying"><i class="fa fa-spinner fa-spin" aria-hidden="true"></i> {{'Checking address' | r | xlat}}&hellip;</span>
             </button>
