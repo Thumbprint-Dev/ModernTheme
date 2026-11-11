@@ -72,6 +72,30 @@ test('fromUrl: reads the raw value', async (t) => {
 	}
 });
 
+test('fromUrl: trailing slashes from the URL rewrite are stripped', async (t) => {
+	const cases = [
+		['?feature_flags=a,b/', 'a,b'], // production appends the slash after the query
+		['?feature_flags=test//', 'test'],
+		['?feature_flags=test///', 'test'],
+		['?feature_flags=test%2F', 'test'], // Angular re-encodes it before we read the URL
+		['?feature_flags=test%2f', 'test'],
+		['?feature_flags=test%2F/', 'test'],
+		['?feature_flags=test/%2F', 'test'],
+		['?feature_flags=test%2F%2F', 'test'],
+		['?a=1&feature_flags=test/', 'test'],
+		['?feature_flags=test&a=1/', 'test'], // slash closes the whole query string
+		['?a=1&feature_flags=test%2F', 'test'],
+		['?feature_flags=a%2Cb/', 'a,b'], // stripped before decoding
+		['?feature_flags=a%2Cb%2F', 'a,b'],
+		['?feature_flags/', ''], // still "clear", not absent
+		['?feature_flags%2F', ''],
+		['?/', null]
+	];
+	for (const [search, expected] of cases) {
+		await t.test(search, () => assert.equal(fromUrl(search), expected));
+	}
+});
+
 test('fromUrl: empty or bare param means "clear", not absent', () => {
 	assert.equal(fromUrl('?feature_flags='), '');
 	assert.equal(fromUrl('?feature_flags'), '');
@@ -138,6 +162,14 @@ test('service: the param turns flags on and saves them', () => {
 	assert.equal(storage.data[STORAGE_KEY], 'test,other');
 });
 
+test('service: a trailing-slash URL still enables every flag', () => {
+	for (const search of ['?feature_flags=test,Other/', '?feature_flags=test,Other%2F']) {
+		const { service, storage } = boot(search);
+		assert.deepEqual(service.list(), ['test', 'other'], search);
+		assert.equal(storage.data[STORAGE_KEY], 'test,other', search);
+	}
+});
+
 test('service: isOn is case- and whitespace-insensitive, and false for unknown names', () => {
 	const { service } = boot('?feature_flags=test');
 	assert.equal(service.isOn('test'), true);
@@ -185,35 +217,98 @@ test('service: a malformed inbound link does not stop it booting', () => {
 	assert.deepEqual(service.list(), ['test']); // bad value ignored, stored flags kept
 });
 
-test('run block: feature_flag() reaches isolate scopes, and the param is stripped', async (t) => {
+test('run block: feature_flag() reaches isolate scopes, and the URL is cleaned', async (t) => {
 	// Angular's Scope: child scopes inherit from $rootScope, isolate scopes are `new Scope()`
 	// and share only its prototype.
 	function Scope() {}
 	const makeRun = () => load().run;
 
+	// Minimal $location: `url()` reads/writes the composed URL and re-parses its query;
+	// `search()` reads/writes that query; `replace()` is recorded so the test sees it.
+	function fakeLocation(url) {
+		const calls = [];
+		const parseQuery = () => {
+			const query = {};
+			const raw = url.split('#')[0].split('?')[1] || '';
+			for (const pair of raw.split('&')) {
+				if (!pair) continue;
+				const eq = pair.indexOf('=');
+				const decode = (s) => decodeURIComponent(s.replace(/\+/g, ' '));
+				query[decode(eq < 0 ? pair : pair.slice(0, eq))] = eq < 0 ? true : decode(pair.slice(eq + 1));
+			}
+			return query;
+		};
+		let query = parseQuery();
+		const $location = {
+			url: (next) => {
+				if (next === undefined) return url;
+				url = next;
+				query = parseQuery();
+				calls.push(['url', next]);
+				return $location;
+			},
+			search: (...args) => {
+				if (!args.length) return query;
+				if (args[1] === null) delete query[args[0]];
+				else query[args[0]] = args[1];
+				calls.push(args);
+				return $location;
+			},
+			replace: () => {
+				calls.push('replace');
+				return $location;
+			}
+		};
+		return { $location, calls, query: () => query };
+	}
+
+	function runAt(url) {
+		const fake = fakeLocation(url);
+		makeRun()(new Scope(), fake.$location, boot('').service);
+		return fake;
+	}
+
 	await t.test('helper on the shared prototype', () => {
 		const $rootScope = new Scope();
 		const isolate = new Scope();
 		const { service } = boot('?feature_flags=test');
-		makeRun()($rootScope, { search: () => ({}) }, service);
+		makeRun()($rootScope, fakeLocation('/catalog?feature_flags=test').$location, service);
 		assert.equal(isolate.feature_flag('test'), true);
 		assert.equal(Object.create($rootScope).feature_flag('test'), true);
 		assert.equal(isolate.feature_flag('other'), false);
 	});
 
 	await t.test('strips feature_flags without a history entry, only when present', () => {
-		const { service } = boot('');
-		for (const [query, shouldStrip] of [[{ feature_flags: 'test', a: '1' }, true], [{ a: '1' }, false]]) {
-			const calls = [];
-			const $location = {
-				search: (...args) => {
-					if (!args.length) return query;
-					calls.push(args);
-					return { replace: () => calls.push('replace') };
-				}
-			};
-			makeRun()(new Scope(), $location, service);
-			assert.deepEqual(calls, shouldStrip ? [['feature_flags', null], 'replace'] : []);
+		let result = runAt('/catalog?feature_flags=test&a=1');
+		assert.deepEqual(result.calls, [['feature_flags', null], 'replace']);
+		assert.deepEqual(result.query(), { a: '1' });
+
+		result = runAt('/catalog?a=1');
+		assert.deepEqual(result.calls, []);
+		assert.deepEqual(result.query(), { a: '1' });
+	});
+
+	await t.test('drops the trailing slash production appends to the query', () => {
+		const cases = [
+			['/catalog?_=1%2F', [['url', '/catalog?_=1'], 'replace']],
+			['/catalog?_=1%2F%2F', [['url', '/catalog?_=1'], 'replace']],
+			['/catalog?a=1&_=2%2F', [['url', '/catalog?a=1&_=2'], 'replace']],
+			['/catalog?_=1', []], // no artifact, leave the URL alone
+			['/catalog/', []], // a slash on the path is not the artifact
+			['/catalog?feature_flags%2F', [['url', '/catalog?feature_flags'], ['feature_flags', null], 'replace']]
+		];
+		for (const [url, expected] of cases) {
+			assert.deepEqual(runAt(url).calls, expected, url);
 		}
+	});
+
+	await t.test('handles the param and the slash in one pass', () => {
+		const { query, calls } = runAt('/catalog?feature_flags=test,other&_=1%2F');
+		assert.deepEqual(calls, [
+			['url', '/catalog?feature_flags=test,other&_=1'],
+			['feature_flags', null],
+			'replace'
+		]);
+		assert.deepEqual(query(), { _: '1' });
 	});
 });
