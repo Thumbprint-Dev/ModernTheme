@@ -132,7 +132,7 @@
          different address, or can't match the one entered; the shopper picks which one to save. -->
     <div class="mt-error-modal-backdrop" ng-show="verification" ng-click="cancelVerification()">
         <div class="mt-error-modal mt-verify-modal" role="dialog" aria-modal="true" aria-labelledby="mt-verify-title-{{$id}}" ng-click="$event.stopPropagation()">
-            <button type="button" class="mt-error-modal-close" ng-click="cancelVerification()" aria-label="{{'Close' | r | xlat}}">
+            <button type="button" class="mt-error-modal-close" ng-click="cancelVerification()" aria-label="{{'Close' | r | xlat}}" ng-if="!feature_flag('new_address_verification') || verification.suggested">
                 <i class="fa fa-times"></i>
             </button>
             <div class="mt-error-modal-head">
@@ -140,7 +140,8 @@
                 <h2 class="mt-error-modal-title" id="mt-verify-title-{{$id}}">{{'Confirm your address' | r | xlat}}</h2>
             </div>
             <p class="mt-error-modal-message" ng-if="verification.suggested">{{'We found a close verified match to the address you entered. Choose the one to use.' | r | xlat}}</p>
-            <p class="mt-error-modal-message" ng-if="!verification.suggested">{{'We couldn\'t verify this address. Check it before saving, or go back and edit it.' | r | xlat}}</p>
+            <p class="mt-error-modal-message" ng-if="!verification.suggested && !feature_flag('new_address_verification')">{{'We couldn\'t verify this address. Check it before saving, or go back and edit it.' | r | xlat}}</p>
+            <p class="mt-error-modal-message" ng-if="!verification.suggested && feature_flag('new_address_verification')">{{'We couldn\'t verify this address. Please edit your address and try again. If your custom address still does not validate, reach out to support@thumbprint.com' | r | xlat}}</p>
 
             <div class="mt-verify-options" role="radiogroup">
                 <label class="mt-verify-option" ng-if="verification.suggested" ng-class="{'mt-verify-option-selected': verification.choice == 'suggested'}">
@@ -161,7 +162,7 @@
                         </span>
                     </span>
                 </label>
-                <label class="mt-verify-option" ng-class="{'mt-verify-option-selected': verification.choice == 'entered'}">
+                <label class="mt-verify-option" ng-class="{'mt-verify-option-selected': verification.choice == 'entered'}" ng-if="!feature_flag('new_address_verification') || verification.suggested">
                     <input type="radio" name="mtVerifyChoice{{$id}}" value="entered" ng-model="verification.choice" />
                     <span class="mt-verify-option-body">
                         <span class="mt-verify-option-label">
@@ -182,7 +183,7 @@
 
             <div class="mt-error-modal-actions mt-verify-actions">
                 <button type="button" class="mt-header-btn" ng-click="cancelVerification()">{{'Edit address' | r | xlat}}</button>
-                <button type="button" class="mt-btn-accent" ng-click="useVerifiedAddress()">{{'Use this address' | r | xlat}}</button>
+                <button type="button" class="mt-btn-accent" ng-click="useVerifiedAddress()" ng-if="!feature_flag('new_address_verification') || verification.suggested">{{'Use this address' | r | xlat}}</button>
             </div>
         </div>
     </div>
