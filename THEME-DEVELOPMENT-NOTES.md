@@ -803,6 +803,7 @@ Add a row with every new flag; delete the row in the PR that removes the flag's 
 | Flag | What it changes | Where | Remove when |
 |---|---|---|---|
 | `test` | Dummy example: two extra lines in the home page hero, one checked in the template and one in the controller | `app/partials/categoryView.html`, `app/js/controllers/categoryCtrl.js` | Once a real flag shows usage -- or keep as a smoke test that flags work |
+| `new_address_verification` | PO Box validation on address forms, live Smarty US Street validation of Address Line 2 with correction/removal hints, grey missing-field (City/State/ZIP) suggestions from a valid match, Residential/Commercial labels on the form and verification modal, and a stricter verification modal for unmatched addresses: no close / "As entered" / "Use this address" options, plus support guidance | `app/js/controllers/addressInputCtrl.js`, `app/js/services/addressService.js`, `app/partials/controls/addressInput.html` | Once the stricter flow, line 2 check, field suggestions and address-type labels are rolled out to all sites |
 
 ## Per-site branding: `app/site.json`
 
@@ -1116,6 +1117,87 @@ fields in and nothing more. The submit button reads **Save** rather than Done.
 `<addressinput address="..." user="...">`, not the raw partial -- compiling the partial
 alone leaves `ng-submit="save()"` pointing at nothing, and a "no save happened" result
 means only that the controller was never there.
+
+## Address fields are checked with Smarty (behind `new_address_verification`)
+
+`Address` in `app/js/services/addressService.js` sends the address to Smarty's US Street API
+with `match=enhanced` and interprets `analysis.enhanced_match`, `analysis.dpv_match_code`,
+`analysis.dpv_footnotes` and `analysis.footnotes` with the rules Smarty documents for raw
+output:
+
+- `enhanced_match=none`, or no candidate -> the whole address is invalid.
+- `missing-secondary` + `N1` (or `dpv_match_code=D`) -> the address needs a unit and line 2 is empty.
+- `missing-secondary` without `N1`/`D`, or `non-postal-match` + `missing-secondary` -> a unit may
+  exist but is not required; show the soft `line2-suggested` hint.
+- USPS `footnotes=H#` (the ZIP+4 is a building) with an empty line 2 -> suites may exist; show the
+  same soft `line2-suggested` hint. This is how a building such as
+  `2478 E Michigan St, Orlando FL 32806` is flagged even though the base address is a clean
+  postal match and USPS does not require a unit.
+- `unknown-secondary` + `C1` -> the submitted unit is required, but not recognized; offer the
+  established unit when Smarty returns one.
+- `unknown-secondary` + `CC` -> the submitted unit is not recognized, but not required; offer removal.
+- `ignored-input` with a line 2 -> the submitted unit was not used for the match; offer removal
+  (unless Smarty echoed that same unit back).
+- `postal-match` / `non-postal-match` without those -> valid.
+
+`line2-suggested` is advisory only: it shows a grey info hint under Address Line 2 and does not
+gate Save. It is suppressed when a secondary was already supplied, whether in Line 2 or parsed
+out of Street1.
+
+Unknown/ignored secondary signals only produce a Line 2 correction when Line 2 actually has a
+value. If the shopper typed the unit into Street1, Smarty parses it out, but an empty Line 2
+has nothing to correct and is left alone.
+
+Smarty's `metadata.rdi` (`Residential` / `Commercial`, or blank when unknown) is returned as
+`residential` on the same result. Once the live check completes, the controller shows it as a
+badge in the Address Line 1 label row. The verification modal looks each candidate up
+separately, so the **Suggested** and **As entered** cards carry their own
+Residential/Commercial badge. This is display-only for now; forwarding the label through
+checkout is a follow-up.
+
+When the match is valid and City, State or ZIP was left blank, `interpret` also returns
+`suggestions` built from the matched candidate's `components` (`city_name`,
+`state_abbreviation`, `zipcode` + `plus4_code`). City and ZIP appear as grey placeholder text
+in the empty inputs, so they suggest the Smarty value without overwriting anything typed. The
+State control is a dropdown, which cannot show placeholder text, so its suggested abbreviation
+appears in the field label instead. Hints clear as soon as the shopper edits any address field;
+the next check brings them back. They are display-only and never change what gets saved unless
+the shopper types the value.
+
+### Smarty test addresses
+
+These are covered as response fixtures in `test/node/addressService.test.js` (the embedded key
+will not answer from an unregistered host):
+
+| Address | Expected status | Label |
+|---|---|---|
+| 2825 Arcata Ln, Orlando FL 32817 | valid | Residential |
+| 2600 Maitland Center Pkwy, Suite 230, Maitland FL 32751 | valid | Commercial |
+| 1234 Msin St, Orlando FL 32817 | invalid | none |
+| 390 St Johns St, Central Islip NY 11722 | valid | Residential |
+| 1600 Amphitheatre Pkwy, Mountain View CA 94043 | valid | Commercial |
+| 1 Infinite Loop, Cupertino CA 95014 | valid | Commercial |
+| PO Box 4735, Tulsa OK 74159 | valid | Residential (PO Boxes are always RDI Residential) |
+| 122 Mast Rd, Lee NH 03861 | valid, unit required | Residential |
+| 2478 E Michigan St, Orlando FL 32806 | valid, suite suggested | Commercial |
+| 3331 Erie Ave, Apt 2, Cincinnati OH 45208 | valid, unknown unit | Residential |
+
+`AddressInputCtrl` watches the address fields and debounces the request by 800ms. Only a US
+address with `Street1` and either a ZIP or City+State is sent. The check is advisory: it never
+disables Save and never changes the save/`Address.validate` path. A failed request (CORS,
+timeout, rejected key, malformed JSON) resolves to no warning.
+
+The request goes through `$httpBackend` rather than `$http`. That is the low-level transport
+underneath `$http`, so it never passes through the global interceptor in
+`app/js/interceptors.js`: no Four51 `Authorization` header is attached, and a Smarty 401/403
+cannot broadcast a login event or open the login flow.
+
+The key in the service is Smarty's embedded demo key. It is public by design and only works
+from hosts registered with Smarty, so an unregistered storefront gets no warnings. If a site
+needs this, register its host with Smarty or replace that constant with the site's key.
+
+`interpret(address, candidates)` is pure and covered by `test/node/addressService.test.js`;
+use it rather than a live call when changing the mapping.
 
 ## Editing an address did not refresh the card showing it
 
