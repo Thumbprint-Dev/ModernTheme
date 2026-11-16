@@ -1232,6 +1232,10 @@ output:
 - `unknown-secondary` + `CC` -> the submitted unit is not recognized, but not required; offer removal.
 - `ignored-input` with a line 2 -> the submitted unit was not used for the match; offer removal
   (unless Smarty echoed that same unit back).
+- A submitted unit that matches the established one after normalizing spacing, punctuation and
+  the designator spelling -> valid. `apartment`/`apt`, `suite`/`ste`, `unit`, `floor`/`fl`,
+  `room`/`rm` and `building`/`bldg` are the same unit, so Smarty's `STE 230` is not offered
+  back as a correction to a shopper's `Suite 230`.
 - `postal-match` / `non-postal-match` without those -> valid.
 
 `line2-suggested` is advisory only: it shows a grey info hint under Address Line 2 and does not
