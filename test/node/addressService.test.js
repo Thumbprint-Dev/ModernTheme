@@ -552,7 +552,7 @@ test('interpret: ignored line 2 with an established unit suggests the unit', () 
 	assert.equal(r.canRemove, true);
 });
 
-test('interpret: equivalent secondary formatting is not offered back as a correction', () => {
+test('interpret: equivalent secondary formatting is not reported as a correction', () => {
 	const r = interpret(address({ Street2: 'apt 3410-3502' }), [candidate({
 		enhanced_match: 'postal-match,unknown-secondary',
 		dpv_match_code: 'S',
@@ -562,8 +562,36 @@ test('interpret: equivalent secondary formatting is not offered back as a correc
 		secondary_number: '3410 - 3502'
 	})]);
 
-	assert.equal(r.status, 'line2-invalid');
+	assert.equal(r.status, 'valid');
 	assert.equal(r.suggestedLine2, '');
+});
+
+test('interpret: long-form secondary designators are accepted alongside their abbreviations', async (t) => {
+	const cases = [
+		['Apartment 230', 'APT', '230'],
+		['Suite 230', 'STE', '230'],
+		['Unit 230', 'UNIT', '230'],
+		['Floor 2', 'FL', '2'],
+		['Room 12', 'RM', '12'],
+		['Building 5', 'BLDG', '5'],
+		['Suite230', 'STE', '230']
+	];
+
+	for (const [typed, designator, number] of cases) {
+		await t.test(typed, () => {
+			const r = interpret(address({ Street2: typed }), [candidate({
+				enhanced_match: 'postal-match,unknown-secondary',
+				dpv_match_code: 'S',
+				dpv_footnotes: 'AAC1'
+			}, {
+				secondary_designator: designator,
+				secondary_number: number
+			})]);
+
+			assert.equal(r.status, 'valid');
+			assert.equal(r.suggestedLine2, '');
+		});
+	}
 });
 
 test('interpret: extra secondary pieces are composed into the suggestion', () => {

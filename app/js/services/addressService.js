@@ -124,13 +124,36 @@ four51.app.factory('Address', ['$resource', '$451', 'Error', '$q', '$httpBackend
         return parts.join(', ');
     }
 
-    // Ignore the differences that do not change what the shopper typed -- spacing, case and
-    // the spaces around a hyphen -- so "Apt 3410-3502" is not offered back as a correction.
+    // USPS secondary designators have a long and a short spelling. Treat them as the same
+    // designator so "Suite 230" is not reported as a correction to "STE 230".
+    var SECONDARY_DESIGNATORS = {
+        APARTMENT: 'APT',
+        APT: 'APT',
+        SUITE: 'STE',
+        STE: 'STE',
+        UNIT: 'UNIT',
+        FLOOR: 'FL',
+        FL: 'FL',
+        ROOM: 'RM',
+        RM: 'RM',
+        BUILDING: 'BLDG',
+        BLDG: 'BLDG'
+    };
+
+    // Ignore the differences that do not change what the shopper typed -- spacing, case, the
+    // spaces around a hyphen and the designator spelling -- so "Apt 3410-3502" or
+    // "Apartment 3410-3502" is not offered back as a correction.
     function secondaryKey(value) {
         return upper(value)
             .replace(/[.#,]/g, '')
             .replace(/\s*-\s*/g, '-')
-            .replace(/\s+/g, ' ');
+            .replace(/\s+/g, ' ')
+            .replace(/\b(APARTMENT|APT|SUITE|STE|UNIT|FLOOR|FL|ROOM|RM|BUILDING|BLDG)(?=\s|\d|$)\s*/g,
+                function(match, word) {
+                    return SECONDARY_DESIGNATORS[word] + ' ';
+                })
+            .replace(/\s+/g, ' ')
+            .trim();
     }
 
     // Smarty's residential delivery indicator (RDI): "Residential", "Commercial", or blank
@@ -212,10 +235,15 @@ four51.app.factory('Address', ['$resource', '$451', 'Error', '$q', '$httpBackend
         var footnotes = upper(analysis.dpv_footnotes);
         var dpv = upper(analysis.dpv_match_code);
         var established = suggestedSecondary(top);
-        var suggestion = established && secondaryKey(established) !== secondaryKey(submitted) ? established : '';
+        var sameUnit = !!established && secondaryKey(established) === secondaryKey(submitted);
+        var suggestion = established && !sameUnit ? established : '';
         var hasEnhanced = enhanced.length > 0;
 
         if (has(enhanced, 'none')) return result('invalid-address');
+
+        // Smarty standardizes the designator ("Suite" -> "STE"). When the unit it established
+        // is the one the shopper typed, there is nothing to correct.
+        if (submitted && sameUnit) return result('valid');
 
         // enhanced_match is only present with match=enhanced, but the DPV fields are always
         // present. Use every documented signal: either can flag a bad/missing secondary.
