@@ -320,6 +320,17 @@ four51.app.factory('Address', ['$resource', '$451', 'Error', '$q', '$httpBackend
         return !!text(address.Zip) || (!!text(address.City) && !!text(address.State));
     }
 
+    // PO Box detection for the address form. "P.O. Box", "PO Box", "Post Office Box" and a
+    // bare "Box" are PO Boxes. A bare "B" or "Bin" is not: "Unit B", "Suite B", "Bldg B",
+    // "123 B St" and "Bin 4 Rd" are real street or secondary lines. BIN only counts after
+    // the P.O. prefix ("PO Bin 4").
+    var PO_BOX = /(?:\bP(?:OST)?\.?\s*O(?:FFICE)?\.?\s*B(?:OX|IN)\b|\bBOX\b)/i;
+
+    function containsPOBox(address) {
+        if (!address) return false;
+        return PO_BOX.test(text(address.Street1)) || PO_BOX.test(text(address.Street2));
+    }
+
     function requestParams(address) {
         return {
             key: EMBEDDED_KEY,
@@ -383,6 +394,7 @@ four51.app.factory('Address', ['$resource', '$451', 'Error', '$q', '$httpBackend
         validate: _validate,
         checkLine2: checkLine2,
         canCheck: canCheck,
+        containsPOBox: containsPOBox,
         interpret: interpret,
         requestParams: requestParams
     };
