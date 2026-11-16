@@ -53,8 +53,11 @@ four51.app.factory('FeatureFlags', ['$window', '$log', function($window, $log) {
 	// The raw feature_flags value in a query string ('?a=1&feature_flags=x,y' -> 'x,y'),
 	// '' for a bare `?feature_flags`, or null when the param is absent. Pure -- it takes the
 	// string rather than reading $window -- so tests can call it directly.
+	// Production rewrites page URLs to end in a slash, which lands after the query
+	// (?feature_flags=a,b -> ?feature_flags=a,b/). Angular then re-encodes that slash as
+	// %2F while it boots, before this factory reads the URL, so strip both forms.
 	function fromUrl(search) {
-		var query = (search || '').replace(/^\?/, '');
+		var query = (search || '').replace(/^\?/, '').replace(/(?:\/|%2f)+$/i, '');
 		var found = null;
 		query.split('&').forEach(function(pair) {
 			var eq = pair.indexOf('=');
@@ -101,13 +104,28 @@ four51.app.factory('FeatureFlags', ['$window', '$log', function($window, $log) {
 }]);
 
 // Instantiate at boot so the param is read on whatever page it arrives on, expose the
-// template helper, and drop the param from the address bar without adding a history entry.
+// template helper, and clean the address bar without adding a history entry: drop the param
+// and the trailing slash production's URL rewrite leaves at the end of the query string.
 four51.app.run(['$rootScope', '$location', 'FeatureFlags', function($rootScope, $location, FeatureFlags) {
 	// On the Scope prototype rather than $rootScope itself: isolate scopes (addressInput and
 	// the other `scope: {}` directives) are built with `new Scope()` and do not inherit from
 	// $rootScope, but they do share its prototype -- so feature_flag() resolves on every scope.
 	Object.getPrototypeOf($rootScope).feature_flag = FeatureFlags.isOn;
-	if ($location.search().hasOwnProperty(FeatureFlags.PARAM)) {
-		$location.search(FeatureFlags.PARAM, null).replace();
+
+	// Angular re-encodes the slash as %2F when it boots; left alone, the next load gets
+	// another one appended and the URL grows on every reload. Drop it before the first sync.
+	var url = $location.url();
+	var clean = url.replace(/(?:\/|%2f)+$/i, '');
+	var changed = false;
+	if (url.indexOf('?') >= 0 && clean !== url) {
+		$location.url(clean);
+		changed = true;
 	}
+
+	if (Object.prototype.hasOwnProperty.call($location.search(), FeatureFlags.PARAM)) {
+		$location.search(FeatureFlags.PARAM, null);
+		changed = true;
+	}
+
+	if (changed) $location.replace();
 }]);
