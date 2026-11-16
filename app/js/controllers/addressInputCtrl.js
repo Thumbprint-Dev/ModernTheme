@@ -242,9 +242,29 @@ function ($scope, $rootScope, $location, User, Address, Resources, SiteConfig, F
         });
     };
 
-	$scope.cancel = function() {
-		$scope.return ? $location.path($scope.return) : $rootScope.$broadcast('event:AddressCancel');
-	};
+    $scope.cancel = function() {
+        if ($scope.return) {
+            $location.path($scope.return);
+            return;
+        }
+
+        // Checkout hides this form instead of destroying it, and keeps the same bound address
+        // object, so an abandoned form would come back the next time New Address is opened.
+        // Clear it here, keeping only the address-book type flags.
+        var address = $scope.address;
+        if (address) {
+            Object.keys(address).forEach(function(key) {
+                if (key != 'IsShipping' && key != 'IsBilling') delete address[key];
+            });
+            address.Country = 'US';
+        }
+        $scope.verification = null;
+        $scope.poBoxError = false;
+        $scope.line2Check = null;
+        $scope.addressType = null;
+        $scope.fieldHints = {};
+        $rootScope.$broadcast('event:AddressCancel');
+    };
 
     $scope.countries = Resources.countries;
     $scope.states = Resources.states;
