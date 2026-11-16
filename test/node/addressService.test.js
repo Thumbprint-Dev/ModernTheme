@@ -50,7 +50,7 @@ function makeService(backend) {
 }
 
 const { service } = makeService();
-const { interpret, canCheck, requestParams } = service;
+const { interpret, canCheck, requestParams, containsPOBox } = service;
 
 function query(url) {
 	const result = {};
@@ -675,6 +675,47 @@ test('canCheck: needs a US address with a street and ZIP or city/state', () => {
 	assert.equal(canCheck(address({ Country: '' })), false);
 	assert.equal(canCheck(address({ Street1: '  ' })), false);
 	assert.equal(canCheck(null), false);
+});
+
+test('containsPOBox: recognizes PO Box addresses in either street line', () => {
+	const cases = [
+		'PO Box 123',
+		'P.O. Box 123',
+		'P.O.Box 123',
+		'P O Box 123',
+		'Post Office Box 123',
+		'POST OFFICE BOX 123',
+		'Box 123',
+		'Box #123',
+		'PO Bin 4',
+		' p.o. box 9 '
+	];
+
+	cases.forEach((line) => {
+		assert.equal(containsPOBox(address({ Street1: line })), true, line);
+		assert.equal(containsPOBox(address({ Street1: '2335 S State St', Street2: line })), true, line);
+	});
+});
+
+test('containsPOBox: a standalone B or Bin is not a PO Box', () => {
+	const cases = [
+		'Unit B',
+		'Suite B',
+		'Ste B',
+		'Bldg B',
+		'123 B St',
+		'Bin 4 Rd'
+	];
+
+	cases.forEach((line) => {
+		assert.equal(containsPOBox(address({ Street1: line })), false, line);
+		assert.equal(containsPOBox(address({ Street2: line })), false, line);
+	});
+});
+
+test('containsPOBox: missing address or street lines are not a PO Box', () => {
+	assert.equal(containsPOBox(null), false);
+	assert.equal(containsPOBox(address({ Street1: '', Street2: '' })), false);
 });
 
 test('requestParams: sends line 2 as secondary with enhanced matching', () => {

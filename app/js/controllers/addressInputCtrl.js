@@ -33,17 +33,7 @@ function ($scope, $rootScope, $location, User, Address, Resources, SiteConfig, F
         });
     }
 
-    function containsPOBox(address) {
-        if (!address) return false;
-
-        // Matches variations of P.O. Box, Post Office Box, Box #, drawer/caller numbers, etc.
-        const poBoxRegex = /\b(?:P(?:OST)?\.?\s*O(?:FFICE)?\.?\s*)?B(?:OX|IN)?\b|\bP\b\s*\bO\b/i;
-
-        const street1 = address.Street1 || '';
-        const street2 = address.Street2 || '';
-
-        return poBoxRegex.test(street1) || poBoxRegex.test(street2);
-    }
+    var containsPOBox = Address.containsPOBox;
 
     // Address verification (Four51 CustomSolutions "Address Verification"): Save first checks
     // a US address against USPS via Address.validate, and only then saves.
