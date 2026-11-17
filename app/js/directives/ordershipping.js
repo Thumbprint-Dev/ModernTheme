@@ -117,6 +117,9 @@ four51.app.directive('ordershipping', ['Order', 'Shipper', 'Address', 'AddressLi
                         var billAddressID = $scope.currentOrder.BillAddressID;
                         var budgetAccountID = $scope.currentOrder.BudgetAccountID;
                         var creditCardID = $scope.currentOrder.CreditCardID;
+                        // A freshly-typed (not yet saved as a reusable CreditCardID) card lives
+                        // only on this raw CreditCard object - the API doesn't echo it back.
+                        var creditCard = $scope.currentOrder.CreditCard;
 						$scope.currentOrder = data;
                         $scope.currentOrder.BillAddressID = billAddressID;
 						if (budgetAccountID) {
@@ -124,6 +127,9 @@ four51.app.directive('ordershipping', ['Order', 'Shipper', 'Address', 'AddressLi
 						}
 						if (creditCardID) {
 							$scope.currentOrder.CreditCardID = creditCardID;
+						}
+						if (creditCard) {
+							$scope.currentOrder.CreditCard = creditCard;
 						}
 						$scope.displayLoadingIndicator = false;
 						if (auto) {
