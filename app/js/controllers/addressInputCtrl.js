@@ -43,7 +43,8 @@ function ($scope, $rootScope, $location, User, Address, Resources, SiteConfig, F
 
     // Address verification (Four51 CustomSolutions "Address Verification"): Save first checks
     // a US address against USPS via Address.validate, and only then saves.
-    //  - A match identical to what was typed saves straight away - nothing to choose between.
+    //  - A match identical to what was typed saves straight away, unless the address is being
+    //    edited (it has an ID), in which case the choice is still shown.
     //  - A different match, or no match at all, opens the choice modal (addressInput.html):
     //    the suggested address beside the entered one, and the shopper picks which to save.
     //  - Non-US addresses, and any error from the endpoint itself (e.g. a site that doesn't
@@ -57,12 +58,6 @@ function ($scope, $rootScope, $location, User, Address, Resources, SiteConfig, F
     // Smarty's standardized values for blank fields (City/State/Zip), shown as grey
     // placeholder text until the shopper types their own value.
     $scope.fieldHints = {};
-
-    function lines(a) {
-        return [a.Street1, a.Street2, a.City, a.State, a.Zip].map(function(part) {
-            return (part || '').toString().trim().toUpperCase().replace(/\s+/g, ' ');
-        }).join('|');
-    }
 
     // Only a response carrying a ZIP+4 is a real USPS match. For an address it can't find, the
     // endpoint doesn't return "no address" - it echoes the input back uppercased with an empty
@@ -201,8 +196,9 @@ function ($scope, $rootScope, $location, User, Address, Resources, SiteConfig, F
             function(result) {
                 $scope.verifying = false;
                 var suggested = suggestionFrom(result, $scope.address);
-                // A plain ZIP matching the first five digits of a ZIP+4 is the same address.
-                if (suggested && lines(suggested).replace(/-\d{4}$/, '') == lines($scope.address).replace(/-\d{4}$/, '')) {
+                // Editing an address-book entry still shows the choice, even when USPS returns
+                // the same lines; a new address with an identical match saves straight away.
+                if (!Address.shouldConfirmAddress($scope.address, suggested, !!$scope.address.ID)) {
                     saveAndReturn();
                     return;
                 }
