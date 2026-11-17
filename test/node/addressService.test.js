@@ -50,7 +50,7 @@ function makeService(backend) {
 }
 
 const { service } = makeService();
-const { interpret, canCheck, requestParams, containsPOBox } = service;
+const { interpret, canCheck, requestParams, containsPOBox, shouldConfirmAddress } = service;
 
 function query(url) {
 	const result = {};
@@ -716,6 +716,48 @@ test('containsPOBox: a standalone B or Bin is not a PO Box', () => {
 test('containsPOBox: missing address or street lines are not a PO Box', () => {
 	assert.equal(containsPOBox(null), false);
 	assert.equal(containsPOBox(address({ Street1: '', Street2: '' })), false);
+});
+
+test('shouldConfirmAddress: a new address saves directly when USPS matches as entered', () => {
+	const entered = address({
+		Street1: '2335 S State St',
+		Street2: 'Ste 300',
+		City: 'Provo',
+		State: 'UT',
+		Zip: '84606'
+	});
+	const suggested = address({
+		Street1: ' 2335   s state st ',
+		Street2: ' ste 300 ',
+		City: ' PROVO ',
+		State: ' ut ',
+		Zip: '84606-1234'
+	});
+
+	assert.equal(shouldConfirmAddress(entered, suggested, false), false);
+});
+
+test('shouldConfirmAddress: a changed match needs confirmation', () => {
+	const entered = address();
+	const suggested = address({ Street1: '2335 S State Ct' });
+
+	assert.equal(shouldConfirmAddress(entered, suggested, false), true);
+});
+
+test('shouldConfirmAddress: an unverified address needs confirmation', () => {
+	assert.equal(shouldConfirmAddress(address(), null, false), true);
+});
+
+test('shouldConfirmAddress: editing an address always offers the verification choice', () => {
+	const entered = address({ ID: '12345' });
+	const suggested = address({
+		Street1: ' 2335   s state st ',
+		City: ' PROVO ',
+		State: ' ut ',
+		Zip: '84606-1234'
+	});
+
+	assert.equal(shouldConfirmAddress(entered, suggested, true), true);
 });
 
 test('requestParams: sends line 2 as secondary with enhanced matching', () => {

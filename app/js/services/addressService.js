@@ -331,6 +331,23 @@ four51.app.factory('Address', ['$resource', '$451', 'Error', '$q', '$httpBackend
         return PO_BOX.test(text(address.Street1)) || PO_BOX.test(text(address.Street2));
     }
 
+    // Whether the save should stop at the "confirm your address" choice instead of saving
+    // straight away. A USPS match identical to the entry normally needs no choice; an address
+    // that already has an ID is being edited from the address book, and still goes through the
+    // modal so the shopper sees the same verification step as for a new address in checkout.
+    function shouldConfirmAddress(entered, suggested, editing) {
+        if (!suggested || editing) return true;
+
+        function comparable(address) {
+            return [address.Street1, address.Street2, address.City, address.State, address.Zip]
+                .map(function(part) { return text(part).toUpperCase(); })
+                .join('|')
+                // A plain ZIP matching the first five digits of a ZIP+4 is the same address.
+                .replace(/-\d{4}$/, '');
+        }
+        return comparable(suggested) != comparable(entered);
+    }
+
     function requestParams(address) {
         return {
             key: EMBEDDED_KEY,
@@ -395,6 +412,7 @@ four51.app.factory('Address', ['$resource', '$451', 'Error', '$q', '$httpBackend
         checkLine2: checkLine2,
         canCheck: canCheck,
         containsPOBox: containsPOBox,
+        shouldConfirmAddress: shouldConfirmAddress,
         interpret: interpret,
         requestParams: requestParams
     };
