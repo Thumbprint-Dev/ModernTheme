@@ -35,6 +35,12 @@ function ($scope, $rootScope, $location, User, Address, Resources, SiteConfig, F
 
     var containsPOBox = Address.containsPOBox;
 
+    // A PO Box cannot be shipped to, but it is allowed as a billing address, so only run the
+    // check on addresses that are being saved for shipping.
+    function isShippingAddress() {
+        return !!$scope.address && !!$scope.address.IsShipping;
+    }
+
     // Address verification (Four51 CustomSolutions "Address Verification"): Save first checks
     // a US address against USPS via Address.validate, and only then saves.
     //  - A match identical to what was typed saves straight away - nothing to choose between.
@@ -129,12 +135,18 @@ function ($scope, $rootScope, $location, User, Address, Resources, SiteConfig, F
     // new_address_verification flag; when it is off, none of these watches are registered, so
     // the form behaves exactly as it did before.
     if (FeatureFlags.isOn('new_address_verification')) {
-        // Watch Street1 and Street2 for changes and debounce PO Box validation
+        // Watch Street1, Street2 and the shipping flag for changes and debounce PO Box validation
         $scope.$watch(function() {
-            return ($scope.address ? $scope.address.Street1 : '') + '|' + ($scope.address ? $scope.address.Street2 : '');
+            return ($scope.address ? $scope.address.Street1 : '') + '|' +
+                ($scope.address ? $scope.address.Street2 : '') + '|' +
+                ($scope.address && $scope.address.IsShipping ? 'shipping' : '');
         }, function() {
             if (poBoxCheckTimer) {
                 clearTimeout(poBoxCheckTimer);
+            }
+            if (!isShippingAddress()) {
+                $scope.poBoxError = false;
+                return;
             }
             poBoxCheckTimer = setTimeout(function() {
                 $scope.$apply(function() {
@@ -173,7 +185,7 @@ function ($scope, $rootScope, $location, User, Address, Resources, SiteConfig, F
     $scope.save = function() {
         // Check for PO Box before proceeding with verification (new_address_verification flag)
         if (FeatureFlags.isOn('new_address_verification')) {
-            if ($scope.address && containsPOBox($scope.address)) {
+            if (isShippingAddress() && containsPOBox($scope.address)) {
                 $scope.poBoxError = true;
                 return;
             }
