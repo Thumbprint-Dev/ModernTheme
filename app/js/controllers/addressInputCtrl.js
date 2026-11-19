@@ -44,7 +44,8 @@ function ($scope, $rootScope, $location, User, Address, Resources, SiteConfig, F
     // Address verification (Four51 CustomSolutions "Address Verification"): Save first checks
     // a US address against USPS via Address.validate, and only then saves.
     //  - A match identical to what was typed saves straight away, unless the address is being
-    //    edited (it has an ID), in which case the choice is still shown.
+    //    edited (it has an ID), in which case the choice is still shown. A suite Smarty accepted
+    //    is also saved as entered when USPS leaves it out of its match.
     //  - A different match, or no match at all, opens the choice modal (addressInput.html):
     //    the suggested address beside the entered one, and the shopper picks which to save.
     //  - Non-US addresses, and any error from the endpoint itself (e.g. a site that doesn't
@@ -191,41 +192,63 @@ function ($scope, $rootScope, $location, User, Address, Resources, SiteConfig, F
             saveAndReturn();
             return;
         }
-        $scope.verifying = true;
-        Address.validate($scope.address,
-            function(result) {
-                $scope.verifying = false;
-                var suggested = suggestionFrom(result, $scope.address);
-                // Editing an address-book entry still shows the choice, even when USPS returns
-                // the same lines; a new address with an identical match saves straight away.
-                if (!Address.shouldConfirmAddress($scope.address, suggested, !!$scope.address.ID)) {
-                    saveAndReturn();
-                    return;
-                }
-                var flagOn = FeatureFlags.isOn('new_address_verification');
-                var verification = {
-                    suggested: suggested,
-                    entered: angular.copy($scope.address),
-                    choice: suggested ? 'suggested' : 'entered',
-                    suggestedResidential: null,
-                    enteredResidential: flagOn ? $scope.addressType : null
-                };
-                $scope.verification = verification;
 
-                // The live check usually already filled in the entered address. If the shopper
-                // hit Save before the debounce ran, look it up now alongside the suggested one.
-                if (flagOn) {
-                    if (verification.enteredResidential == null)
-                        lookupResidential(verification, 'enteredResidential', verification.entered);
-                    if (suggested)
-                        lookupResidential(verification, 'suggestedResidential', suggested);
+        var flagOn = FeatureFlags.isOn('new_address_verification');
+        var entered = angular.copy($scope.address);
+
+        function validateAndDecide(line2Check) {
+            $scope.verifying = true;
+            Address.validate(entered,
+                function(result) {
+                    $scope.verifying = false;
+                    var suggested = suggestionFrom(result, entered);
+                    var line2Status = line2Check ? line2Check.status : null;
+                    // Editing an address-book entry still shows the choice, even when USPS returns
+                    // the same lines. A new address with an identical match saves straight away,
+                    // as does a suite Smarty accepted but the USPS suggestion dropped.
+                    if (!Address.shouldConfirmAddress(entered, suggested, !!entered.ID, line2Status)) {
+                        saveAndReturn();
+                        return;
+                    }
+                    var verification = {
+                        suggested: suggested,
+                        entered: angular.copy(entered),
+                        choice: suggested ? 'suggested' : 'entered',
+                        suggestedResidential: null,
+                        enteredResidential: flagOn ?
+                            (line2Check ? line2Check.residential : $scope.addressType) : null
+                    };
+                    $scope.verification = verification;
+
+                    // The live check usually already filled in the entered address. If the shopper
+                    // hit Save before the debounce ran, look it up now alongside the suggested one.
+                    if (flagOn) {
+                        if (verification.enteredResidential == null)
+                            lookupResidential(verification, 'enteredResidential', verification.entered);
+                        if (suggested)
+                            lookupResidential(verification, 'suggestedResidential', suggested);
+                    }
+                },
+                function() {
+                    $scope.verifying = false;
+                    saveAndReturn();
                 }
-            },
-            function() {
-                $scope.verifying = false;
-                saveAndReturn();
-            }
-        );
+            );
+        }
+
+        // USPS can normalize a matched address to its base street and leave the suite out. If
+        // Smarty checked this exact address and did not flag the suite, save what was typed
+        // rather than offering a suggestion that would drop it.
+        if (flagOn && Address.containsSuiteNumber(entered) && Address.canCheck(entered)) {
+            $scope.verifying = true;
+            Address.checkLine2(angular.copy(entered)).then(function(result) {
+                validateAndDecide(result);
+            }, function() {
+                validateAndDecide(null);
+            });
+            return;
+        }
+        validateAndDecide(null);
     };
 
     // Copies the chosen lines onto the bound address rather than replacing the object, so the

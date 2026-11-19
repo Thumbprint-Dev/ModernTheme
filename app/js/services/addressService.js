@@ -331,18 +331,65 @@ four51.app.factory('Address', ['$resource', '$451', 'Error', '$q', '$httpBackend
         return PO_BOX.test(text(address.Street1)) || PO_BOX.test(text(address.Street2));
     }
 
+    // A shopper can type a suite/unit into either street line. Match the designators Smarty
+    // recognizes (long and short spellings), plus a bare "# 230".
+    // The number must start with a digit, or be a single letter ("Unit B"), so a street
+    // name like "Suite Street" is not mistaken for a suite.
+    var SUITE_DESIGNATOR = /\b(?:APARTMENT|APT|SUITE|STE|UNIT|FLOOR|FL|ROOM|RM|BUILDING|BLDG)\.?\s*#?\s*(?:\d[0-9A-Z-]*|[A-Z])\b/ig;
+    var SUITE_HASH = /(?:^|\s)#\s*(?:\d[0-9A-Z-]*|[A-Z])\b/ig;
+
+    function containsSuiteNumber(address) {
+        if (!address) return false;
+        return [address.Street1, address.Street2].some(function(line) {
+            var value = text(line);
+            return value.search(SUITE_DESIGNATOR) !== -1 || value.search(SUITE_HASH) !== -1;
+        });
+    }
+
+    function stripSuite(value) {
+        return text(value)
+            .replace(SUITE_DESIGNATOR, ' ')
+            .replace(SUITE_HASH, ' ')
+            .replace(/\s*[,;]\s*$/, '')
+            .replace(/\s+/g, ' ')
+            .trim();
+    }
+
+    function normalizedPart(value) {
+        return upper(value).replace(/[.,#]/g, '').replace(/\s+/g, ' ').trim();
+    }
+
+    function sameBaseAddress(entered, suggested) {
+        function comparable(address) {
+            return [stripSuite(address.Street1), stripSuite(address.Street2),
+                    address.City, address.State, address.Zip]
+                .map(normalizedPart)
+                .join('|')
+                // A plain ZIP matching the first five digits of a ZIP+4 is the same address.
+                .replace(/-\d{4}$/, '');
+        }
+        return comparable(entered) === comparable(suggested);
+    }
+
     // Whether the save should stop at the "confirm your address" choice instead of saving
     // straight away. A USPS match identical to the entry normally needs no choice; an address
     // that already has an ID is being edited from the address book, and still goes through the
     // modal so the shopper sees the same verification step as for a new address in checkout.
-    function shouldConfirmAddress(entered, suggested, editing) {
+    //
+    // line2Status is the completed Smarty check for the entered address ('valid' when it did
+    // not flag anything). A suggestion that drops a suite the shopper typed must not open the
+    // modal or replace that suite - USPS often omits a unit it did not use for the match.
+    function shouldConfirmAddress(entered, suggested, editing, line2Status) {
         if (!suggested || editing) return true;
+
+        if (line2Status === 'valid' && containsSuiteNumber(entered) &&
+            !text(suggested.Street2) && !containsSuiteNumber(suggested.Street1) &&
+            sameBaseAddress(entered, suggested)) return false;
 
         function comparable(address) {
             return [address.Street1, address.Street2, address.City, address.State, address.Zip]
                 .map(function(part) { return text(part).toUpperCase(); })
                 .join('|')
-                // A plain ZIP matching the first five digits of a ZIP+4 is the same address.
                 .replace(/-\d{4}$/, '');
         }
         return comparable(suggested) != comparable(entered);
@@ -412,6 +459,7 @@ four51.app.factory('Address', ['$resource', '$451', 'Error', '$q', '$httpBackend
         checkLine2: checkLine2,
         canCheck: canCheck,
         containsPOBox: containsPOBox,
+        containsSuiteNumber: containsSuiteNumber,
         shouldConfirmAddress: shouldConfirmAddress,
         interpret: interpret,
         requestParams: requestParams
