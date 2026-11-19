@@ -50,7 +50,7 @@ function makeService(backend) {
 }
 
 const { service } = makeService();
-const { interpret, canCheck, requestParams, containsPOBox, shouldConfirmAddress } = service;
+const { interpret, canCheck, requestParams, containsPOBox, containsSuiteNumber, shouldConfirmAddress } = service;
 
 function query(url) {
 	const result = {};
@@ -718,6 +718,38 @@ test('containsPOBox: missing address or street lines are not a PO Box', () => {
 	assert.equal(containsPOBox(address({ Street1: '', Street2: '' })), false);
 });
 
+test('containsSuiteNumber: recognizes a suite/unit in either street line', () => {
+	const cases = [
+		'Suite 230',
+		'Suite230',
+		'Ste. 230',
+		'#230',
+		'Apt 2B',
+		'UNIT B',
+		'Building 5'
+	];
+
+	cases.forEach((line) => {
+		assert.equal(containsSuiteNumber(address({ Street1: line })), true, line);
+		assert.equal(containsSuiteNumber(address({ Street2: line })), true, line);
+	});
+});
+
+test('containsSuiteNumber: street text without a unit is not a suite', () => {
+	const cases = [
+		'2335 S State St',
+		'Suite Street',
+		'P.O. Box 123',
+		'123 B St',
+		''
+	];
+
+	cases.forEach((line) => {
+		assert.equal(containsSuiteNumber(address({ Street1: line, Street2: '' })), false, line);
+		assert.equal(containsSuiteNumber(address({ Street1: '2335 S State St', Street2: line })), false, line);
+	});
+});
+
 test('shouldConfirmAddress: a new address saves directly when USPS matches as entered', () => {
 	const entered = address({
 		Street1: '2335 S State St',
@@ -758,6 +790,72 @@ test('shouldConfirmAddress: editing an address always offers the verification ch
 	});
 
 	assert.equal(shouldConfirmAddress(entered, suggested, true), true);
+});
+
+test('shouldConfirmAddress: an unflagged suite is preserved when USPS drops it', () => {
+	const entered = address({
+		Street1: '2600 Maitland Center Pkwy',
+		Street2: 'Suite 230',
+		City: 'Maitland',
+		State: 'FL',
+		Zip: '32751'
+	});
+	const suggested = address({
+		Street1: '2600 Maitland Center Pkwy',
+		Street2: '',
+		City: 'Maitland',
+		State: 'FL',
+		Zip: '32751-1234'
+	});
+
+	assert.equal(shouldConfirmAddress(entered, suggested, false, 'valid'), false);
+});
+
+test('shouldConfirmAddress: a suite in Street1 is preserved when USPS drops it', () => {
+	const entered = address({
+		Street1: '2478 E Michigan St. Suite 230',
+		Street2: '',
+		City: 'Orlando',
+		State: 'FL',
+		Zip: '32806'
+	});
+	const suggested = address({
+		Street1: '2478 E Michigan St',
+		Street2: '',
+		City: 'Orlando',
+		State: 'FL',
+		Zip: '32806-1234'
+	});
+
+	assert.equal(shouldConfirmAddress(entered, suggested, false, 'valid'), false);
+});
+
+test('shouldConfirmAddress: a flagged or unchecked suite still needs confirmation', () => {
+	const entered = address({ Street1: '2600 Maitland Center Pkwy', Street2: 'Suite 230' });
+	const suggested = address({ Street1: '2600 Maitland Center Pkwy', Street2: '' });
+
+	assert.equal(shouldConfirmAddress(entered, suggested, false, 'line2-invalid'), true);
+	assert.equal(shouldConfirmAddress(entered, suggested, false, 'line2-remove'), true);
+	assert.equal(shouldConfirmAddress(entered, suggested, false, null), true);
+	assert.equal(shouldConfirmAddress(entered, suggested, true, 'valid'), true);
+});
+
+test('shouldConfirmAddress: a suite does not hide a genuinely different USPS match', () => {
+	const entered = address({
+		Street1: '2600 Maitland Center Pkwy',
+		Street2: 'Suite 230',
+		City: 'Maitland',
+		State: 'FL',
+		Zip: '32751'
+	});
+
+	assert.equal(shouldConfirmAddress(entered, address({
+		Street1: '2600 Maitland Center Blvd', Street2: '', City: 'Maitland', State: 'FL', Zip: '32751-1234'
+	}), false, 'valid'), true);
+
+	assert.equal(shouldConfirmAddress(entered, address({
+		Street1: '2600 Maitland Center Pkwy', Street2: 'STE 300', City: 'Maitland', State: 'FL', Zip: '32751-1234'
+	}), false, 'valid'), true);
 });
 
 test('requestParams: sends line 2 as secondary with enhanced matching', () => {
