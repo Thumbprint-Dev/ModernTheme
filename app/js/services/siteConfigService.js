@@ -28,6 +28,11 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 			buttonText: 'Shop the collection',
 			buttonHref: 'catalog'
 		},
+		home: {
+			// The heading over the home page's category tiles, e.g. "Shop by brand" for a store
+			// whose top-level categories are brands. Blank keeps "Shop by category".
+			categoriesHeading: 'Shop by category'
+		},
 		address: {
 			// false hides the Quick Address (Google Places) field on every address form -
 			// checkout's New Address and the Addresses page. It needs a Google Maps key that

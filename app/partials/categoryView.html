@@ -14,7 +14,7 @@
     </div>
 
     <div class="mt-container mt-section" ng-if="shopByCategories.length">
-        <h2 class="mt-eyebrow">{{'Shop by category' | r | xlat}}</h2>
+        <h2 class="mt-eyebrow">{{(site.home.categoriesHeading || 'Shop by category') | r | xlat}}</h2>
         <div class="row">
             <div class="{{deptTileClass}}" ng-repeat="dept in shopByCategories">
                 <a ng-href="catalog/{{dept.InteropID}}" class="mt-dept-tile">

@@ -878,6 +878,9 @@ these switched on must have its own override.
   in the file, so turning it back on is a one-word edit. Only a real JSON
   boolean is accepted -- a quoted `"false"` is ignored with a console warning,
   since as a non-empty string it would otherwise read as on.
+- **Category tiles heading**: `home.categoriesHeading` is the heading over the home
+  page's category tiles (default "Shop by category"). A store whose top-level categories
+  are brands sets `"Shop by brand"`. Blank keeps the default.
 - **Quick Address**: `address.showQuickAddress` (default `true`) shows or hides
   the Google Places "Quick Address" field on every address form -- checkout's
   New Address and the Addresses page. Turn it off for a site whose Google Maps
