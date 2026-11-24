@@ -793,7 +793,7 @@ Unfinished or not-yet-rolled-out UI ships behind a flag that is off by default. 
 adding the pseudo query param to **any** storefront URL -- it is not a route:
 
 ```
-/storefront/catalog?feature_flags=test,new_address_verification
+/storefront/catalog?feature_flags=test,other_flag
 ```
 
 - The list **replaces** whatever was on before; `?feature_flags=` (empty) clears every flag.
@@ -840,7 +840,6 @@ Add a row with every new flag; delete the row in the PR that removes the flag's 
 | Flag | What it changes | Where | Remove when |
 |---|---|---|---|
 | `test` | Dummy example: two extra lines in the home page hero, one checked in the template and one in the controller | `app/partials/categoryView.html`, `app/js/controllers/categoryCtrl.js` | Once a real flag shows usage -- or keep as a smoke test that flags work |
-| `new_address_verification` | PO Box validation on address forms, live Smarty US Street validation of Address Line 2 with correction/removal hints, grey missing-field (City/State/ZIP) suggestions from a valid match, Residential/Commercial labels on the form and verification modal, and a stricter verification modal for unmatched addresses: no close / "As entered" / "Use this address" options, plus support guidance | `app/js/controllers/addressInputCtrl.js`, `app/js/services/addressService.js`, `app/partials/controls/addressInput.html` | Once the stricter flow, line 2 check, field suggestions and address-type labels are rolled out to all sites |
 
 ## Favorites need a Four51 user field
 
@@ -1212,7 +1211,7 @@ fields in and nothing more. The submit button reads **Save** rather than Done.
 alone leaves `ng-submit="save()"` pointing at nothing, and a "no save happened" result
 means only that the controller was never there.
 
-## Address fields are checked with Smarty (behind `new_address_verification`)
+## Address fields are checked with Smarty
 
 `Address` in `app/js/services/addressService.js` sends the address to Smarty's US Street API
 with `match=enhanced` and interprets `analysis.enhanced_match`, `analysis.dpv_match_code`,

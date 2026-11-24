@@ -30,7 +30,7 @@
         <div class="mt-field">
             <label ng-class="{'required': address.IsCustEditable != false}">
                 {{'Address Line 1' | r | xlat}}
-                <span class="mt-verify-badge pull-right" ng-if="feature_flag('new_address_verification') && addressType != null">
+                <span class="mt-verify-badge pull-right" ng-if="addressType != null">
                     <i class="fa" ng-class="addressType ? 'fa-home' : 'fa-building'" aria-hidden="true"></i>
                     {{(addressType ? 'Residential' : 'Commercial') | r | xlat}}
                 </span>
@@ -42,12 +42,12 @@
             <input name="street2" class="form-control" type="text" ng-model="address.Street2" placeholder="{{'Address Line 2' | r | xlat}}" autocomplete="off" ng-disabled="address.IsCustEditable == false" />
         </div>
 
-        <p class="text-muted" ng-if="feature_flag('new_address_verification') && line2Check && line2Check.status == 'line2-suggested'" aria-live="polite">
+        <p class="text-muted" ng-if="line2Check && line2Check.status == 'line2-suggested'" aria-live="polite">
             <i class="fa fa-info-circle" aria-hidden="true"></i>
             {{'This address may have an apartment or suite number. Add one on Address Line 2 if needed.' | r | xlat}}
         </p>
 
-        <div class="mt-checkout-payment-warning" ng-if="feature_flag('new_address_verification') && line2Check && line2Check.status != 'line2-suggested'" aria-live="polite">
+        <div class="mt-checkout-payment-warning" ng-if="line2Check && line2Check.status != 'line2-suggested'" aria-live="polite">
             <p>
                 <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
                 <span ng-if="line2Check.status == 'invalid-address'">{{'This address is invalid.' | r | xlat}}</span>
@@ -62,7 +62,7 @@
             </p>
         </div>
 
-        <p class="mt-checkout-payment-warning" ng-show="feature_flag('new_address_verification') && poBoxError">{{'We cannot ship to a PO Box. Please update your shipping details with a physical street address so we can process your order.' | r | xlat}}</p>
+        <p class="mt-checkout-payment-warning" ng-show="poBoxError">{{'We cannot ship to a PO Box. Please update your shipping details with a physical street address so we can process your order.' | r | xlat}}</p>
 
         <div class="mt-checkout-shipping-fields">
             <div class="mt-field">
@@ -76,7 +76,7 @@
             <div class="mt-field" ng-show="hasStates()">
                 <label ng-class="{required: hasStates && address.IsCustEditable != false}">
                     {{'State' | r | xlat}}
-                    <span class="text-muted" ng-if="feature_flag('new_address_verification') && fieldHints.State">({{'Suggested' | r | xlat}}: {{fieldHints.State}})</span>
+                    <span class="text-muted" ng-if="fieldHints.State">({{'Suggested' | r | xlat}}: {{fieldHints.State}})</span>
                 </label>
                 <select ng-show="hasStates()" class="form-control" ng-options="state.value as state.label for state in states | filter:country" ng-model="address.State" placeholder="{{'State' | r | xlat}}" ng-required="hasStates() && address.IsCustEditable != false" ng-disabled="address.IsCustEditable == false">
                 </select>
@@ -121,7 +121,7 @@
                 <button ng-if="(user.Permissions.contains('CreateShipToAddress') || user.Permissions.contains('CreateBillToAddress')) && address.IsCustEditable" class="mt-header-btn" ng-click="delete()" type="button">{{'Delete' | r | xlat}}</button>
                 <button class="mt-header-btn" type="button" ng-click="cancel()">{{'Cancel' | r | xlat}}</button>
             </span>
-            <button ng-if="(user.Permissions.contains('CreateShipToAddress') || user.Permissions.contains('CreateBillToAddress')) && address.IsCustEditable != false" class="mt-btn-accent" type="submit" ng-disabled="addressEdit.$invalid || verifying || (feature_flag('new_address_verification') && poBoxError)">
+            <button ng-if="(user.Permissions.contains('CreateShipToAddress') || user.Permissions.contains('CreateBillToAddress')) && address.IsCustEditable != false" class="mt-btn-accent" type="submit" ng-disabled="addressEdit.$invalid || verifying || poBoxError">
                 <span ng-if="!verifying">{{'Save' | r | xlat}}</span>
                 <span ng-if="verifying"><i class="fa fa-spinner fa-spin" aria-hidden="true"></i> {{'Checking address' | r | xlat}}&hellip;</span>
             </button>
@@ -132,7 +132,7 @@
          different address, or can't match the one entered; the shopper picks which one to save. -->
     <div class="mt-error-modal-backdrop" ng-show="verification" ng-click="cancelVerification()">
         <div class="mt-error-modal mt-verify-modal" role="dialog" aria-modal="true" aria-labelledby="mt-verify-title-{{$id}}" ng-click="$event.stopPropagation()">
-            <button type="button" class="mt-error-modal-close" ng-click="cancelVerification()" aria-label="{{'Close' | r | xlat}}" ng-if="!feature_flag('new_address_verification') || verification.suggested">
+            <button type="button" class="mt-error-modal-close" ng-click="cancelVerification()" aria-label="{{'Close' | r | xlat}}" ng-if="verification.suggested">
                 <i class="fa fa-times"></i>
             </button>
             <div class="mt-error-modal-head">
@@ -140,8 +140,7 @@
                 <h2 class="mt-error-modal-title" id="mt-verify-title-{{$id}}">{{'Confirm your address' | r | xlat}}</h2>
             </div>
             <p class="mt-error-modal-message" ng-if="verification.suggested">{{'We found a close verified match to the address you entered. Choose the one to use.' | r | xlat}}</p>
-            <p class="mt-error-modal-message" ng-if="!verification.suggested && !feature_flag('new_address_verification')">{{'We couldn\'t verify this address. Check it before saving, or go back and edit it.' | r | xlat}}</p>
-            <p class="mt-error-modal-message" ng-if="!verification.suggested && feature_flag('new_address_verification')">{{'We couldn\'t verify this address. Please edit your address and try again. If your custom address still does not validate, reach out to support@thumbprint.com' | r | xlat}}</p>
+            <p class="mt-error-modal-message" ng-if="!verification.suggested">{{'We couldn\'t verify this address. Please edit your address and try again. If your custom address still does not validate, reach out to support@thumbprint.com' | r | xlat}}</p>
 
             <div class="mt-verify-options" role="radiogroup">
                 <label class="mt-verify-option" ng-if="verification.suggested" ng-class="{'mt-verify-option-selected': verification.choice == 'suggested'}">
@@ -150,7 +149,7 @@
                         <span class="mt-verify-option-label">
                             {{'Suggested' | r | xlat}}
                             <span class="mt-verify-badge"><i class="fa fa-check" aria-hidden="true"></i> {{'Verified' | r | xlat}}</span>
-                            <span class="mt-verify-badge" ng-if="feature_flag('new_address_verification') && verification.suggestedResidential != null">
+                            <span class="mt-verify-badge" ng-if="verification.suggestedResidential != null">
                                 <i class="fa" ng-class="verification.suggestedResidential ? 'fa-home' : 'fa-building'" aria-hidden="true"></i>
                                 {{(verification.suggestedResidential ? 'Residential' : 'Commercial') | r | xlat}}
                             </span>
@@ -162,12 +161,12 @@
                         </span>
                     </span>
                 </label>
-                <label class="mt-verify-option" ng-class="{'mt-verify-option-selected': verification.choice == 'entered'}" ng-if="!feature_flag('new_address_verification') || verification.suggested">
+                <label class="mt-verify-option" ng-class="{'mt-verify-option-selected': verification.choice == 'entered'}" ng-if="verification.suggested">
                     <input type="radio" name="mtVerifyChoice{{$id}}" value="entered" ng-model="verification.choice" />
                     <span class="mt-verify-option-body">
                         <span class="mt-verify-option-label">
                             {{'As entered' | r | xlat}}
-                            <span class="mt-verify-badge" ng-if="feature_flag('new_address_verification') && verification.enteredResidential != null">
+                            <span class="mt-verify-badge" ng-if="verification.enteredResidential != null">
                                 <i class="fa" ng-class="verification.enteredResidential ? 'fa-home' : 'fa-building'" aria-hidden="true"></i>
                                 {{(verification.enteredResidential ? 'Residential' : 'Commercial') | r | xlat}}
                             </span>
@@ -183,7 +182,7 @@
 
             <div class="mt-error-modal-actions mt-verify-actions">
                 <button type="button" class="mt-header-btn" ng-click="cancelVerification()">{{'Edit address' | r | xlat}}</button>
-                <button type="button" class="mt-btn-accent" ng-click="useVerifiedAddress()" ng-if="!feature_flag('new_address_verification') || verification.suggested">{{'Use this address' | r | xlat}}</button>
+                <button type="button" class="mt-btn-accent" ng-click="useVerifiedAddress()" ng-if="verification.suggested">{{'Use this address' | r | xlat}}</button>
             </div>
         </div>
     </div>

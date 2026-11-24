@@ -1,6 +1,6 @@
 // Feature flags, switched on per browser tab with a pseudo query param on any page:
 //
-//   /storefront/catalog?feature_flags=new_address_verification,other_flag
+//   /storefront/catalog?feature_flags=test,other_flag
 //
 // The list replaces whatever was set before; `?feature_flags=` (empty) clears them all.
 // State lives in sessionStorage, so it survives navigation and reloads in that tab but
@@ -8,9 +8,9 @@
 // left stuck on an experiment. The param is stripped from the URL once read so it does
 // not linger in the address bar, in analytics, or in links copied from the page.
 //
-// In templates: ng-if="feature_flag('new_address_verification')"  -- works in every template,
+// In templates: ng-if="feature_flag('test')"  -- works in every template,
 //               isolate-scope directives included (see the run block below).
-// In JS:        inject FeatureFlags, then FeatureFlags.isOn('new_address_verification')
+// In JS:        inject FeatureFlags, then FeatureFlags.isOn('test')
 four51.app.factory('FeatureFlags', ['$window', '$log', function($window, $log) {
 	var PARAM = 'feature_flags';
 	var STORAGE_KEY = 'mt.featureFlags';

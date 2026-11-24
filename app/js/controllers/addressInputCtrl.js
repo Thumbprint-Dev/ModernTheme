@@ -1,5 +1,5 @@
-four51.app.controller('AddressInputCtrl', ['$scope', '$rootScope', '$location', 'User', 'Address', 'Resources', 'SiteConfig', 'FeatureFlags',
-function ($scope, $rootScope, $location, User, Address, Resources, SiteConfig, FeatureFlags) {
+four51.app.controller('AddressInputCtrl', ['$scope', '$rootScope', '$location', 'User', 'Address', 'Resources', 'SiteConfig',
+function ($scope, $rootScope, $location, User, Address, Resources, SiteConfig) {
     // The addressinput directive has an isolate scope, so the `site` object Four51Ctrl puts on
     // every other page's scope doesn't reach this template - it needs its own reference.
     $scope.site = SiteConfig.settings;
@@ -127,43 +127,38 @@ function ($scope, $rootScope, $location, User, Address, Resources, SiteConfig, F
         }, 800); // 800ms debounce
     }
 
-    // PO Box validation and the live Address Line 2 check ship behind the
-    // new_address_verification flag; when it is off, none of these watches are registered, so
-    // the form behaves exactly as it did before.
-    if (FeatureFlags.isOn('new_address_verification')) {
-        // Watch Street1, Street2 and the shipping flag for changes and debounce PO Box validation
-        $scope.$watch(function() {
-            return ($scope.address ? $scope.address.Street1 : '') + '|' +
-                ($scope.address ? $scope.address.Street2 : '') + '|' +
-                ($scope.address && $scope.address.IsShipping ? 'shipping' : '');
-        }, function() {
-            if (poBoxCheckTimer) {
-                clearTimeout(poBoxCheckTimer);
-            }
-            if (!isShippingAddress()) {
-                $scope.poBoxError = false;
-                return;
-            }
-            poBoxCheckTimer = setTimeout(function() {
-                $scope.$apply(function() {
-                    $scope.poBoxError = containsPOBox($scope.address);
-                });
-            }, 500); // 500ms debounce
-        });
+    // Watch Street1, Street2 and the shipping flag for changes and debounce PO Box validation
+    $scope.$watch(function() {
+        return ($scope.address ? $scope.address.Street1 : '') + '|' +
+            ($scope.address ? $scope.address.Street2 : '') + '|' +
+            ($scope.address && $scope.address.IsShipping ? 'shipping' : '');
+    }, function() {
+        if (poBoxCheckTimer) {
+            clearTimeout(poBoxCheckTimer);
+        }
+        if (!isShippingAddress()) {
+            $scope.poBoxError = false;
+            return;
+        }
+        poBoxCheckTimer = setTimeout(function() {
+            $scope.$apply(function() {
+                $scope.poBoxError = containsPOBox($scope.address);
+            });
+        }, 500); // 500ms debounce
+    });
 
-        // Live Smarty check for Address Line 2. This is advisory: the Save button is not
-        // gated on it, and a failed/timed-out request just clears the warning.
-        $scope.$watch(line2WatchValue, scheduleLine2Check);
+    // Live Smarty check for Address Line 2. This is advisory: the Save button is not
+    // gated on it, and a failed/timed-out request just clears the warning.
+    $scope.$watch(line2WatchValue, scheduleLine2Check);
 
-        $scope.useLine2Suggestion = function() {
-            if (!$scope.line2Check || !$scope.line2Check.suggestedLine2) return;
-            $scope.address.Street2 = $scope.line2Check.suggestedLine2;
-        };
+    $scope.useLine2Suggestion = function() {
+        if (!$scope.line2Check || !$scope.line2Check.suggestedLine2) return;
+        $scope.address.Street2 = $scope.line2Check.suggestedLine2;
+    };
 
-        $scope.removeLine2 = function() {
-            $scope.address.Street2 = '';
-        };
-    }
+    $scope.removeLine2 = function() {
+        $scope.address.Street2 = '';
+    };
 
     // The verification modal already has the address strings; ask Smarty for each one's RDI so
     // the suggested and entered cards can show Residential/Commercial. Failure just leaves the
@@ -179,21 +174,18 @@ function ($scope, $rootScope, $location, User, Address, Resources, SiteConfig, F
     }
 
     $scope.save = function() {
-        // Check for PO Box before proceeding with verification (new_address_verification flag)
-        if (FeatureFlags.isOn('new_address_verification')) {
-            if (isShippingAddress() && containsPOBox($scope.address)) {
-                $scope.poBoxError = true;
-                return;
-            }
-            $scope.poBoxError = false;
+        // Check for PO Box before proceeding with verification
+        if (isShippingAddress() && containsPOBox($scope.address)) {
+            $scope.poBoxError = true;
+            return;
         }
+        $scope.poBoxError = false;
 
         if (!$scope.address || $scope.address.Country != 'US') {
             saveAndReturn();
             return;
         }
 
-        var flagOn = FeatureFlags.isOn('new_address_verification');
         var entered = angular.copy($scope.address);
 
         function validateAndDecide(line2Check) {
@@ -215,19 +207,16 @@ function ($scope, $rootScope, $location, User, Address, Resources, SiteConfig, F
                         entered: angular.copy(entered),
                         choice: suggested ? 'suggested' : 'entered',
                         suggestedResidential: null,
-                        enteredResidential: flagOn ?
-                            (line2Check ? line2Check.residential : $scope.addressType) : null
+                        enteredResidential: line2Check ? line2Check.residential : $scope.addressType
                     };
                     $scope.verification = verification;
 
                     // The live check usually already filled in the entered address. If the shopper
                     // hit Save before the debounce ran, look it up now alongside the suggested one.
-                    if (flagOn) {
-                        if (verification.enteredResidential == null)
-                            lookupResidential(verification, 'enteredResidential', verification.entered);
-                        if (suggested)
-                            lookupResidential(verification, 'suggestedResidential', suggested);
-                    }
+                    if (verification.enteredResidential == null)
+                        lookupResidential(verification, 'enteredResidential', verification.entered);
+                    if (suggested)
+                        lookupResidential(verification, 'suggestedResidential', suggested);
                 },
                 function() {
                     $scope.verifying = false;
@@ -239,7 +228,7 @@ function ($scope, $rootScope, $location, User, Address, Resources, SiteConfig, F
         // USPS can normalize a matched address to its base street and leave the suite out. If
         // Smarty checked this exact address and did not flag the suite, save what was typed
         // rather than offering a suggestion that would drop it.
-        if (flagOn && Address.containsSuiteNumber(entered) && Address.canCheck(entered)) {
+        if (Address.containsSuiteNumber(entered) && Address.canCheck(entered)) {
             $scope.verifying = true;
             Address.checkLine2(angular.copy(entered)).then(function(result) {
                 validateAndDecide(result);
