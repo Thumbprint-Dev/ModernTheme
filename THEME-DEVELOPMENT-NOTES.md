@@ -890,8 +890,8 @@ these switched on must have its own override.
   `.mt-dept-tile`). Capped at 120. The generic merge takes numbers (or "12"/"12px" strings)
   for any key whose default is a number.
 - **Finished-artwork hero**: `hero.showText` (default `true`). `false` with an image shows the
-  image as a designed banner: an `<img>` at full width and its own proportions (max 520px
-  tall, trimmed from the bottom), with no theme text or dark shade. For banners that carry
+  image as a designed banner: an `<img>` at full width and its own proportions, never
+  cropped (it grows taller on wider screens), with no theme text or dark shade. For banners that carry
   their own logo and wording - a background-image hero crops them top and bottom and puts
   text over the logo. The heading stays as a visually hidden `<h1>`; with `showButton` true
   the whole image links to `buttonHref`.

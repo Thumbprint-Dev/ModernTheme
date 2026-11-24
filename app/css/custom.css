@@ -258,9 +258,9 @@ body {
     margin-bottom: 0;
 }
 
-/* site.json hero.showText: false - the image is a finished banner, shown as designed. Full
-   width at its own proportions, capped in height on wide screens; the cap trims from the
-   bottom so a logo or faces near the top stay in. No shade, no theme text. */
+/* site.json hero.showText: false - the image is a finished banner, shown as designed: always
+   the whole image, scaled to the full width at its own proportions, never cropped. No shade,
+   no theme text. (A 520px height cap used to trim wide screens, which cut into the artwork.) */
 .mt-hero.mt-hero-artwork {
     position: relative;
     padding: 0;
@@ -275,9 +275,6 @@ body {
     display: block;
     width: 100%;
     height: auto;
-    max-height: 520px;
-    object-fit: cover;
-    object-position: center top;
 }
 
 .mt-hero-artwork-link:focus-visible {

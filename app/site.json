@@ -31,7 +31,7 @@
 		"heading": "Gear your team for the season ahead.",
 		"subheading": "New apparel, drinkware and print kits, priced for your group.",
 		"showButton": false,
-		"_help_showText": "showText: true or false, without quotes. false shows the image as a finished banner, exactly as designed: no eyebrow, heading, subheading or dark shade over it, at the image's own proportions (very wide screens trim a little off the bottom). Use it when the image already carries its own logo and wording. The heading is still read by screen readers, and with showButton true the whole banner links to buttonHref.",
+		"_help_showText": "showText: true or false, without quotes. false shows the image as a finished banner, exactly as designed: no eyebrow, heading, subheading or dark shade over it, scaled to the full width at the image's own proportions and never cropped (so it grows taller on wider screens). Use it when the image already carries its own logo and wording. The heading is still read by screen readers, and with showButton true the whole banner links to buttonHref.",
 		"showText": true,
 		"buttonText": "Shop the collection",
 		"buttonHref": "catalog"
