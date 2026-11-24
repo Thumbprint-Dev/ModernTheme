@@ -1,6 +1,16 @@
 <section ng-if="isHome" class="mt-home">
 
-    <div class="mt-hero" ng-class="{'mt-hero-image': site.hero.image}" ng-style="site.heroStyle">
+    <!-- site.json hero.showText false: a finished banner (its own logo and wording) shown as
+         designed - no theme text or shade over it. The heading stays for screen readers. -->
+    <div class="mt-hero mt-hero-artwork" ng-if="site.hero.image && site.hero.showText === false">
+        <a ng-if="site.hero.showButton && site.hero.buttonHref" ng-href="{{site.hero.buttonHref}}" class="mt-hero-artwork-link">
+            <img ng-src="{{site.hero.image}}" class="mt-hero-artwork-img" alt="{{(site.hero.buttonText || site.hero.heading) | r | xlat}}" />
+        </a>
+        <img ng-if="!(site.hero.showButton && site.hero.buttonHref)" ng-src="{{site.hero.image}}" class="mt-hero-artwork-img" alt="" />
+        <h1 class="mt-hero-artwork-heading" ng-if="site.hero.heading">{{site.hero.heading | r | xlat}}</h1>
+    </div>
+
+    <div class="mt-hero" ng-if="!(site.hero.image && site.hero.showText === false)" ng-class="{'mt-hero-image': site.hero.image}" ng-style="site.heroStyle">
         <div class="mt-container">
             <p class="mt-eyebrow" ng-if="site.hero.eyebrow">{{site.hero.eyebrow | r | xlat}}</p>
             <h1 ng-if="site.hero.heading">{{site.hero.heading | r | xlat}}</h1>

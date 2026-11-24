@@ -258,6 +258,45 @@ body {
     margin-bottom: 0;
 }
 
+/* site.json hero.showText: false - the image is a finished banner, shown as designed. Full
+   width at its own proportions, capped in height on wide screens; the cap trims from the
+   bottom so a logo or faces near the top stay in. No shade, no theme text. */
+.mt-hero.mt-hero-artwork {
+    position: relative;
+    padding: 0;
+    background: var(--mt-color-bg);
+}
+
+.mt-hero-artwork-link {
+    display: block;
+}
+
+.mt-hero-artwork-img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 520px;
+    object-fit: cover;
+    object-position: center top;
+}
+
+.mt-hero-artwork-link:focus-visible {
+    outline: 2px solid var(--mt-color-accent);
+    outline-offset: -4px;
+}
+
+/* the page heading, kept for screen readers only */
+.mt-hero.mt-hero-artwork .mt-hero-artwork-heading {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+}
+
 .mt-btn-accent {
     display: inline-block;
     background: var(--mt-color-accent);

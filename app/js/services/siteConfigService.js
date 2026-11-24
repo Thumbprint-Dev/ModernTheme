@@ -25,6 +25,10 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 			// false hides the hero's call-to-action button while keeping its
 			// buttonText/buttonHref in the file, ready to switch back on.
 			showButton: true,
+			// false shows hero.image as a finished banner: the whole image, no theme text or
+			// dark shade over it, cropped only from the bottom on wide screens. For artwork
+			// that carries its own logo and wording. Ignored without an image.
+			showText: true,
 			buttonText: 'Shop the collection',
 			buttonHref: 'catalog'
 		},

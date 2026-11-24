@@ -889,6 +889,12 @@ these switched on must have its own override.
   both `.mt-dept-tile` and its photo read (both need it - see the clipping note on
   `.mt-dept-tile`). Capped at 120. The generic merge takes numbers (or "12"/"12px" strings)
   for any key whose default is a number.
+- **Finished-artwork hero**: `hero.showText` (default `true`). `false` with an image shows the
+  image as a designed banner: an `<img>` at full width and its own proportions (max 520px
+  tall, trimmed from the bottom), with no theme text or dark shade. For banners that carry
+  their own logo and wording - a background-image hero crops them top and bottom and puts
+  text over the logo. The heading stays as a visually hidden `<h1>`; with `showButton` true
+  the whole image links to `buttonHref`.
 - **Quick Address**: `address.showQuickAddress` (default `true`) shows or hides
   the Google Places "Quick Address" field on every address form -- checkout's
   New Address and the Addresses page. Turn it off for a site whose Google Maps
