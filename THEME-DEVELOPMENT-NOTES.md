@@ -895,6 +895,10 @@ these switched on must have its own override.
   their own logo and wording - a background-image hero crops them top and bottom and puts
   text over the logo. The heading stays as a visually hidden `<h1>`; with `showButton` true
   the whole image links to `buttonHref`.
+- **Header logo size**: `logo.height` (default `70`) and `logo.mobileHeight` (default `40`, under
+  992px) set the header logo's height in pixels; the width follows its proportions. Written to
+  `--mt-logo-height` / `--mt-logo-height-mobile`, clamped 16-140. The old 100px max-height is
+  gone - the clamp does that job.
 - **Quick Address**: `address.showQuickAddress` (default `true`) shows or hides
   the Google Places "Quick Address" field on every address form -- checkout's
   New Address and the Addresses page. Turn it off for a site whose Google Maps

@@ -713,8 +713,8 @@ body {
        and then renders as nothing. Pinning the height gives the aspect ratio
        something to resolve the width against. A raster logo is sized to match
        rather than left at its own smaller height. */
-    height: 70px;
-    max-height: 100px;
+    /* site.json logo.height (siteConfigService.js sets --mt-logo-height) */
+    height: var(--mt-logo-height, 70px);
     width: auto;
     flex: 0 0 auto;
     object-fit: contain;
@@ -725,8 +725,8 @@ body {
    at 40px, which the row absorbs without growing. */
 @media (max-width: 991px) {
     .mt-brand-logo {
-        height: 40px;
-        max-height: 40px;
+        /* site.json logo.mobileHeight */
+        height: var(--mt-logo-height-mobile, 40px);
     }
 }
 

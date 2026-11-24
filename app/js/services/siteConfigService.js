@@ -15,7 +15,12 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 		favicon: '',
 		logo: {
 			url: '',
-			alt: ''
+			alt: '',
+			// Header logo height in pixels: height on desktop, mobileHeight on tablet and
+			// phone (under 992px). The width follows the logo's own proportions. Applied as
+			// --mt-logo-height / --mt-logo-height-mobile by applyTheme().
+			height: 70,
+			mobileHeight: 40
 		},
 		hero: {
 			image: '',
@@ -334,6 +339,13 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 		applyFont(root);
 		// Capped so a typo like 400 can't turn the tiles into circles.
 		root.style.setProperty('--mt-tile-radius', Math.min(settings.home.tileRadius, 120) + 'px');
+		// Kept between 16 and 140 so a typo can't hide the logo or swallow the header.
+		root.style.setProperty('--mt-logo-height', clampPx(settings.logo.height, 16, 140));
+		root.style.setProperty('--mt-logo-height-mobile', clampPx(settings.logo.mobileHeight, 16, 140));
+	}
+
+	function clampPx(value, min, max) {
+		return Math.max(min, Math.min(max, value)) + 'px';
 	}
 
 	function applyAccent(root) {

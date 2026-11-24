@@ -7,7 +7,10 @@
 	"logo": {
 		"_help": "url: full URL of the nav logo, for sites whose company logo isn't set in Four51. alt: its alt text. Blank uses the company logo.",
 		"url": "",
-		"alt": ""
+		"alt": "",
+		"_help_height": "height: the header logo's height in pixels on desktop, as a number without quotes (default 70). mobileHeight: the same on tablet and phone, under 992px wide (default 40). The width follows the logo's own proportions. Each is kept between 16 and 140.",
+		"height": 70,
+		"mobileHeight": 40
 	},
 	"address": {
 		"_help_showQuickAddress": "showQuickAddress: true or false, without quotes. true shows the Quick Address (Google address lookup) field on checkout's New Address form and the Addresses page. It needs a Google Maps key that allows this site's domain - without one the field only shows an error, so leave it false until that's set up.",
