@@ -596,6 +596,66 @@ body {
     color: var(--mt-color-danger);
 }
 
+/* Home page, one top-level category for this user (categoryView.html .mt-single-brand): the
+   category's image as a small thumbnail beside its name, "Shop all" on the right, then the
+   product grid. */
+.mt-single-brand-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px 16px;
+    margin-bottom: 18px;
+}
+
+.mt-single-brand-title {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+}
+
+.mt-single-brand-title img {
+    width: 64px;
+    height: 64px;
+    flex: none;
+    border-radius: 14px;
+    object-fit: cover;
+    box-shadow: 0 0 0 1px var(--mt-color-border);
+}
+
+.mt-single-brand-title .mt-eyebrow {
+    margin: 0;
+}
+
+.mt-single-brand-title h2 {
+    margin: 2px 0 0;
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+    color: var(--mt-color-text-strong);
+}
+
+.mt-single-brand-all {
+    display: inline-flex;
+    gap: 6px;
+    font-weight: 600;
+    color: var(--mt-color-accent);
+    white-space: nowrap;
+}
+
+.mt-single-brand-all:hover,
+.mt-single-brand-all:focus {
+    color: var(--mt-color-accent-dark);
+}
+
+@media (max-width: 767px) {
+    .mt-single-brand-title h2 {
+        font-size: 22px;
+    }
+}
+
 .mt-carousel-header {
     display: flex;
     align-items: center;

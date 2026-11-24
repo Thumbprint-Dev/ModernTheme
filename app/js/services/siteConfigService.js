@@ -47,7 +47,13 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 			showCategoryNames: true,
 			// Corner radius of the home page category tiles, in pixels. 0 gives straight
 			// corners. Applied as --mt-tile-radius by applyTheme().
-			tileRadius: 40
+			tileRadius: 40,
+			// When a user can see only one top-level category (e.g. a franchise user who only has
+			// their own brand), the home page shows that category's products instead of a lone
+			// tile: up to this many, with a "Shop all" link. 0 keeps the tile. Capped at 24.
+			singleBrandProducts: 8,
+			// The small label above that category's name in the same section.
+			singleBrandLabel: 'Your brand'
 		},
 		address: {
 			// false hides the Quick Address (Google Places) field on every address form -

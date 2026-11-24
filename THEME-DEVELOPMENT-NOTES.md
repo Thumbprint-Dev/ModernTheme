@@ -904,6 +904,14 @@ these switched on must have its own override.
   both `.mt-dept-tile` and its photo read (both need it - see the clipping note on
   `.mt-dept-tile`). Capped at 120. The generic merge takes numbers (or "12"/"12px" strings)
   for any key whose default is a number.
+- **One-category users**: when a user sees exactly one top-level category (Neighborly's
+  franchise users each see only their brand), the home page shows that category's products -
+  up to `home.singleBrandProducts` (default 8, max 24; `0` keeps the old lone tile) - with the
+  category image as a thumbnail, `home.singleBrandLabel` (default "Your brand") and a "Shop
+  all N products" link, instead of a single oversized tile. A category with no products keeps
+  its tile. `CategoryCtrl` copies each home search's results out of `Product.search()`'s shared
+  cache and runs the featured and single-category searches one after the other, because both
+  would otherwise fill (and empty) the same cache array.
 - **Finished-artwork hero**: `hero.showText` (default `true`). `false` with an image shows the
   image as a designed banner: an `<img>` at full width and its own proportions, never
   cropped (it grows taller on wider screens), with no theme text or dark shade. For banners that carry

@@ -1,6 +1,9 @@
 four51.app.controller('CategoryCtrl', ['$routeParams', '$sce', '$scope', '$rootScope', '$451', 'Category', 'Product', 'AppConst', 'Order', 'User', '$modal', 'ProductDisplayService', 'FeatureFlags', 'CategoryPath',
 function ($routeParams, $sce, $scope, $rootScope, $451, Category, Product, AppConst, Order, User, $modal, ProductDisplayService, FeatureFlags, CategoryPath) {
 	$scope.isHome = !$routeParams.categoryInteropID;
+	// Most products the home page shows for a one-category user (site.json home.singleBrandProducts).
+	// Declared up here because computeHomeCategoryLists() can fetch before the code below runs.
+	var SINGLE_BRAND_MAX = 24;
 
 	// Breadcrumb trail above the category title: this category's parents, then the category
 	// itself (categoryPathService.js). Empty until the nav tree loads, or for a category that
@@ -80,13 +83,52 @@ function ($routeParams, $sce, $scope, $rootScope, $451, Category, Product, AppCo
 		// InteropID) is resolved above, rather than searching on the bare config prefix directly -
 		// guarded so this only ever fires once even though computeHomeCategoryLists() re-runs
 		// whenever the tree reloads.
-		if ($scope.isHome && $scope.featuredCategory && !$scope.featuredProductsFetched) {
-			$scope.featuredProductsFetched = true;
-			Product.search($scope.featuredCategory.InteropID, null, null, function (products) {
-				$scope.featuredProducts = products;
-			}, 1, 20);
+		// Product.search() hands back its shared product cache (padded with placeholder numbers
+		// past the page it fetched), and the next search empties and refills that same array.
+		// So each home list keeps its own copy of just the real products, and the two searches
+		// run one after the other rather than at once (both would fill the one cache).
+		if ($scope.isHome && !$scope.homeProductsFetched) {
+			$scope.homeProductsFetched = true;
+			fetchFeatured(fetchSingleBrand);
 		}
 	}
+
+	function realProducts(list) {
+		return (list || []).filter(function(p) { return angular.isObject(p); });
+	}
+
+	function fetchFeatured(next) {
+		if (!$scope.featuredCategory) return next();
+		Product.search($scope.featuredCategory.InteropID, null, null, function (products) {
+			$scope.featuredProducts = realProducts(products);
+			next();
+		}, 1, 20);
+	}
+
+	// Only one top-level category for this user: show its products on the home page
+	// (site.json home.singleBrandProducts, the number to show) instead of one oversized tile.
+	// Always fetches the cap (SINGLE_BRAND_MAX, top of the controller) so the template can
+	// apply the site's number with limitTo, whenever site.json happens to land.
+	function fetchSingleBrand() {
+		var cats = $scope.shopByCategories || [];
+		if (cats.length !== 1) return;
+		$scope.singleBrand = cats[0];
+		Product.search(cats[0].InteropID, null, null, function (products, count) {
+			$scope.singleBrandProducts = realProducts(products).slice(0, SINGLE_BRAND_MAX);
+			$scope.singleBrandCount = count || $scope.singleBrandProducts.length;
+		}, 1, SINGLE_BRAND_MAX);
+	}
+
+	// The products section replaces the tile only when the site allows it and the category
+	// actually has products - a category with none (e.g. still "coming soon") keeps its tile.
+	$scope.singleBrandLimit = function() {
+		var n = $scope.site && $scope.site.home ? $scope.site.home.singleBrandProducts : 8;
+		return Math.min(n, SINGLE_BRAND_MAX);
+	};
+	$scope.showSingleBrand = function() {
+		return !!($scope.singleBrand && $scope.shopByCategories && $scope.shopByCategories.length === 1 &&
+			$scope.singleBrandLimit() > 0 && $scope.singleBrandProducts && $scope.singleBrandProducts.length);
+	};
 	computeHomeCategoryLists();
 
 	// Quick add-to-cart from a product card (home featured carousel and PLP grid). Product.search()

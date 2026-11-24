@@ -23,7 +23,31 @@
         </div>
     </div>
 
-    <div class="mt-container mt-section" ng-if="shopByCategories.length">
+    <!-- Only one top-level category for this user (e.g. a franchise user with just their brand):
+         its products, up to site.json home.singleBrandProducts, instead of a lone oversized tile. -->
+    <div class="mt-container mt-section mt-single-brand" ng-if="showSingleBrand()">
+        <div class="mt-single-brand-head">
+            <div class="mt-single-brand-title">
+                <img ng-if="singleBrand.Image.URL" ng-src="{{singleBrand.Image.URL}}" alt="" />
+                <div>
+                    <p class="mt-eyebrow">{{(site.home.singleBrandLabel || 'Your brand') | r | xlat}}</p>
+                    <h2 ng-bind-html="singleBrand.Name"></h2>
+                </div>
+            </div>
+            <a class="mt-single-brand-all" ng-href="catalog/{{singleBrand.InteropID}}">
+                <span ng-if="singleBrandCount > 1">{{('Shop all' | r | xlat) + ' ' + singleBrandCount + ' ' + ('products' | r | xlat)}}</span>
+                <span ng-if="singleBrandCount <= 1">{{'Shop the collection' | r | xlat}}</span>
+                <span aria-hidden="true">&rsaquo;</span>
+            </a>
+        </div>
+        <div class="mt-product-grid-wrap">
+            <div class="row">
+                <div class="col-sm-3 col-xs-6" ng-repeat="product in singleBrandProducts | limitTo:singleBrandLimit()" ng-include="'partials/controls/mtProductCard.html'"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-container mt-section" ng-if="shopByCategories.length && !showSingleBrand()">
         <h2 class="mt-eyebrow">{{(site.home.categoriesHeading || 'Shop by category') | r | xlat}}</h2>
         <div class="row">
             <div class="{{deptTileClass}}" ng-repeat="dept in shopByCategories">
