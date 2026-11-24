@@ -6183,17 +6183,27 @@ input[datepicker-popup] {
 
 .mt-error-modal-close {
     position: absolute;
-    top: 14px;
-    right: 14px;
-    width: 32px;
-    height: 32px;
+    top: 10px;
+    right: 10px;
+    z-index: 1;
+    /* Bootstrap's global `button { min-height: 40px }` stretched the old 32px button to
+       32x40, so the icon sat high in a crooked target. Grow the box to a square 40px and
+       move it in 4px: the icon keeps the same visual center, with a proper tap target. */
+    width: 40px;
+    height: 40px;
+    min-height: 0;
+    padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
     background: none;
     border: none;
     border-radius: 8px;
     font-size: 15px;
+    line-height: 1;
     color: var(--mt-color-muted);
     cursor: pointer;
 }

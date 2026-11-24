@@ -255,8 +255,20 @@ function main() {
 		req.pipe(upstreamReq)
 	}
 
+	// Production answers page URLs with a trailing slash, and IIS appends it to
+	// the raw URL -- after the query string when there is one (/catalog?x=1 ->
+	// /catalog?x=1/). Mirror that so local routes land on the same URLs they do
+	// once deployed. Files keep their URL; only extensionless routes redirect.
+	function needsTrailingSlash(url, urlPath) {
+		if (url.endsWith('/')) return false
+		return !path.extname(urlPath.split('/').pop())
+	}
+
 	function serveStatic(req, res, urlPath) {
 		let rel = decodeURIComponent(urlPath.slice(mount.length))
+		// A trailing slash still names an app route (/catalog/), not a file --
+		// decide before appending index.html so the extension test below holds.
+		const appRoute = !path.extname(rel.replace(/\/$/, ''))
 		if (rel === '' || rel.endsWith('/')) rel += 'index.html'
 
 		const file = path.join(APP_DIR, rel)
@@ -268,7 +280,7 @@ function main() {
 				// A missing path with no file extension is an app route (e.g. /catalog),
 				// so boot the local shell -- sending it upstream would load production's
 				// index.html and quietly bypass every local edit.
-				if (!path.extname(rel)) {
+				if (appRoute) {
 					const shell = renderHtml(fs.readFileSync(path.join(APP_DIR, 'index.html'), 'utf8'), appPath)
 					console.log(`  spa  200 ${req.method} ${safeUrl(urlPath)}`)
 					res.writeHead(200, { 'content-type': MIME['.html'], 'cache-control': 'no-store' })
@@ -298,7 +310,9 @@ function main() {
 	}
 
 	const server = http.createServer((req, res) => {
-		const urlPath = req.url.split('?')[0]
+		const queryIndex = req.url.indexOf('?')
+		const urlPath = queryIndex === -1 ? req.url : req.url.slice(0, queryIndex)
+		const search = queryIndex === -1 ? '' : req.url.slice(queryIndex)
 
 		if (urlPath.startsWith('/api/')) {
 			const blocked = !args.allowOrders && blockedWrite(req.method, urlPath)
@@ -313,8 +327,15 @@ function main() {
 			}
 			return proxyUpstream(req, res, 'api ')
 		}
-		if (urlPath === '/' || urlPath === '') return send(res, 302, '', { location: mount })
-		if (urlPath === mount.slice(0, -1)) return send(res, 302, '', { location: mount })
+		const isMountRoot = urlPath === mount.slice(0, -1)
+		const isPage = urlPath === '/' || urlPath === '' || isMountRoot || urlPath.startsWith(mount)
+
+		// Imitate the production redirect -- the slash goes at the end of the raw
+		// URL, so /catalog?x=1 becomes /catalog?x=1/, not /catalog/?x=1.
+		if (isPage && needsTrailingSlash(req.url, urlPath)) return send(res, 302, '', { location: `${req.url}/` })
+
+		if (urlPath === '/' || urlPath === '') return send(res, 302, '', { location: mount + search })
+		if (isMountRoot) return serveStatic(req, res, mount)
 		if (urlPath.startsWith(mount)) return serveStatic(req, res, urlPath)
 
 		// Root-relative assets that ignore <base href> -- product images come through
