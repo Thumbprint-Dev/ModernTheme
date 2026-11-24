@@ -889,6 +889,10 @@ these switched on must have its own override.
   in the file, so turning it back on is a one-word edit. Only a real JSON
   boolean is accepted -- a quoted `"false"` is ignored with a console warning,
   since as a non-empty string it would otherwise read as on.
+- **Tab title**: `name`, when set, is the browser tab title on every page, including after
+  sign-in (Four51Ctrl and SiteConfig both apply it). Blank falls back to the Four51 company
+  name plus hostname once a user loads. Lets a site keep a company name the platform needs
+  (Neighborly's "Neighborly+") out of the tab.
 - **Category tiles heading**: `home.categoriesHeading` is the heading over the home
   page's category tiles (default "Shop by category"). A store whose top-level categories
   are brands sets `"Shop by brand"`. Blank keeps the default.

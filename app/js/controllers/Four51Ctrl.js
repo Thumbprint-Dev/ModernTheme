@@ -53,7 +53,13 @@ function ($scope, $route, $rootScope, $timeout, $document, $window, $location, $
 				$scope.user.Culture.CurrencyPrefix = XLATService.getCurrentLanguage(user.CultureUI, user.Culture.Name)[1];
 				$scope.user.Culture.DateFormat = XLATService.getCurrentLanguage(user.CultureUI, user.Culture.Name)[2];
 
-				if (user.Company && user.Company.Name) {
+				// site.json name wins when set, so a site can show a clean tab title while the
+				// Four51 company name carries something it needs (e.g. Neighborly+, whose "+" drives
+				// one-to-many customer logic). SiteConfig applies the same title when the file lands.
+				if (SiteConfig.settings.name) {
+					$document[0].title = SiteConfig.settings.name;
+				}
+				else if (user.Company && user.Company.Name) {
 					$document[0].title = user.Company.Name + ' - ' + $window.location.hostname;
 				}
 
