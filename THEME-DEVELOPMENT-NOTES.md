@@ -884,6 +884,11 @@ these switched on must have its own override.
 - **Category tile names**: `home.showCategoryNames` (default `true`). `false` hides the name
   printed over each home page tile, for sites whose tile images show the name themselves.
   The name stays in the link for screen readers, and a category without an image keeps it.
+- **Category tile corners**: `home.tileRadius` (default `40`) is the tiles' corner radius in
+  pixels; `0` gives straight corners. It's written to `--mt-tile-radius` on the root, which
+  both `.mt-dept-tile` and its photo read (both need it - see the clipping note on
+  `.mt-dept-tile`). Capped at 120. The generic merge takes numbers (or "12"/"12px" strings)
+  for any key whose default is a number.
 - **Quick Address**: `address.showQuickAddress` (default `true`) shows or hides
   the Google Places "Quick Address" field on every address form -- checkout's
   New Address and the Addresses page. Turn it off for a site whose Google Maps

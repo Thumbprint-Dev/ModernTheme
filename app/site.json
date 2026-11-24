@@ -38,7 +38,9 @@
 		"_help_categoriesHeading": "categoriesHeading: the heading over the home page's category tiles, e.g. \"Shop by brand\". Blank keeps \"Shop by category\".",
 		"categoriesHeading": "",
 		"_help_showCategoryNames": "showCategoryNames: true or false, without quotes. false hides the category name printed over each home page tile, for when the tile images already show it. Screen readers still read the name, and a category with no image keeps its name.",
-		"showCategoryNames": true
+		"showCategoryNames": true,
+		"_help_tileRadius": "tileRadius: how rounded the home page category tiles' corners are, in pixels, as a number without quotes. 0 gives straight corners, 40 is the theme's default, and anything over 120 is treated as 120.",
+		"tileRadius": 40
 	},
 	"categoryMessages": {
 		"_help": "Message bars under a category page's title, keyed by the category's InteropID (not its display name; capitals don't matter). A category that isn't listed shows nothing, and each subcategory needs its own entry - nothing is inherited from the parent. Each category takes a list of messages, which stack in order. message: plain text, required (a blank message is skipped). linkText + linkUrl: optional link at the end of the message - a site page (faq, contactus, order), a full https:// URL (opens in a new tab), or mailto:. style: pick one of three options - \"tint\" (light wash of the accent colour; the default, also used when left blank), \"solid\" (full accent colour with white text) or \"neutral\" (white box with a thin border). Any other value falls back to tint. Keys starting with _ are ignored: to add messages, copy _example_category-interopid, rename it to the real InteropID and fill it in. Reload the page to see a change.",

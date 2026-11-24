@@ -35,7 +35,10 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 			// false hides the category name printed over each tile, for sites whose tile images
 			// carry the name themselves. Screen readers still read it, and a tile without an
 			// image keeps its name.
-			showCategoryNames: true
+			showCategoryNames: true,
+			// Corner radius of the home page category tiles, in pixels. 0 gives straight
+			// corners. Applied as --mt-tile-radius by applyTheme().
+			tileRadius: 40
 		},
 		address: {
 			// false hides the Quick Address (Google Places) field on every address form -
@@ -325,6 +328,8 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 
 		applyAccent(root);
 		applyFont(root);
+		// Capped so a typo like 400 can't turn the tiles into circles.
+		root.style.setProperty('--mt-tile-radius', Math.min(settings.home.tileRadius, 120) + 'px');
 	}
 
 	function applyAccent(root) {
@@ -444,6 +449,14 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 				else if (typeof value === 'boolean') {
 					if (typeof override === 'boolean') defaults[key] = override;
 					else if (override !== undefined) $log.warn('SiteConfig: ' + section + '.' + key + ' must be true or false, ignoring -- ' + angular.toJson(override));
+				}
+				// A number takes a real number, or a string that is one ("12" or "12px"), so a
+				// value pasted with its unit still works. Negative or non-numeric is ignored.
+				else if (typeof value === 'number') {
+					var num = typeof override === 'number' ? override
+						: (angular.isString(override) && /^\s*\d+(\.\d+)?\s*(px)?\s*$/i.test(override) ? parseFloat(override) : NaN);
+					if (isFinite(num) && num >= 0) defaults[key] = num;
+					else if (override !== undefined && override !== '') $log.warn('SiteConfig: ' + section + '.' + key + ' must be a number of 0 or more, ignoring -- ' + angular.toJson(override));
 				}
 				// Lists are taken whole rather than merged, so a site can shorten one as
 				// well as extend it. Non-string entries are dropped instead of failing

@@ -369,7 +369,8 @@ body {
        correctly (verified with elementFromPoint at the literal corner pixel) but was too subtle
        to read as "rounded" rather than "square" at this tile's actual rendered size - confirmed
        live by testing 24px (still read as square) and 40px (clearly rounded) side by side. */
-    border-radius: 40px;
+    /* site.json home.tileRadius (siteConfigService.js sets --mt-tile-radius) */
+    border-radius: var(--mt-tile-radius, 40px);
     overflow: hidden;
     /* isolation:isolate is required, not decorative: without it, Chrome composites the large
        absolutely-positioned photo onto its own GPU layer and that layer ignores this element's
@@ -396,7 +397,8 @@ body {
        image to a compositing layer that clips inconsistently at the instant of the repaint,
        producing a "correct at rest, wrong mid-transition" flash. Rounding the image's own paint
        here means the corners are right regardless of whether the parent's clip layer is applied. */
-    border-radius: 40px;
+    /* site.json home.tileRadius (siteConfigService.js sets --mt-tile-radius) */
+    border-radius: var(--mt-tile-radius, 40px);
     aspect-ratio: auto;
     transition: transform 480ms cubic-bezier(0.16, 1, 0.3, 1);
 }
