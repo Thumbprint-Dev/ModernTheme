@@ -433,6 +433,18 @@ body {
     text-shadow: 0 1px 8px rgba(0, 0, 0, 0.45);
 }
 
+/* site.json home.showCategoryNames: false - the tile image carries the name itself. Hidden
+   from view only; screen readers still read it as the link's name. */
+.mt-dept-name.mt-dept-name--hidden {
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+}
+
 .mt-product-card {
     position: relative;
     display: flex;

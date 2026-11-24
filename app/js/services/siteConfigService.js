@@ -31,7 +31,11 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 		home: {
 			// The heading over the home page's category tiles, e.g. "Shop by brand" for a store
 			// whose top-level categories are brands. Blank keeps "Shop by category".
-			categoriesHeading: 'Shop by category'
+			categoriesHeading: 'Shop by category',
+			// false hides the category name printed over each tile, for sites whose tile images
+			// carry the name themselves. Screen readers still read it, and a tile without an
+			// image keeps its name.
+			showCategoryNames: true
 		},
 		address: {
 			// false hides the Quick Address (Google Places) field on every address form -

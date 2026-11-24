@@ -881,6 +881,9 @@ these switched on must have its own override.
 - **Category tiles heading**: `home.categoriesHeading` is the heading over the home
   page's category tiles (default "Shop by category"). A store whose top-level categories
   are brands sets `"Shop by brand"`. Blank keeps the default.
+- **Category tile names**: `home.showCategoryNames` (default `true`). `false` hides the name
+  printed over each home page tile, for sites whose tile images show the name themselves.
+  The name stays in the link for screen readers, and a category without an image keeps it.
 - **Quick Address**: `address.showQuickAddress` (default `true`) shows or hides
   the Google Places "Quick Address" field on every address form -- checkout's
   New Address and the Addresses page. Turn it off for a site whose Google Maps
