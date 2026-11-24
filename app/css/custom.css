@@ -267,6 +267,13 @@ body {
     background: var(--mt-color-bg);
 }
 
+/* .mt-home pulls itself up 20px (margin-top: -20px), which tucks the top of the hero under the
+   header's category nav. A text hero only lost some padding; a finished banner lost the top
+   20px of its artwork - on a phone, where the banner is ~130px tall, that cut its logo. */
+.mt-home > .mt-hero-artwork {
+    margin-top: 20px;
+}
+
 .mt-hero-artwork-link {
     display: block;
 }
@@ -1036,6 +1043,31 @@ body {
     .mt-cat-nav-row {
         padding: 0 16px;
         overflow-x: auto;
+    }
+    /* At phone width the logo, search toggle, Cart and the account button didn't fit: the
+       account name wrapped onto two lines and the row ran ~2px past the screen, so the page
+       scrolled sideways. Tighter gaps, a logo that may give up a little width, and an account
+       name that stays on one line (ellipsis when long). */
+    .mt-header-row {
+        gap: 10px;
+    }
+    .mt-header-actions {
+        gap: 8px;
+        min-width: 0;
+    }
+    .mt-brand {
+        min-width: 0;
+        flex: 0 1 auto;
+    }
+    .mt-brand-logo {
+        max-width: 100%;
+    }
+    .mt-account .mt-header-btn {
+        display: inline-block;
+        max-width: 110px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
     }
     .mt-search-toggle {
         display: inline-flex;
