@@ -85,8 +85,14 @@ function ($scope, $route, $rootScope, $timeout, $document, $window, $location, $
 			// plain $scope property, so every template that renders a heart button reads
 			// through $root instead.
 			$scope.$root.favoriteProducts = $scope.$root.favoriteProducts || [];
-			FavoriteProducts.getAll(function (skus) {
+			FavoriteProducts.getAll(function (skus, available) {
 				$scope.$root.favoriteProducts = skus;
+				// No FavoriteSKUs user field on this site: hide the hearts (custom.css,
+				// .mt-no-favorites - a class rather than template conditions, so the
+				// admin-managed PDT's heart is covered too) and the Favorite Products links,
+				// rather than show buttons that can't save anything.
+				$scope.$root.favoritesAvailable = available;
+				$document.find('body').toggleClass('mt-no-favorites', !available);
 			});
 			$scope.$root.addFavorite = function (sku) {
 				FavoriteProducts.add(sku, function (skus) {

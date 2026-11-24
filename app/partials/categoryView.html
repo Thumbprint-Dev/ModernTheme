@@ -39,7 +39,7 @@
     <div class="mt-container mt-section">
         <h2 class="mt-eyebrow">{{'Quick actions' | r | xlat}}</h2>
         <div class="row mt-quick-actions">
-            <div ng-class="allProductsCategory ? 'col-sm-4' : 'col-sm-6'">
+            <div ng-class="'col-sm-' + (12 / (1 + (allProductsCategory ? 1 : 0) + ($root.favoritesAvailable !== false ? 1 : 0)))">
                 <a href="order" class="mt-tile">
                     <div class="mt-tile-icon"><i class="fa fa-clock-o"></i></div>
                     <div class="mt-tile-body">
@@ -48,7 +48,7 @@
                     </div>
                 </a>
             </div>
-            <div ng-class="allProductsCategory ? 'col-sm-4' : 'col-sm-6'">
+            <div ng-if="$root.favoritesAvailable !== false" ng-class="'col-sm-' + (12 / (1 + (allProductsCategory ? 1 : 0) + ($root.favoritesAvailable !== false ? 1 : 0)))">
                 <a href="favoriteproducts" class="mt-tile">
                     <div class="mt-tile-icon"><i class="fa fa-heart-o"></i></div>
                     <div class="mt-tile-body">
@@ -61,7 +61,7 @@
                  AppConst.allProductsCategoryInteropID exists (e.g. named "All Products" in the
                  admin) - links straight to it as a real full-catalog browse. Otherwise there is
                  nothing to link to, since Four51 has no unscoped whole-catalog view. -->
-            <div class="col-sm-4" ng-if="allProductsCategory">
+            <div ng-if="allProductsCategory" ng-class="'col-sm-' + (12 / (1 + (allProductsCategory ? 1 : 0) + ($root.favoritesAvailable !== false ? 1 : 0)))">
                 <a ng-href="catalog/{{allProductsCategory.InteropID}}" class="mt-tile">
                     <div class="mt-tile-icon"><i class="fa fa-book"></i></div>
                     <div class="mt-tile-body">

@@ -95,7 +95,7 @@
                     <li class="favorites" ng-show="user.Type == 'Customer'">
                         <a id="451qa_fave_link" href="favoriteorders">{{'Favorite Orders' | r | xlat}}</a>
                     </li>
-                    <li class="favorites" ng-show="user.Type == 'Customer'">
+                    <li class="favorites" ng-show="user.Type == 'Customer' && $root.favoritesAvailable !== false">
                         <a href="favoriteproducts">{{'Favorite Products' | r | xlat}}</a>
                     </li>
                     <li ng-show="user.Type == 'Customer' && user.Permissions.contains('AdvancedReporting')">

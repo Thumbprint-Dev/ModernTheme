@@ -841,6 +841,17 @@ Add a row with every new flag; delete the row in the PR that removes the flag's 
 |---|---|---|---|
 | `test` | Dummy example: two extra lines in the home page hero, one checked in the template and one in the controller | `app/partials/categoryView.html`, `app/js/controllers/categoryCtrl.js` | Once a real flag shows usage -- or keep as a smoke test that flags work |
 
+## Favorites need a Four51 user field
+
+The favorite hearts and the Favorite Products page save to a Four51 **user custom field named
+`FavoriteSKUs`** (a comma-separated list of product InteropIDs; `favoriteProductsService.js`).
+It has to be set up per buyer in the Four51 admin: create the user custom field `FavoriteSKUs`
+(text, not required) and assign it to the buyer's users. A site without it has nowhere to save
+a favorite, so the theme hides the hearts (`.mt-no-favorites` on `<body>`, covering the
+admin-managed PDT's heart too), the home page's Favorite Products tile and the account menu's
+Favorite Products link, and logs a console warning naming the field. Add it to every new site's
+setup checklist.
+
 ## Per-site branding: `app/site.json`
 
 There is no CMS behind this theme, and the platform has no field for a home-page

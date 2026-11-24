@@ -1,23 +1,33 @@
 // favoriteProductsService.js
 // Favorites are stored on a Four51 custom user field (a comma-delimited string of product
 // InteropIDs) - no separate database, the user record is the store. Same approach used on
-// the Risepoint buyer site. FAVORITE_SKUS_FIELD must be enabled (ticked) for this buyer under
-// Company > user fields in the Four51 admin, or add()/remove() will throw when the field is
-// missing from the user record.
-four51.app.factory('FavoriteProducts', ['$resource', '$q', 'User', '$451', function($resource, $q, User, $451) {
+// the Risepoint buyer site. FAVORITE_SKUS_FIELD must exist as a user custom field for the
+// buyer in the Four51 admin and be assigned to its users. Without it there is nowhere to save
+// a favorite: getAll() reports the field as unavailable (Four51Ctrl then hides the hearts and
+// Favorite Products links), and add()/remove() log a warning instead of throwing.
+four51.app.factory('FavoriteProducts', ['$resource', '$q', '$log', 'User', '$451', function($resource, $q, $log, User, $451) {
     var FAVORITE_SKUS_FIELD = 'FavoriteSKUs';
 
     function _then(fn, data) {
         if (angular.isFunction(fn)) fn(data);
     }
 
-    // use like `FavoriteProducts.getAll(skus => {...})`
+    function _field(user) {
+        return (user.CustomFields || []).find(function(f) { return f.Name === FAVORITE_SKUS_FIELD; });
+    }
+
+    function _missing() {
+        $log.warn('FavoriteProducts: this user has no "' + FAVORITE_SKUS_FIELD + '" custom field, so favorites ' +
+            'can\'t be saved. Add it as a user custom field in the Four51 admin and assign it to this buyer\'s users.');
+    }
+
+    // use like `FavoriteProducts.getAll((skus, available) => {...})`. available is false when
+    // the user has no FavoriteSKUs field (not set up for the buyer, or an anonymous user).
     function getAll(callback) {
         User.get(function(user) {
-            var field = user.CustomFields.find(function(f) { return f.Name === FAVORITE_SKUS_FIELD; });
-            // field may be absent for users the custom field isn't assigned to (e.g. anon)
+            var field = _field(user);
             var skus = field && field.Value ? field.Value.split(',') : [];
-            _then(callback, skus);
+            if (angular.isFunction(callback)) callback(skus, !!field);
         });
     }
 
@@ -72,7 +82,8 @@ four51.app.factory('FavoriteProducts', ['$resource', '$q', 'User', '$451', funct
     // use like `FavoriteProducts.add(sku, skus => {...})`
     function add(sku, callback) {
         User.get(function(user) {
-            var field = user.CustomFields.find(function(f) { return f.Name === FAVORITE_SKUS_FIELD; });
+            var field = _field(user);
+            if (!field) { _missing(); return; }
             var skus = field.Value ? field.Value.split(',') : [];
             if (skus.indexOf(sku) == -1) skus.push(sku);
             field.Value = skus.join(',');
@@ -84,7 +95,8 @@ four51.app.factory('FavoriteProducts', ['$resource', '$q', 'User', '$451', funct
     // use like `FavoriteProducts.remove(sku, skus => {...})`
     function remove(sku, callback) {
         User.get(function(user) {
-            var field = user.CustomFields.find(function(f) { return f.Name === FAVORITE_SKUS_FIELD; });
+            var field = _field(user);
+            if (!field) { _missing(); return; }
             if (!field.Value) return;
             var skus = field.Value.split(',').filter(function(item) { return item !== sku; });
             field.Value = skus.join(',');

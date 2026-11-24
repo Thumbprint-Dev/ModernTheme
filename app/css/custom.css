@@ -505,6 +505,12 @@ body {
     object-fit: contain;
 }
 
+/* Four51Ctrl adds .mt-no-favorites to <body> when the user has no FavoriteSKUs custom field
+   (favoriteProductsService.js) - there's nowhere to save a favorite, so no hearts. */
+.mt-no-favorites .mt-fav-btn {
+    display: none !important;
+}
+
 .mt-fav-btn {
     -webkit-appearance: none;
     -moz-appearance: none;
